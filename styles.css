@@ -1,0 +1,285 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.date-display {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.spin-wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.slot-machine {
+    display: flex;
+    background: linear-gradient(145deg, #2c3e50, #34495e);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 30px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 0 30px rgba(243, 156, 18, 0.3);
+    border: 5px solid #f39c12;
+    gap: 20px;
+    position: relative;
+}
+
+.slot-machine::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, #f39c12, #e67e22, #d35400, #f39c12);
+    border-radius: 25px;
+    z-index: -1;
+    animation: golden-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes golden-glow {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.02); }
+}
+
+.reel {
+    width: 100px;
+    height: 120px;
+    background: #34495e;
+    border: 3px solid #ecf0f1;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.reel-item {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(145deg, #3498db, #2980b9);
+    border-bottom: 2px solid #2c3e50;
+}
+
+.reel.spinning {
+    animation: spin 3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.reel.spinning:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.reel.spinning:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes spin {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-600px); }
+    100% { transform: translateY(0); }
+}
+
+.spin-button {
+    margin-top: 20px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.spin-button:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+}
+
+.trending-games {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s ease;
+}
+
+.trending-games.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.trending-games h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+}
+
+.game-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.game-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.game-thumbnail {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    border-radius: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-thumbnail::after {
+    content: 'GAME IMAGE';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    background: rgba(0,0,0,0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.game-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #f1c40f;
+}
+
+.win-info {
+    background: rgba(46, 204, 113, 0.2);
+    border-left: 4px solid #2ecc71;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.win-amount {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2ecc71;
+    margin-bottom: 10px;
+}
+
+.win-screenshot {
+    margin: 10px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    filter: blur(1px) brightness(0.9);
+    opacity: 0.8;
+}
+
+.win-screenshot img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.win-comment {
+    font-style: italic;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.player-name {
+    font-size: 0.9rem;
+    color: #95a5a6;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .slot-machine {
+        padding: 20px;
+        gap: 10px;
+    }
+    
+    .reel {
+        width: 80px;
+        height: 100px;
+    }
+    
+    .reel-item {
+        height: 100px;
+        font-size: 2.5rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .game-card {
+        padding: 20px;
+    }
+}
