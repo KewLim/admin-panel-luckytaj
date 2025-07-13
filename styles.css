@@ -23,13 +23,13 @@ header {
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .date-display {
-    font-size: 1.2rem;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
     opacity: 0.9;
 }
 
@@ -144,8 +144,8 @@ header h1 {
 
 .trending-games h2 {
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 2rem;
+    margin-bottom: clamp(20px, 3vw, 30px);
+    font-size: clamp(1.4rem, 3vw, 2rem);
 }
 
 .games-grid {
@@ -174,8 +174,8 @@ header h1 {
 .game-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 25px;
+    border-radius: clamp(15px, 2vw, 20px);
+    padding: clamp(10px, 2.5vw, 25px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
     opacity: 0;
@@ -194,9 +194,9 @@ header h1 {
 
 .game-thumbnail {
     width: 100%;
-    height: 200px;
-    border-radius: 15px;
-    margin-bottom: 15px;
+    height: clamp(100px, 20vw, 200px);
+    border-radius: clamp(10px, 1.5vw, 15px);
+    margin-bottom: clamp(8px, 1.5vw, 15px);
     position: relative;
     overflow: hidden;
     background: #34495e;
@@ -217,10 +217,11 @@ header h1 {
 }
 
 .game-title {
-    font-size: 1.5rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.5rem);
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: clamp(8px, 1vw, 15px);
     color: #f1c40f;
+    line-height: 1.2;
 }
 
 .win-info {
@@ -232,23 +233,25 @@ header h1 {
 }
 
 .win-amount {
-    font-size: 1.2rem;
+    font-size: clamp(0.7rem, 2vw, 1.2rem);
     font-weight: bold;
     color: #2ecc71;
-    margin-bottom: 10px;
+    margin-bottom: clamp(4px, 1vw, 10px);
 }
 
 
 .win-comment {
     font-style: italic;
     opacity: 0.9;
-    line-height: 1.4;
+    font-size: clamp(0.65rem, 1.8vw, 1rem);
+    line-height: clamp(1.2, 1.5vw, 1.4);
+    margin-bottom: clamp(4px, 1vw, 8px);
 }
 
 .player-name {
-    font-size: 0.9rem;
+    font-size: clamp(0.6rem, 1.5vw, 0.9rem);
     color: #95a5a6;
-    margin-top: 10px;
+    margin-top: clamp(4px, 1vw, 10px);
 }
 
 @media (max-width: 768px) {
@@ -275,44 +278,8 @@ header h1 {
         font-size: 2.5rem;
     }
     
-    .trending-games h2 {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-    
     .games-grid {
-        gap: 8px;
+        gap: clamp(6px, 1.5vw, 15px);
         padding: 0 8px;
-    }
-    
-    .game-card {
-        padding: 10px;
-    }
-    
-    .game-thumbnail {
-        height: 100px;
-        margin-bottom: 8px;
-    }
-    
-    .game-title {
-        font-size: 0.9rem;
-        margin-bottom: 6px;
-        line-height: 1.2;
-    }
-    
-    .win-amount {
-        font-size: 0.7rem;
-        margin-bottom: 4px;
-    }
-    
-    .win-comment {
-        font-size: 0.65rem;
-        line-height: 1.2;
-        margin-bottom: 4px;
-    }
-    
-    .player-name {
-        font-size: 0.6rem;
-        margin-top: 4px;
     }
 }
