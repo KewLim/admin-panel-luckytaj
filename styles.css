@@ -155,6 +155,7 @@ header h1 {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 10px;
+    align-items: stretch;
 }
 
 @media (min-width: 768px) {
@@ -180,6 +181,16 @@ header h1 {
     transition: all 0.3s ease;
     opacity: 0;
     transform: translateY(30px);
+    
+    /* CSS Grid Layout */
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas: 
+        "thumbnail"
+        "title" 
+        "wininfo";
+    gap: clamp(8px, 1.5vw, 15px);
+    height: 100%;
 }
 
 .game-card.animate-in {
@@ -193,10 +204,10 @@ header h1 {
 }
 
 .game-thumbnail {
+    grid-area: thumbnail;
     width: 100%;
     height: clamp(100px, 20vw, 200px);
     border-radius: clamp(10px, 1.5vw, 15px);
-    margin-bottom: clamp(8px, 1.5vw, 15px);
     position: relative;
     overflow: hidden;
     background: #34495e;
@@ -217,19 +228,21 @@ header h1 {
 }
 
 .game-title {
+    grid-area: title;
     font-size: clamp(0.9rem, 2.5vw, 1.5rem);
     font-weight: bold;
-    margin-bottom: clamp(8px, 1vw, 15px);
     color: #f1c40f;
     line-height: 1.2;
+    align-self: start;
 }
 
 .win-info {
+    grid-area: wininfo;
     background: rgba(46, 204, 113, 0.2);
     border-left: 4px solid #2ecc71;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
+    padding: clamp(10px, 1.5vw, 15px);
+    border-radius: clamp(8px, 1vw, 10px);
+    align-self: end;
 }
 
 .win-amount {
