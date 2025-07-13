@@ -150,24 +150,24 @@ header h1 {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 10px;
 }
 
 @media (min-width: 768px) {
     .games-grid {
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 30px;
-        padding: 0;
+        gap: 25px;
+        padding: 0 15px;
     }
 }
 
 @media (min-width: 1024px) {
     .games-grid {
-        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        padding: 0;
     }
 }
 
@@ -281,24 +281,35 @@ header h1 {
     }
     
     .games-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 0 10px;
+        gap: 10px;
+        padding: 0 5px;
     }
     
     .game-card {
-        padding: 20px;
+        padding: 15px;
     }
     
     .game-thumbnail {
-        height: 150px;
+        height: 120px;
     }
     
     .game-title {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
     }
     
     .win-amount {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .win-comment {
+        font-size: 0.85rem;
+        line-height: 1.3;
+    }
+    
+    .player-name {
+        font-size: 0.8rem;
+        margin-top: 8px;
     }
 }
