@@ -132,12 +132,6 @@ header h1 {
 }
 
 .trending-games {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 1s ease;
-}
-
-.trending-games.show {
     opacity: 1;
     transform: translateY(0);
 }
