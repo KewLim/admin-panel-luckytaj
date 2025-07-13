@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #151a43 0%, #1a2050 100%);
     min-height: 100vh;
     color: white;
 }
@@ -42,14 +42,14 @@ header h1 {
 
 .slot-machine {
     display: flex;
-    background: linear-gradient(145deg, #2c3e50, #34495e);
+    background: linear-gradient(145deg, #1e2654, #252d63);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 
         0 10px 30px rgba(0,0,0,0.4),
         inset 0 1px 0 rgba(255,255,255,0.1),
-        0 0 30px rgba(243, 156, 18, 0.3);
-    border: 5px solid #f39c12;
+        0 0 30px rgba(255, 154, 57, 0.3);
+    border: 5px solid #ff9a39;
     gap: 20px;
     position: relative;
 }
@@ -61,7 +61,7 @@ header h1 {
     left: -5px;
     right: -5px;
     bottom: -5px;
-    background: linear-gradient(45deg, #f39c12, #e67e22, #d35400, #f39c12);
+    background: linear-gradient(45deg, #ff9a39, #fe4a3f, #ff6b42, #ff9a39);
     border-radius: 25px;
     z-index: -1;
     animation: golden-glow 3s ease-in-out infinite alternate;
@@ -116,19 +116,20 @@ header h1 {
     margin-top: 20px;
     padding: 15px 30px;
     font-size: 1.2rem;
-    background: #e74c3c;
+    background: linear-gradient(45deg, #ff9a39, #fe4a3f);
     color: white;
     border: none;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
 .spin-button:hover {
-    background: #c0392b;
+    background: linear-gradient(45deg, #fe4a3f, #ff9a39);
     transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 7px 20px rgba(255, 154, 57, 0.4);
 }
 
 .trending-games {
@@ -146,6 +147,18 @@ header h1 {
     text-align: center;
     margin-bottom: clamp(20px, 3vw, 30px);
     font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.trending-games h2 a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.trending-games h2 a:hover {
+    color: #ff9a39;
+    text-shadow: 0 0 10px rgba(255, 154, 57, 0.5);
 }
 
 .games-grid {
@@ -231,24 +244,24 @@ header h1 {
     grid-area: title;
     font-size: clamp(0.9rem, 2.5vw, 1.5rem);
     font-weight: bold;
-    color: #f1c40f;
+    color: #ff9a39;
     line-height: 1.2;
     align-self: start;
 }
 
 .win-info {
     grid-area: wininfo;
-    background: rgba(46, 204, 113, 0.2);
-    border-left: 4px solid #2ecc71;
+    background: rgba(255, 154, 57, 0.15);
+    border-left: 4px solid #ff9a39;
     padding: clamp(10px, 1.5vw, 15px);
     border-radius: clamp(8px, 1vw, 10px);
     align-self: end;
 }
 
 .win-amount {
-    font-size: clamp(0.7rem, 2vw, 1.2rem);
+    font-size: clamp(0.6rem, 2vw, 1.2rem);
     font-weight: bold;
-    color: #2ecc71;
+    color: #ff9a39;
     margin-bottom: clamp(4px, 1vw, 10px);
 }
 
@@ -256,7 +269,7 @@ header h1 {
 .win-comment {
     font-style: italic;
     opacity: 0.9;
-    font-size: clamp(0.65rem, 1.8vw, 1rem);
+    font-size: clamp(0.5rem, 1.8vw, 1rem);
     line-height: clamp(1.2, 1.5vw, 1.4);
     margin-bottom: clamp(4px, 1vw, 8px);
 }

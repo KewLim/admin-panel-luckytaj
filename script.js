@@ -38,7 +38,7 @@ class DailyTrendingGames {
             day: 'numeric' 
         };
         document.getElementById('dateDisplay').textContent = 
-            `Today's Selection - ${now.toLocaleDateString('en-US', options)}`;
+            `${now.toLocaleDateString('en-US', options)}`;
     }
 
     generateDailyGames() {
