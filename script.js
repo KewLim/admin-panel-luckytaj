@@ -103,7 +103,7 @@ class DailyTrendingGames {
         reels.forEach((reel, index) => {
             setTimeout(() => {
                 reel.classList.add('spinning');
-                this.updateReelContent(reel, this.dailyGames[index]?.emoji || '🎮');
+                this.updateReelContent(reel, this.dailyGames[index]?.image);
             }, index * 500);
         });
 
@@ -115,14 +115,18 @@ class DailyTrendingGames {
         }, 4000);
     }
 
-    updateReelContent(reel, targetEmoji) {
+    updateReelContent(reel, targetImage) {
         const items = reel.querySelectorAll('.reel-item');
         const emojis = ['🎮', '🎯', '🎲', '🃏', '🎊', '⚡'];
         
         items.forEach((item, index) => {
             if (index === 0) {
                 setTimeout(() => {
-                    item.textContent = targetEmoji;
+                    if (targetImage) {
+                        item.innerHTML = `<img src="${targetImage}" alt="Game" class="reel-game-image">`;
+                    } else {
+                        item.textContent = '🎮';
+                    }
                 }, 3000);
             } else {
                 item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -165,7 +169,7 @@ class DailyTrendingGames {
         
         card.innerHTML = `
             <div class="game-thumbnail">
-                ${game.emoji}
+                <img src="${game.image}" alt="${game.title}" class="game-image">
             </div>
             <div class="game-title">${game.title}</div>
             <div class="win-info">
