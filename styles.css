@@ -10,7 +10,7 @@ body {
     min-height: 100vh;
     color: white;
     margin: 0;
-    padding-top: 80px; /* Space for fixed navbar */
+    padding-top: clamp(60px, 10vw, 80px); /* Space for fixed navbar */
 }
 
 /* Top Navigation Bar */
@@ -20,7 +20,7 @@ body {
     left: 0;
     right: 0;
     background: #151a43;
-    height: 80px;
+    height: clamp(60px, 10vw, 80px);
     z-index: 1000;
     border-bottom: 1px solid rgba(255, 154, 57, 0.2);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -42,7 +42,7 @@ body {
 }
 
 .logo-img {
-    height: 50px;
+    height: clamp(35px, 6vw, 50px);
     width: auto;
     object-fit: contain;
 }
@@ -57,16 +57,16 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 30px;
+    gap: clamp(15px, 4vw, 30px);
 }
 
 .nav-link {
     color: #ffffff;
     text-decoration: none;
-    font-size: 16px;
+    font-size: clamp(14px, 2vw, 16px);
     font-weight: 500;
     transition: all 0.3s ease;
-    padding: 8px 12px;
+    padding: clamp(6px, 1vw, 8px) clamp(8px, 1.5vw, 12px);
     border-radius: 6px;
 }
 
@@ -78,16 +78,16 @@ body {
 .navbar-actions {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: clamp(8px, 2vw, 15px);
 }
 
 .login-btn {
     background: transparent;
     border: 2px solid #ff9a39;
     color: #ff9a39;
-    padding: 10px 20px;
+    padding: clamp(8px, 1.5vw, 10px) clamp(15px, 3vw, 20px);
     border-radius: 25px;
-    font-size: 14px;
+    font-size: clamp(12px, 2vw, 14px);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -102,9 +102,9 @@ body {
     background: linear-gradient(45deg, #ff9a39, #fe4a3f);
     color: white;
     text-decoration: none;
-    padding: 12px 25px;
+    padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 25px);
     border-radius: 25px;
-    font-size: 16px;
+    font-size: clamp(14px, 2.5vw, 16px);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -122,38 +122,12 @@ body {
 
 /* Mobile Navigation */
 @media (max-width: 768px) {
-    body {
-        padding-top: 70px;
-    }
-    
-    .top-navbar {
-        height: 70px;
-    }
-    
     .navbar-container {
         padding: 0 15px;
     }
     
     .navbar-menu {
         display: none; /* Hide navigation links on mobile */
-    }
-    
-    .logo-img {
-        height: 40px;
-    }
-    
-    .navbar-actions {
-        gap: 10px;
-    }
-    
-    .login-btn {
-        padding: 8px 15px;
-        font-size: 12px;
-    }
-    
-    .play-now-btn {
-        padding: 10px 20px;
-        font-size: 14px;
     }
 }
 
