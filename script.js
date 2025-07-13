@@ -11,7 +11,11 @@ class DailyTrendingGames {
         await this.loadGamesData();
         this.updateDateDisplay();
         this.generateDailyGames();
-        this.showTrendingGames();
+        this.setupEventListeners();
+        
+        setTimeout(() => {
+            this.autoSpin();
+        }, 1000);
     }
 
     async loadGamesData() {
@@ -82,8 +86,58 @@ class DailyTrendingGames {
         };
     }
 
+    setupEventListeners() {
+        const spinButton = document.getElementById('spinButton');
+        spinButton.addEventListener('click', () => {
+            if (!this.isSpinning) {
+                this.hideTrendingGames();
+                setTimeout(() => this.autoSpin(), 500);
+            }
+        });
+    }
+
+    autoSpin() {
+        if (this.isSpinning) return;
+        
+        this.isSpinning = true;
+        const reels = document.querySelectorAll('.reel');
+        
+        reels.forEach((reel, index) => {
+            setTimeout(() => {
+                reel.classList.add('spinning');
+                this.updateReelContent(reel, this.dailyGames[index]?.image);
+            }, index * 500);
+        });
+
+        setTimeout(() => {
+            reels.forEach(reel => reel.classList.remove('spinning'));
+            this.isSpinning = false;
+            this.showTrendingGames();
+            this.showSpinButton();
+        }, 4000);
+    }
+
+    updateReelContent(reel, targetImage) {
+        const items = reel.querySelectorAll('.reel-item');
+        const emojis = ['🎮', '🎯', '🎲', '🃏', '🎊', '⚡'];
+        
+        items.forEach((item, index) => {
+            if (index === 0) {
+                setTimeout(() => {
+                    if (targetImage) {
+                        item.innerHTML = `<img src="${targetImage}" alt="Game" class="reel-game-image">`;
+                    } else {
+                        item.textContent = '🎮';
+                    }
+                }, 3000);
+            } else {
+                item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            }
+        });
+    }
 
     showTrendingGames() {
+        const trendingGamesSection = document.getElementById('trendingGames');
         const gamesGrid = document.getElementById('gamesGrid');
         
         gamesGrid.innerHTML = '';
@@ -96,6 +150,19 @@ class DailyTrendingGames {
                 gameCard.classList.add('animate-in');
             }, index * 200);
         });
+        
+        trendingGamesSection.style.display = 'block';
+        setTimeout(() => {
+            trendingGamesSection.classList.add('show');
+        }, 100);
+    }
+
+    hideTrendingGames() {
+        const trendingGamesSection = document.getElementById('trendingGames');
+        trendingGamesSection.classList.remove('show');
+        setTimeout(() => {
+            trendingGamesSection.style.display = 'none';
+        }, 500);
     }
 
     createGameCard(game) {
@@ -115,6 +182,13 @@ class DailyTrendingGames {
         `;
         
         return card;
+    }
+
+    showSpinButton() {
+        const spinButton = document.getElementById('spinButton');
+        setTimeout(() => {
+            spinButton.style.display = 'block';
+        }, 1000);
     }
 
 }
