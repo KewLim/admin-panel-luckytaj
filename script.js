@@ -22,6 +22,7 @@ class DailyTrendingGames {
         try {
             const response = await fetch('./games-data.json');
             this.gamesData = await response.json();
+            console.log('Games data loaded:', this.gamesData);
         } catch (error) {
             console.error('Error loading games data:', error);
             this.gamesData = { gamesPool: [] };
@@ -56,6 +57,7 @@ class DailyTrendingGames {
             const gameIndex = (startIndex + i) % totalGames;
             this.dailyGames.push(this.gamesData.gamesPool[gameIndex]);
         }
+        console.log('Daily games selected:', this.dailyGames);
     }
 
     stringToSeed(str) {
@@ -174,9 +176,6 @@ class DailyTrendingGames {
             <div class="game-title">${game.title}</div>
             <div class="win-info">
                 <div class="win-amount">🏆 Recent Win: ${game.recentWin.amount}</div>
-                <div class="win-screenshot">
-                    <img src="${game.screenshot || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMzNDQ5NWUiLz48dGV4dCB4PSIxMDAiIHk9IjU1IiBmaWxsPSIjZWNmMGYxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE0Ij5XSU4gU0NSRUVOU0hPVDwvdGV4dD48L3N2Zz4='}" alt="Win Screenshot" />
-                </div>
                 <div class="win-comment">"${game.recentWin.comment}"</div>
                 <div class="player-name">- ${game.recentWin.player}</div>
             </div>
