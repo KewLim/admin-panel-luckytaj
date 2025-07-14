@@ -4,6 +4,22 @@ class DailyTrendingGames {
         this.dailyGames = [];
         this.isSpinning = false;
         
+        // LuckyTaj YouTube Channel Videos - Replace with your actual video IDs
+        this.youtubeVideos = [
+            'E7He8psjoJ8', // Example video - replace with your actual video IDs
+            // To add more videos from your channel:
+            // 1. Go to your video on YouTube
+            // 2. Copy the video ID from the URL (after watch?v=)
+            // 3. Add it to this array like: 'VIDEO_ID_HERE',
+            // 
+            // Example:
+            // 'dQw4w9WgXcQ', // Replace with your video ID
+            // 'abc123def456', // Replace with your video ID  
+            // 'xyz789uvw012', // Replace with your video ID
+            //
+            // The system will randomly pick one video per day
+        ];
+        
         this.init();
     }
 
@@ -11,6 +27,7 @@ class DailyTrendingGames {
         await this.loadGamesData();
         this.updateDateDisplay();
         this.generateDailyGames();
+        this.loadRandomVideo();
         this.setupEventListeners();
         
         setTimeout(() => {
@@ -58,6 +75,24 @@ class DailyTrendingGames {
             this.dailyGames.push(this.gamesData.gamesPool[gameIndex]);
         }
         console.log('Daily games selected:', this.dailyGames);
+    }
+
+    loadRandomVideo() {
+        if (this.youtubeVideos.length === 0) return;
+        
+        // Use date-based seeding for consistent daily video (like games)
+        const today = new Date();
+        const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+        const videoIndex = daysSinceEpoch % this.youtubeVideos.length;
+        
+        const selectedVideoId = this.youtubeVideos[videoIndex];
+        
+        // Update the iframe src
+        const videoIframe = document.querySelector('.highlight-video');
+        if (videoIframe) {
+            videoIframe.src = `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1&showinfo=0`;
+            console.log('Loaded video:', selectedVideoId);
+        }
     }
 
     stringToSeed(str) {
