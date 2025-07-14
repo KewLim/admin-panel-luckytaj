@@ -5,7 +5,7 @@ class DailyTrendingGames {
         this.isSpinning = false;
         this.notificationPermission = null;
         
-        // LuckyTaj YouTube Channel Videos - Replace with your actual video IDs
+        // LuckyTaj YouTube Channel Videos - Main video section (changes daily)
         this.youtubeVideos = [
             'E7He8psjoJ8', // Example video - replace with your actual video IDs
             'RU-LstcZQMY',
@@ -22,6 +22,11 @@ class DailyTrendingGames {
             'zvjgVpOdY7w',
             'DQ9Ku_8oe6Q',
             'u_vuwY4la7Y',
+        ];
+        
+        // Tournament TV Videos - Changes every 6 hours
+        this.tournamentTvVideos = [
+            'Fr3bXkHriGM', // Your specified video
         ];
         
         // Video descriptions mapping for dynamic content
@@ -42,6 +47,15 @@ class DailyTrendingGames {
             'DQ9Ku_8oe6Q': 'Experience heart-stopping moments of pure casino excitement!',
             'u_vuwY4la7Y': 'Join thousands of players celebrating their biggest wins at LuckyTaj!'
         };
+        
+        // Tournament Dashboard Data
+        this.tournamentWinners = [];
+        this.dailyTotalWinnings = 0;
+        this.winnerRefreshInterval = null;
+        
+        // Video position tracking
+        this.videoPositionTracker = null;
+        this.currentVideoId = null;
         
         this.init();
     }
@@ -69,6 +83,12 @@ class DailyTrendingGames {
         setTimeout(() => {
             this.autoSpin();
         }, 1000);
+        
+        // Initialize tournament dashboard
+        this.initializeTournamentDashboard();
+        
+        // Initialize tournament TV
+        this.initializeTournamentTV();
     }
 
     async loadGamesData() {
@@ -608,7 +628,7 @@ class DailyTrendingGames {
 
             // Capture screenshot
             const canvas = await html2canvas(trendingSection, {
-                backgroundColor: null,
+                backgroundColor: '#151a43', // LuckyTaj brand background color
                 scale: 2, // Higher quality
                 useCORS: true,
                 allowTaint: false,
@@ -652,7 +672,7 @@ class DailyTrendingGames {
                                 text: whatsappMessage,
                                 files: [file]
                             });
-                            this.showSuccessMessage('🎉 Thanks for sharing!');
+                            this.showSuccessMessage('🎉 Completed!');
                         } else {
                             this.fallbackImageShare(canvas, whatsappMessage);
                         }
@@ -720,6 +740,305 @@ ${gamesList}
         window.open(whatsappUrl, '_blank');
         
         this.showSuccessMessage('📱 Opening WhatsApp...');
+    }
+
+    // Tournament Dashboard Methods
+    initializeTournamentDashboard() {
+        this.generateInitialWinners();
+        this.updateDailyTotal();
+        this.startWinnerUpdates();
+    }
+
+    generateInitialWinners() {
+        const indianNames = [
+            'Rajesh', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Suresh', 'Kavita',
+            'Rahul', 'Meera', 'Arjun', 'Pooja', 'Kiran', 'Deepika', 'Rohan', 'Shreya',
+            'Anil', 'Ritu', 'Manoj', 'Nisha', 'Sanjay', 'Geeta', 'Vinay', 'Sunita',
+            'Ravi', 'Lata', 'Ajay', 'Manju', 'Prakash', 'Seema', 'Gopal', 'Usha',
+            'Neha', 'Harsh', 'Divya', 'Abhishek', 'Isha', 'Karthik', 'Swati', 'Tushar',
+            'Bhavna', 'Yash', 'Chitra', 'Mohit', 'Tanvi', 'Nikhil', 'Payal', 'Dev',
+            'Juhi', 'Alok', 'Madhuri', 'Sameer'
+        ];
+
+        const cities = [
+            'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad',
+            'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Bhopal', 'Visakhapatnam', 'Patna',
+            'Vadodara', 'Ghaziabad', 'Ludhiana', 'Agra', 'Nashik', 'Faridabad', 'Meerut', 'Rajkot'
+        ];
+
+        // Generate 15 initial winners
+        for (let i = 0; i < 15; i++) {
+            const name = indianNames[Math.floor(Math.random() * indianNames.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const vipLevel = Math.floor(Math.random() * 20) + 1; // Random VIP 1-20
+            const amount = this.generateRandomAmount();
+            const time = this.generateTodayTime();
+            
+            this.tournamentWinners.push({
+                name: `${name} ${city.charAt(0)}***   VIP ${vipLevel}`,
+                phone: this.generateIndianPhone(),
+                amount: amount,
+                time: time,
+                timestamp: Date.now() - (i * 30000) // Spread over last 30 minutes
+            });
+        }
+
+        // Sort by timestamp (newest first)
+        this.tournamentWinners.sort((a, b) => b.timestamp - a.timestamp);
+        this.updateWinnersDisplay();
+    }
+
+    generateRandomAmount() {
+        // Generate amounts between ₹1000 and ₹10000
+        const min = 1000;
+        const max = 10000;
+        const amount = Math.floor(Math.random() * (max - min + 1)) + min;
+        
+        // Round to nearest 50 for more realistic amounts
+        return Math.round(amount / 50) * 50;
+    }
+
+    generateTodayTime() {
+        const now = new Date();
+        // Generate time from 6 AM to current time (GMT+5:30)
+        const startOfDay = new Date(now);
+        startOfDay.setHours(6, 0, 0, 0);
+        
+        const randomTime = new Date(startOfDay.getTime() + Math.random() * (now.getTime() - startOfDay.getTime()));
+        
+        return randomTime.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Kolkata'
+        });
+    }
+
+    generateIndianPhone() {
+        // Generate realistic Indian phone number pattern
+        const prefixes = ['98', '99', '97', '96', '95', '94', '93', '92', '91', '90'];
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const remaining = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+        return `+91 ${prefix}${remaining.substring(0, 4)}***${remaining.substring(7)}`;
+    }
+
+    updateDailyTotal() {
+        // Calculate today's total from all winners
+        this.dailyTotalWinnings = this.tournamentWinners.reduce((total, winner) => {
+            return total + winner.amount;
+        }, 0);
+
+        // Add some extra random amount to make it more impressive
+        this.dailyTotalWinnings += Math.floor(Math.random() * 50000) + 100000;
+
+        const totalElement = document.getElementById('totalWinners');
+        if (totalElement) {
+            totalElement.textContent = `₹${this.dailyTotalWinnings.toLocaleString('en-IN')} Won Today`;
+        }
+    }
+
+    startWinnerUpdates() {
+        // Update winners every 2 seconds
+        this.winnerRefreshInterval = setInterval(() => {
+            this.addNewWinner();
+        }, 2000);
+    }
+
+    addNewWinner() {
+        const indianNames = [
+            'Rajesh', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Suresh', 'Kavita',
+            'Rahul', 'Meera', 'Arjun', 'Pooja', 'Kiran', 'Deepika', 'Rohan', 'Shreya',
+            'Anil', 'Ritu', 'Manoj', 'Nisha', 'Sanjay', 'Geeta', 'Vinay', 'Sunita'
+        ];
+
+        const cities = [
+            'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad',
+            'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Bhopal', 'Visakhapatnam', 'Patna'
+        ];
+
+        const name = indianNames[Math.floor(Math.random() * indianNames.length)];
+        const city = cities[Math.floor(Math.random() * cities.length)];
+        const vipLevel = Math.floor(Math.random() * 20) + 1; // Random VIP 1-20
+        const amount = this.generateRandomAmount();
+
+        const newWinner = {
+            name: `${name} ${city.charAt(0)}*** VIP ${vipLevel}`,
+            phone: this.generateIndianPhone(),
+            amount: amount,
+            time: 'Just now',
+            timestamp: Date.now()
+        };
+
+        // Add to beginning of array
+        this.tournamentWinners.unshift(newWinner);
+
+        // Keep only last 20 winners to prevent memory issues
+        if (this.tournamentWinners.length > 20) {
+            this.tournamentWinners = this.tournamentWinners.slice(0, 20);
+        }
+
+        // Update daily total
+        this.dailyTotalWinnings += amount;
+        const totalElement = document.getElementById('totalWinners');
+        if (totalElement) {
+            totalElement.textContent = `₹${this.dailyTotalWinnings.toLocaleString('en-IN')} Won Today`;
+        }
+
+        this.updateWinnersDisplay();
+    }
+
+    updateWinnersDisplay() {
+        const winnersList = document.getElementById('winnersList');
+        if (!winnersList) return;
+
+        winnersList.innerHTML = '';
+
+        this.tournamentWinners.forEach((winner, index) => {
+            const winnerElement = document.createElement('div');
+            winnerElement.className = 'winner-record';
+            winnerElement.style.animationDelay = `${index * 0.1}s`;
+
+            winnerElement.innerHTML = `
+                <div class="winner-info">
+                    <div class="winner-name">${winner.name}</div>
+                    <div class="winner-phone">${winner.phone}</div>
+                    <div class="winner-time">${winner.time}</div>
+                </div>
+                <div class="winner-amount">₹${winner.amount.toLocaleString('en-IN')}</div>
+            `;
+
+            winnersList.appendChild(winnerElement);
+        });
+
+        // Auto-scroll to top to show newest winner
+        winnersList.scrollTop = 0;
+    }
+
+    // Tournament TV Methods
+    initializeTournamentTV() {
+        console.log('Initializing Tournament TV...');
+        console.log('Tournament TV Videos array:', this.tournamentTvVideos);
+        
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            this.loadTournamentTvVideo();
+        }, 500);
+    }
+
+    loadTournamentTvVideo() {
+        console.log('Loading Tournament TV video...');
+        
+        if (this.tournamentTvVideos.length === 0) {
+            console.error('No tournament TV videos available');
+            return;
+        }
+        
+        // For now, just use the first video since you only have one
+        const selectedVideoId = this.tournamentTvVideos[0];
+        console.log('Selected video ID:', selectedVideoId);
+        
+        // Skip if video ID is empty
+        if (!selectedVideoId) {
+            console.error('Empty video ID');
+            return;
+        }
+        
+        this.currentVideoId = selectedVideoId;
+        
+        // Start at 20 seconds
+        const startTime = 20;
+        
+        // Try multiple video URL formats for better compatibility
+        const videoUrls = [
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&controls=0&disablekb=1`,
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&controls=0`,
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}`,
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}`
+        ];
+        
+        // Update the tournament TV iframe
+        const tvVideoIframe = document.getElementById('tournamentTvVideo');
+        console.log('TV Video iframe element:', tvVideoIframe);
+        
+        if (tvVideoIframe) {
+            // Try the first URL
+            const videoUrl = videoUrls[0];
+            console.log('Setting video URL:', videoUrl);
+            tvVideoIframe.src = videoUrl;
+            
+            // Add a timeout to check if video loaded
+            setTimeout(() => {
+                // If iframe still doesn't have content, try alternative approach
+                if (!tvVideoIframe.contentDocument && tvVideoIframe.src) {
+                    console.log('Trying alternative video URL...');
+                    tvVideoIframe.src = videoUrls[1];
+                }
+            }, 3000);
+            
+            console.log('Tournament TV video setup complete');
+        } else {
+            console.error('Tournament TV iframe element not found in DOM!');
+            // Check if the tournament dashboard exists
+            const dashboard = document.getElementById('tournamentDashboard');
+            console.log('Tournament dashboard found:', !!dashboard);
+            
+            // List all elements with "tournament" in their ID
+            const tournamentElements = document.querySelectorAll('[id*="tournament"]');
+            console.log('All tournament elements:', Array.from(tournamentElements).map(el => el.id));
+        }
+    }
+
+    startVideoPositionTracking() {
+        // Clear any existing tracker
+        if (this.videoPositionTracker) {
+            clearInterval(this.videoPositionTracker);
+        }
+        
+        // Track video position every 10 seconds
+        this.videoPositionTracker = setInterval(() => {
+            if (this.currentVideoId) {
+                const now = new Date();
+                const sixHourPeriodStart = Math.floor(now.getTime() / (1000 * 60 * 60 * 6)) * (1000 * 60 * 60 * 6);
+                const timeSincePeriodStart = now.getTime() - sixHourPeriodStart;
+                const currentPosition = Math.floor(timeSincePeriodStart / 1000);
+                
+                this.saveVideoPosition(this.currentVideoId, currentPosition);
+            }
+        }, 10000); // Save position every 10 seconds
+    }
+
+    saveVideoPosition(videoId, position) {
+        try {
+            const videoPositions = JSON.parse(localStorage.getItem('tournamentVideoPositions')) || {};
+            videoPositions[videoId] = {
+                position: position,
+                timestamp: Date.now(),
+                sixHourPeriod: Math.floor(Date.now() / (1000 * 60 * 60 * 6))
+            };
+            localStorage.setItem('tournamentVideoPositions', JSON.stringify(videoPositions));
+        } catch (error) {
+            console.log('Could not save video position:', error);
+        }
+    }
+
+    getSavedVideoPosition(videoId) {
+        try {
+            const videoPositions = JSON.parse(localStorage.getItem('tournamentVideoPositions')) || {};
+            const savedData = videoPositions[videoId];
+            
+            if (savedData) {
+                const currentSixHourPeriod = Math.floor(Date.now() / (1000 * 60 * 60 * 6));
+                
+                // Only use saved position if it's from the same 6-hour period
+                if (savedData.sixHourPeriod === currentSixHourPeriod) {
+                    return savedData.position;
+                }
+            }
+            
+            return null;
+        } catch (error) {
+            console.log('Could not get saved video position:', error);
+            return null;
+        }
     }
 
     // Share Functionality (keeping original for backup)

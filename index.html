@@ -97,7 +97,55 @@
                 </div>
             </a>
             
-            
+            <!-- Tournament Dashboard -->
+            <div class="tournament-dashboard" id="tournamentDashboard">
+                <div class="tournament-header">
+                    <div class="tournament-title">
+                        <h3>Live Tournament Winners</h3>
+                        <span class="live-indicator">● LIVE</span>
+                    </div>
+                    <div class="tournament-stats">
+                        <span class="total-winners" id="totalWinners">₹2,45,680 Won Today</span>
+                    </div>
+                </div>
+                
+                <!-- Tournament TV Section -->
+                <div class="tournament-tv" id="tournamentTV">
+                    <div class="tv-header">
+                        <h4>📺 Live Tournament Stream</h4>
+                        <span class="live-indicator tv-live">● LIVE</span>
+                    </div>
+                    <div class="tv-container">
+                        <iframe 
+                            id="tournamentTvVideo"
+                            src=""
+                            title="Tournament Live Stream" 
+                            frameborder="0" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen
+                            class="tv-video">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <div class="winners-container">
+                    <div class="winners-list" id="winnersList">
+                        <!-- Dynamic winner records will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="tournament-cta">
+                    <button class="join-tournament-btn" onclick="window.open('https://www.luckytaj.com/en-in/slot', '_blank')">
+                        <span class="cta-text">Join Tournament Now!</span>
+                        <span class="cta-prize">Win up to ₹10,00,000.00!</span>
+                    </button>
+                </div>
+                
+                <!-- Floating Character -->
+                <div class="floating-character">
+                    <img src="https://www.pngarts.com/files/13/Clash-Royale-Characters-PNG-High-Quality-Image.png" alt="Lucky Character" class="character-img">
+                </div>
+            </div>
         </div>
     </div>
 
