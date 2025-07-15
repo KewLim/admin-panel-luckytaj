@@ -26,7 +26,13 @@ class DailyTrendingGames {
         
         // Tournament TV Videos - Changes every 6 hours
         this.tournamentTvVideos = [
-            'Fr3bXkHriGM', // Your specified video
+            //'Fr3bXkHriGM', // Your specified video
+            //'POl3GtraHeo&t',
+            //'ma5lm-ExMaA',
+            //'akm4ys-WUN0',
+            //'n14gIPk9_yo',
+            //'GPXxOzK8A50',
+            'f0tUF8RLHwE',
         ];
         
         // Video descriptions mapping for dynamic content
@@ -117,8 +123,14 @@ class DailyTrendingGames {
     generateDailyGames() {
         if (!this.gamesData.gamesPool.length) return;
 
-        const today = new Date();
-        const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+        // Get current time in GMT+5:30 (Indian Standard Time)
+        const now = new Date();
+        const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const istTime = new Date(utcTime + (5.5 * 60 * 60 * 1000));
+        
+        // Calculate days since epoch using IST date (not local time)
+        const istDate = new Date(istTime.getFullYear(), istTime.getMonth(), istTime.getDate());
+        const daysSinceEpoch = Math.floor(istDate.getTime() / (1000 * 60 * 60 * 24));
         
         // Use modulo logic as specified in README
         const totalGames = this.gamesData.gamesPool.length;
@@ -130,7 +142,7 @@ class DailyTrendingGames {
             const gameIndex = (startIndex + i) % totalGames;
             this.dailyGames.push(this.gamesData.gamesPool[gameIndex]);
         }
-        console.log('Daily games selected:', this.dailyGames);
+        console.log('Daily games selected for IST date:', istDate.toDateString(), this.dailyGames);
     }
 
     // Utility function to mimic CSS clamp() in JavaScript
