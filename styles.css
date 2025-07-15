@@ -286,6 +286,15 @@ header h1 {
     height: 100%;
     border: none;
     border-radius: 10px;
+    
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
 .video-overlay {
@@ -1590,7 +1599,16 @@ header h1 {
     padding-bottom: 56.25%; /* 16:9 aspect ratio */
     height: 0;
     overflow: hidden;
+    animation: fadeIn 1s ease-in forwards;
+
 }
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
 
 .tv-video {
     position: absolute;

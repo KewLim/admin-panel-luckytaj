@@ -26,17 +26,17 @@ class DailyTrendingGames {
         
         // Tournament TV Videos - Changes every 6 hours
         this.tournamentTvVideos = [
-            //'Fr3bXkHriGM', 
-            //'POl3GtraHeo&t',
-            //'ma5lm-ExMaA',
-            //'akm4ys-WUN0',
-            //'n14gIPk9_yo',
-            //'GPXxOzK8A50',
-            //'f0tUF8RLHwE',
-            //'CfrVafvX3XI',
-            //'D8g38fkFHFw',
-            //'be1pSS2NSbY',
-            //'7Bw0FSjSRpI',
+            'Fr3bXkHriGM', 
+            'POl3GtraHeo&t',
+            'ma5lm-ExMaA',
+            'akm4ys-WUN0',
+            'n14gIPk9_yo',
+            'GPXxOzK8A50',
+            'f0tUF8RLHwE',
+            'CfrVafvX3XI',
+            'D8g38fkFHFw',
+            'be1pSS2NSbY',
+            '7Bw0FSjSRpI',
             'sZo46xEeOi4',
         ];
         
