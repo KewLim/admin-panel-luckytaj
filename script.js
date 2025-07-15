@@ -26,13 +26,18 @@ class DailyTrendingGames {
         
         // Tournament TV Videos - Changes every 6 hours
         this.tournamentTvVideos = [
-            //'Fr3bXkHriGM', // Your specified video
+            //'Fr3bXkHriGM', 
             //'POl3GtraHeo&t',
             //'ma5lm-ExMaA',
             //'akm4ys-WUN0',
             //'n14gIPk9_yo',
             //'GPXxOzK8A50',
-            'f0tUF8RLHwE',
+            //'f0tUF8RLHwE',
+            //'CfrVafvX3XI',
+            //'D8g38fkFHFw',
+            //'be1pSS2NSbY',
+            //'7Bw0FSjSRpI',
+            'sZo46xEeOi4',
         ];
         
         // Video descriptions mapping for dynamic content
@@ -944,8 +949,9 @@ ${gamesList}
             return;
         }
         
-        // For now, just use the first video since you only have one
-        const selectedVideoId = this.tournamentTvVideos[0];
+        // Randomly select a video on each page refresh
+        const randomIndex = Math.floor(Math.random() * this.tournamentTvVideos.length);
+        const selectedVideoId = this.tournamentTvVideos[randomIndex];
         console.log('Selected video ID:', selectedVideoId);
         
         // Skip if video ID is empty
@@ -960,11 +966,14 @@ ${gamesList}
         const startTime = 20;
         
         // Try multiple video URL formats for better compatibility
+        // Add cache-busting parameter to force reload
+        const cacheBuster = Date.now() + Math.random();
+        
         const videoUrls = [
-            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&controls=0&disablekb=1`,
-            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&controls=0`,
-            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}`,
-            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}`
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&controls=0&disablekb=1&v=${cacheBuster}`,
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&controls=0&v=${cacheBuster}`,
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&loop=1&playlist=${selectedVideoId}&v=${cacheBuster}`,
+            `https://www.youtube.com/embed/${selectedVideoId}?autoplay=1&mute=1&start=${startTime}&v=${cacheBuster}`
         ];
         
         // Update the tournament TV iframe
