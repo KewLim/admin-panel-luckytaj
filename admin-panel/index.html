@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuckyTaj Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="https://www.luckytaj.com/luckytaj/img/logo.png" alt="LuckyTaj" class="logo">
+                    <h2>Admin Panel</h2>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                <div id="loginError" class="error-message" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="dashboard" class="dashboard" style="display: none;">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <img src="https://www.luckytaj.com/luckytaj/img/logo.png" alt="LuckyTaj" class="logo-small">
+                    <h1>Admin Panel</h1>
+                </div>
+                <div class="header-right">
+                    <span id="adminEmail" class="admin-email"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Navigation Tabs -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" data-tab="banners">
+                    <i class="fas fa-images"></i> Banners
+                </button>
+                <button class="tab-btn" data-tab="comments">
+                    <i class="fas fa-comments"></i> Fake Comments
+                </button>
+                <button class="tab-btn" data-tab="videos">
+                    <i class="fas fa-video"></i> TV Session
+                </button>
+            </nav>
+
+            <!-- Content Sections -->
+            <main class="dashboard-content">
+                <!-- Banners Section -->
+                <section id="banners" class="content-section active">
+                    <div class="section-header">
+                        <h2><i class="fas fa-images"></i> Banner Management</h2>
+                        <button class="btn btn-primary" onclick="openBannerModal()">
+                            <i class="fas fa-plus"></i> Add Banner
+                        </button>
+                    </div>
+                    <div id="bannersGrid" class="banners-grid">
+                        <!-- Banners will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Comments Section -->
+                <section id="comments" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-comments"></i> Fake Comments Management</h2>
+                        <button class="btn btn-primary" onclick="openCommentModal()">
+                            <i class="fas fa-plus"></i> Add Comment
+                        </button>
+                    </div>
+                    <div id="commentsTable" class="comments-table">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Videos Section -->
+                <section id="videos" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-video"></i> TV Session Video</h2>
+                        <button class="btn btn-primary" onclick="openVideoModal()">
+                            <i class="fas fa-plus"></i> Add Video
+                        </button>
+                    </div>
+                    <div id="videoContent" class="video-content">
+                        <!-- Current video will be displayed here -->
+                    </div>
+                    <div id="videoHistory" class="video-history">
+                        <h3>Video History</h3>
+                        <!-- Video history will be loaded here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Banner Modal -->
+    <div id="bannerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Banner</h3>
+                <span class="close" onclick="closeBannerModal()">&times;</span>
+            </div>
+            <form id="bannerForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="bannerTitle">Title (Optional)</label>
+                    <input type="text" id="bannerTitle" name="title" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="bannerFile">Image File</label>
+                    <input type="file" id="bannerFile" name="banner" accept="image/jpeg,image/png,image/webp" required>
+                    <small>Supported formats: JPG, PNG, WebP (Max 5MB)</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeBannerModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload Banner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Comment</h3>
+                <span class="close" onclick="closeCommentModal()">&times;</span>
+            </div>
+            <form id="commentForm">
+                <input type="hidden" id="commentId" name="id">
+                <div class="form-group">
+                    <label for="commentUsername">Username</label>
+                    <input type="text" id="commentUsername" name="username" maxlength="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="commentText">Comment</label>
+                    <textarea id="commentText" name="comment" maxlength="500" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="commentAvatar">Avatar (Emoji)</label>
+                    <input type="text" id="commentAvatar" name="avatar" maxlength="10" placeholder="🎮" value="🎮">
+                </div>
+                <div class="form-group">
+                    <label for="commentTimestamp">Timestamp</label>
+                    <select id="commentTimestamp" name="timestamp">
+                        <option value="">Auto-generate</option>
+                        <option value="2 mins ago">2 mins ago</option>
+                        <option value="5 mins ago">5 mins ago</option>
+                        <option value="10 mins ago">10 mins ago</option>
+                        <option value="15 mins ago">15 mins ago</option>
+                        <option value="30 mins ago">30 mins ago</option>
+                        <option value="1 hour ago">1 hour ago</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeCommentModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Update Video</h3>
+                <span class="close" onclick="closeVideoModal()">&times;</span>
+            </div>
+            <div class="video-tabs">
+                <button class="video-tab-btn active" data-type="youtube">YouTube URL</button>
+                <button class="video-tab-btn" data-type="upload">Upload MP4</button>
+            </div>
+            
+            <!-- YouTube URL Form -->
+            <form id="videoUrlForm" class="video-form active">
+                <div class="form-group">
+                    <label for="videoUrl">YouTube URL</label>
+                    <input type="url" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." required>
+                </div>
+                <div class="form-group">
+                    <label for="videoUrlTitle">Title (Optional)</label>
+                    <input type="text" id="videoUrlTitle" name="title" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="videoUrlDescription">Description (Optional)</label>
+                    <textarea id="videoUrlDescription" name="description" maxlength="500" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeVideoModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Video URL</button>
+                </div>
+            </form>
+
+            <!-- Video Upload Form -->
+            <form id="videoUploadForm" class="video-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="videoFile">Video File</label>
+                    <input type="file" id="videoFile" name="video" accept="video/mp4,video/webm,video/ogg" required>
+                    <small>Supported formats: MP4, WebM, OGG (Max 100MB)</small>
+                </div>
+                <div class="form-group">
+                    <label for="videoUploadTitle">Title (Optional)</label>
+                    <input type="text" id="videoUploadTitle" name="title" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="videoUploadDescription">Description (Optional)</label>
+                    <textarea id="videoUploadDescription" name="description" maxlength="500" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeVideoModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
