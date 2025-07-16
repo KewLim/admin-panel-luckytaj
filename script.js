@@ -80,6 +80,9 @@ class DailyTrendingGames {
         this.generateDailyGames();
         this.setupEventListeners();
         
+        // Setup daily games refresh at 12pm IST
+        this.setupDailyGamesRefresh();
+        
         // Request notification permission after user interaction
         setTimeout(() => {
             this.requestNotificationPermission();
@@ -554,6 +557,52 @@ class DailyTrendingGames {
                 }
             }, 300);
         }, 3000);
+    }
+
+    setupDailyGamesRefresh() {
+        // Calculate time until next 12pm IST
+        const now = new Date();
+        const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const istTime = new Date(utcTime + (5.5 * 60 * 60 * 1000));
+        
+        const next12pm = new Date(istTime);
+        next12pm.setHours(12, 0, 0, 0);
+        
+        // If 12pm has already passed today, schedule for tomorrow
+        if (istTime.getTime() > next12pm.getTime()) {
+            next12pm.setDate(next12pm.getDate() + 1);
+        }
+        
+        const timeUntilRefresh = next12pm.getTime() - istTime.getTime();
+        
+        console.log('Next games refresh scheduled for:', next12pm.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+        
+        // Set timeout for the next refresh
+        setTimeout(() => {
+            this.refreshDailyGames();
+            // Set up recurring daily refresh every 24 hours
+            setInterval(() => {
+                this.refreshDailyGames();
+            }, 24 * 60 * 60 * 1000);
+        }, timeUntilRefresh);
+    }
+
+    refreshDailyGames() {
+        console.log('Refreshing daily games at 12pm IST');
+        
+        // Regenerate daily games
+        this.generateDailyGames();
+        
+        // Update date display
+        this.updateDateDisplay();
+        
+        // Hide current trending games
+        this.hideTrendingGames();
+        
+        // Restart the slot machine animation with new games
+        setTimeout(() => {
+            this.autoSpin();
+        }, 500);
     }
 
     setupDailyNotifications() {
