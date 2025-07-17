@@ -38,9 +38,7 @@ class AdminPanel {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const target = e.target.closest('.tab-btn');
-                if (target && target.dataset.tab) {
-                    this.switchTab(target.dataset.tab);
-                }
+                this.switchTab(target.dataset.tab);
             });
         });
 
