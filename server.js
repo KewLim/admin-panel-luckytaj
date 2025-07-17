@@ -34,6 +34,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Serve favicon files
+app.use('/luckytaj-favicon', express.static(path.join(__dirname, 'luckytaj-favicon')));
+
 // Serve admin panel static files
 app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
 
