@@ -78,7 +78,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`Admin backend server running on port ${PORT}`);
-    console.log(`Admin panel available at: http://localhost:${PORT}/admin`);
+const HOST = process.env.HOST || '127.0.0.1';
+
+app.listen(PORT, HOST, () => {
+    console.log(`Admin backend server running on http://${HOST}:${PORT}`);
+    console.log(`Admin panel available at: http://${HOST}:${PORT}/admin`);
+}).on('error', (err) => {
+    console.error('Server failed to start:', err);
+    process.exit(1);
 });
