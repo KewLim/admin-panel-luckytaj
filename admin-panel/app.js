@@ -28,7 +28,9 @@ class AdminPanel {
             e.preventDefault();
             this.handleLogin();
         });
+    }
 
+    setupDashboardEventListeners() {
         // Logout button
         document.getElementById('logoutBtn').addEventListener('click', () => {
             this.handleLogout();
@@ -134,6 +136,9 @@ class AdminPanel {
     async showDashboard() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
+        
+        // Setup dashboard event listeners after elements are visible
+        this.setupDashboardEventListeners();
         
         // Load admin info
         const adminInfo = await this.getAdminInfo();
