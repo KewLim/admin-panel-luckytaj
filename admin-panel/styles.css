@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(180deg, #FF9A39 0%, #FE4A3F 100%);
     min-height: 100vh;
     color: #333;
 }
@@ -18,15 +18,17 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    background: linear-gradient(180deg, #FF9A39 0%, #FE4A3F 100%);
 }
 
 .login-card {
     background: white;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
     width: 100%;
     max-width: 400px;
+    border: 2px solid rgba(255, 154, 57, 0.2);
 }
 
 .login-header {
@@ -35,13 +37,22 @@ body {
 }
 
 .logo {
-    height: 60px;
-    margin-bottom: 15px;
+    height: 80px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
 .login-header h2 {
-    color: #333;
-    font-weight: 600;
+    color: #151A43;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
 }
 
 /* Dashboard */
@@ -67,6 +78,11 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    min-width: 200px;
+    max-width: 400px;
+    width: 100%;           /* This makes it flexible */
+    flex: 0 0 auto;        /* ❌ Don’t grow or shrink in flex context */
+    flex-wrap: nowrap;     /* Prevent wrapping */
 }
 
 .logo-small {
@@ -76,6 +92,7 @@ body {
 .header-left h1 {
     color: #333;
     font-weight: 600;
+    font-size: 20px;
 }
 
 .header-right {
@@ -106,7 +123,14 @@ body {
     padding: 20px 0;
     gap: 5px;
     flex-shrink: 0;
-}
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE/Edge */
+    }
+
+    .tab-navigation::-webkit-scrollbar {
+        display: none;              /* Chrome, Safari */
+    }
+
 
 .tab-btn {
     background: none;
@@ -125,14 +149,15 @@ body {
 }
 
 .tab-btn:hover {
-    color: #667eea;
-    background: #f8f9ff;
+    color: #FF9A39;
+    background: rgba(255, 154, 57, 0.1);
 }
 
 .tab-btn.active {
-    color: #667eea;
-    border-right-color: #667eea;
-    background: #f8f9ff;
+    color: #FF9A39;
+    border-right-color: #FF9A39;
+    background: rgba(255, 154, 57, 0.1);
+    font-weight: 600;
 }
 
 .tab-btn i {
@@ -189,12 +214,18 @@ body {
 }
 
 .btn-primary {
-    background: #667eea;
+    background: linear-gradient(135deg, #FF9A39 0%, #FE4A3F 100%);
     color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 154, 57, 0.3);
 }
 
 .btn-primary:hover {
-    background: #5a67d8;
+    background: linear-gradient(135deg, #FA741D 0%, #EE421E 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255, 154, 57, 0.4);
 }
 
 .btn-secondary {
@@ -523,7 +554,7 @@ body {
 
 .video-tab-btn.active {
     color: #667eea;
-    border-bottom-color: #667eea;
+    border-bottom-color: #FF9A39;
 }
 
 .video-form {
@@ -582,6 +613,71 @@ body {
     font-size: 14px;
 }
 
+/* Toast Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    min-width: 300px;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-success {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    color: white;
+}
+
+.notification-error {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    color: white;
+}
+
+.notification-content {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-content i:first-child {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.notification-content span {
+    flex: 1;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.notification-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+}
+
 /* Status Badges */
 .status-badge {
     padding: 4px 8px;
@@ -602,46 +698,104 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .dashboard {
         flex-direction: column;
     }
 
+    .btn {
+        padding: 8px 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 9px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .tab-btn.active {
+        border-right-color: transparent;
+        border-bottom-color: #FF9A39;
+
+    }
+
+
+
+
+    .admin-email {
+        color: #666;
+        font-size: 10px;
+    }
+
+    .header-left h1 {
+        color: #333;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .header-left {
+        font-size: 10px;
+        max-width: 20px;
+        gap: 5px;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
     .dashboard-header {
         padding: 15px 20px;
-        flex-direction: column;
-        gap: 15px;
+        gap: 1px;
         text-align: center;
     }
+    
 
     .dashboard-main {
         flex-direction: column;
     }
 
+    .logo-small {
+        height: 15px;
+    }
+
     /* Mobile: Navigation on top */
     .tab-navigation {
         flex-direction: row;
-        width: 100%;
+        width: auto;
         padding: 0 20px;
         border-right: none;
         border-bottom: 1px solid #e1e8ed;
         overflow-x: auto;
-        gap: 10px;
         white-space: nowrap;
+        scrollbar-width: none;      /* Firefox */
+        -ms-overflow-style: none;   /* IE/Edge */
+    }
+
+    .tab-navigation::-webkit-scrollbar {
+        display: none;              /* Chrome, Safari */
     }
 
     .tab-btn {
         border-right: none;
         border-bottom: 3px solid transparent;
-        padding: 15px 20px;
+        padding: 10px 15px;
         text-align: center;
         min-width: max-content;
         flex-shrink: 0;
+        width: 20px;
+        font-size: 11px;
     }
+
 
     .tab-btn.active {
         border-right-color: transparent;
-        border-bottom-color: #667eea;
+        border-bottom-color: #FF9A39;
     }
 
     .tab-btn i {

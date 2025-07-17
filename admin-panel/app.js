@@ -37,7 +37,10 @@ class AdminPanel {
         // Tab navigation
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
+                const target = e.target.closest('.tab-btn');
+                if (target && target.dataset.tab) {
+                    this.switchTab(target.dataset.tab);
+                }
             });
         });
 
@@ -254,10 +257,36 @@ class AdminPanel {
 
     async handleBannerUpload() {
         const form = document.getElementById('bannerForm');
+        const fileInput = document.getElementById('bannerFile');
+        
+        // Validate file selection
+        if (!fileInput.files || fileInput.files.length === 0) {
+            this.showError('Please select a file to upload');
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+        // Validate file type
+        if (!allowedTypes.includes(file.type)) {
+            this.showError('Invalid file type. Please upload JPG, PNG, or WebP images only.');
+            return;
+        }
+
+        // Validate file size
+        if (file.size > maxSize) {
+            this.showError('File size too large. Maximum size is 5MB.');
+            return;
+        }
+
         const formData = new FormData(form);
 
         try {
             this.showLoading();
+            console.log('Uploading banner...', file.name, file.type, file.size);
+            
             const response = await fetch(`${this.baseURL}/api/banners`, {
                 method: 'POST',
                 headers: {
@@ -266,16 +295,22 @@ class AdminPanel {
                 body: formData
             });
 
+            console.log('Upload response:', response.status, response.statusText);
+
             if (response.ok) {
+                const result = await response.json();
+                console.log('Upload successful:', result);
                 this.closeBannerModal();
                 await this.loadBanners();
                 this.showSuccess('Banner uploaded successfully!');
             } else {
                 const error = await response.json();
-                this.showError(error.error || 'Upload failed');
+                console.error('Upload error:', error);
+                this.showError(error.error || `Upload failed: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
-            this.showError('Network error. Please try again.');
+            console.error('Network error:', error);
+            this.showError(`Network error: ${error.message}. Please try again.`);
         } finally {
             this.hideLoading();
         }
@@ -700,13 +735,52 @@ class AdminPanel {
 
     // Utility Methods
     showSuccess(message) {
-        // Simple success notification - you could enhance this
-        alert(message);
+        this.showNotification(message, 'success');
     }
 
     showError(message) {
-        // Simple error notification - you could enhance this
-        alert('Error: ' + message);
+        this.showNotification(message, 'error');
+    }
+
+    showNotification(message, type) {
+        // Remove any existing notifications
+        const existing = document.querySelector('.notification');
+        if (existing) {
+            existing.remove();
+        }
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                <span>${message}</span>
+                <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+
+        // Add to body
+        document.body.appendChild(notification);
+
+        // Show with animation
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
     }
 }
 
