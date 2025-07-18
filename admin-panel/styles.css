@@ -6,7 +6,6 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     color: #333;
 }
@@ -35,7 +34,7 @@ body {
 }
 
 .logo {
-    height: 60px;
+    height: 30px;
     margin-bottom: 15px;
 }
 
@@ -81,7 +80,7 @@ body {
 }
 
 .logo-small {
-    height: 40px;
+    height: 25px;
 }
 
 .header-left h1 {
@@ -118,13 +117,15 @@ body {
     padding: 20px 0;
     gap: 5px;
     flex-shrink: 0;
-    scrollbar-width: none;      /* Firefox */
-    -ms-overflow-style: none;   /* IE/Edge */
-    }
+    height: 100vh; /* full vertical height */
+    overflow-y: auto; /* allows scrolling if items overflow */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
 
-    .tab-navigation::-webkit-scrollbar {
-        display: none;              /* Chrome, Safari */
-    }
+.tab-navigation::-webkit-scrollbar {
+    display: none; /* hide scrollbar on Chrome/Safari */
+}
 
 
 .tab-btn {
@@ -195,6 +196,27 @@ body {
 /* Buttons */
 .btn {
     padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.btn:focus,
+.btn:active {
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-login {
+    padding: 10px 131px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -691,6 +713,20 @@ body {
         flex-direction: column;
     }
 
+    .btn-login {
+        padding: 10px 120px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
     .btn {
         padding: 8px 10px;
         border: none;
@@ -702,13 +738,26 @@ body {
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 4px;
+    }
+
+    .btn:focus,
+    .btn:active {
+        outline: none;
+        box-shadow: none;
     }
 
     .tab-btn.active {
         border-right-color: transparent;
         border-bottom-color: #667eea;
 
+    }
+
+    .section-header h2 {
+        color: #333;
+        font-weight: 600;
+        font-size: 15px;
     }
 
 
@@ -756,6 +805,8 @@ body {
     .tab-navigation {
         flex-direction: row;
         width: auto;
+        height: auto;
+        max-height: 100%;
         padding: 0 20px;
         border-right: none;
         border-bottom: 1px solid #e1e8ed;
@@ -796,9 +847,22 @@ body {
     }
 
     .section-header {
-        flex-direction: column;
         gap: 15px;
         text-align: center;
+    }
+
+    .status-active {
+        background: #c6f6d5;
+        color: #2f855a;
+        font-size: 8px;
+        padding: 3px 10px 3px 10px;
+    }
+
+    .status-inactive {
+        background: #fed7d7;
+        color: #c53030;
+        font-size: 8px;
+        padding: 3px 10px 3px 10px;
     }
 
     .banners-grid {
@@ -815,8 +879,11 @@ body {
     }
 
     .form-actions {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
     }
+
 
     .video-tabs {
         flex-direction: column;

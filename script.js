@@ -8,21 +8,21 @@ class DailyTrendingGames {
         // LuckyTaj YouTube Channel Videos - Main video section (changes daily)
         this.youtubeVideos = [
             'E7He8psjoJ8', // Example video - replace with your actual video IDs
-            'RU-LstcZQMY',
-            '2cbiW84IuoU', 
-            '1uporVtLEog', 
-            'W10-7uKWZ3I',
-            'kQ924gJSnJ4',
-            '1iiv7O1KH4A',
-            'plzgfP_2Jg0',
-            'daMgJA6wvmY',
-            'PfoG2Uyj-Jk',
-            'HEYsC5YJADk',
-            'y_qGxMbpsJ0',
-            'zvjgVpOdY7w',
-            'DQ9Ku_8oe6Q',
-            'u_vuwY4la7Y',
-            'ys8rhut3gHM',
+            //'RU-LstcZQMY',
+            //'2cbiW84IuoU', 
+            //'1uporVtLEog', 
+            //'W10-7uKWZ3I',
+            //'kQ924gJSnJ4',
+            //'1iiv7O1KH4A',
+            //'plzgfP_2Jg0',
+            //'daMgJA6wvmY',
+            //'PfoG2Uyj-Jk',
+            //'HEYsC5YJADk',
+            //'y_qGxMbpsJ0',
+            //'zvjgVpOdY7w',
+            //'DQ9Ku_8oe6Q',
+            //'u_vuwY4la7Y',
+            //'ys8rhut3gHM',
         ];
         
         // Tournament TV Videos - Changes every 6 hours
