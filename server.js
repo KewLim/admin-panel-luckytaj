@@ -10,6 +10,9 @@ const authRoutes = require('./routes/auth');
 const bannerRoutes = require('./routes/banners');
 const commentRoutes = require('./routes/comments');
 const videoRoutes = require('./routes/video');
+const gamesRoutes = require('./routes/games');
+const winnersRoutes = require('./routes/winners');
+const jackpotRoutes = require('./routes/jackpot');
 
 const app = express();
 
@@ -40,6 +43,11 @@ app.use('/luckytaj-favicon', express.static(path.join(__dirname, 'luckytaj-favic
 // Serve admin panel static files
 app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
 
+// Serve main frontend files
+app.use(express.static(__dirname, { 
+    ignore: ['node_modules', 'admin-panel', 'uploads', 'models', 'routes', 'middleware', 'scripts']
+}));
+
 // Database connection
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -53,10 +61,18 @@ app.use('/api/auth', authRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/video', videoRoutes);
+app.use('/api/games', gamesRoutes);
+app.use('/api/winners', winnersRoutes);
+app.use('/api/jackpot', jackpotRoutes);
 
 // Serve admin panel
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-panel', 'index.html'));
+});
+
+// Serve main frontend
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Health check

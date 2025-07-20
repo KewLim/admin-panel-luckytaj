@@ -34,16 +34,6 @@ const videoSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Only one active video at a time
-videoSchema.pre('save', async function(next) {
-    if (this.isActive) {
-        // Deactivate all other videos
-        await mongoose.model('Video').updateMany(
-            { _id: { $ne: this._id } },
-            { isActive: false }
-        );
-    }
-    next();
-});
+// Allow multiple active videos - removed single active video restriction
 
 module.exports = mongoose.model('Video', videoSchema);

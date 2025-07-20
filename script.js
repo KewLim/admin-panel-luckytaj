@@ -227,7 +227,23 @@ class DailyTrendingGames {
         }
     }
 
-    loadRandomVideo() {
+    async loadRandomVideo() {
+        // First try to load from admin panel backend
+        try {
+            const response = await fetch('/api/video/current');
+            if (response.ok) {
+                const videoData = await response.json();
+                
+                if (videoData.videoId || videoData.videoUrl) {
+                    this.loadVideoFromBackend(videoData);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log('Backend video not available, using fallback:', error.message);
+        }
+        
+        // Fallback to hardcoded video list
         if (this.youtubeVideos.length === 0) return;
         
         // Use date-based seeding for consistent daily video (like games)
@@ -252,23 +268,64 @@ class DailyTrendingGames {
                 videoDescription.textContent = description;
             }
             
-            // Simulate loading delay for better UX
-            setTimeout(() => {
-                if (videoSkeleton) {
-                    videoSkeleton.classList.add('hidden');
-                }
-                
-                // Load immediately if in viewport, otherwise let Intersection Observer handle it
-                const rect = videoIframe.getBoundingClientRect();
-                const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
-                
-                if (inViewport) {
-                    this.loadLazyElement(videoIframe);
-                }
-            }, this.clampValue(800, window.innerWidth * 2, 1500)); // Dynamic delay
-            
-            console.log('Prepared video for lazy loading:', selectedVideoId);
+            this.finishVideoLoad(videoIframe, videoSkeleton, selectedVideoId);
         }
+    }
+
+    loadVideoFromBackend(videoData) {
+        const videoIframe = document.querySelector('.highlight-video');
+        const videoSkeleton = document.getElementById('videoSkeleton');
+        const videoDescription = document.querySelector('.video-description');
+        
+        if (!videoIframe) return;
+        
+        let videoUrl;
+        let videoId;
+        
+        if (videoData.videoType === 'youtube' && videoData.videoId) {
+            // YouTube video from backend
+            videoId = videoData.videoId;
+            videoUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0`;
+        } else if (videoData.videoType === 'mp4' && videoData.videoUrl) {
+            // MP4 video from backend - need to handle differently
+            videoIframe.style.display = 'none';
+            // Could implement MP4 player here if needed
+            console.log('MP4 video not supported in embed iframe:', videoData.videoUrl);
+            return;
+        } else {
+            console.log('Invalid video data from backend');
+            return;
+        }
+        
+        videoIframe.setAttribute('data-src', videoUrl);
+        
+        // Update video description
+        if (videoDescription) {
+            const description = videoData.description || videoData.title || 'Experience the thrill of big wins and exciting gameplay!';
+            videoDescription.textContent = description;
+        }
+        
+        this.finishVideoLoad(videoIframe, videoSkeleton, videoId || 'backend-video');
+        console.log('Loaded video from backend:', videoData.title || videoId);
+    }
+
+    finishVideoLoad(videoIframe, videoSkeleton, videoIdentifier) {
+        // Simulate loading delay for better UX
+        setTimeout(() => {
+            if (videoSkeleton) {
+                videoSkeleton.classList.add('hidden');
+            }
+            
+            // Load immediately if in viewport, otherwise let Intersection Observer handle it
+            const rect = videoIframe.getBoundingClientRect();
+            const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+            
+            if (inViewport) {
+                this.loadLazyElement(videoIframe);
+            }
+        }, this.clampValue(800, window.innerWidth * 2, 1500)); // Dynamic delay
+        
+        console.log('Prepared video for lazy loading:', videoIdentifier);
     }
 
     stringToSeed(str) {
@@ -1262,7 +1319,35 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     // Module 1: WinnerBoard
-    initializeWinnerBoard() {
+    async initializeWinnerBoard() {
+        // Try to load from admin panel backend first
+        try {
+            const response = await fetch('/api/winners/active');
+            if (response.ok) {
+                const backendWinners = await response.json();
+                
+                if (backendWinners && backendWinners.length > 0) {
+                    // Convert backend format to frontend format
+                    this.winnerData = backendWinners.map(winner => ({
+                        username: winner.name,
+                        game: winner.game,
+                        betAmount: null, // Not stored in backend
+                        winAmount: winner.amount,
+                        multiplier: null, // Not stored in backend
+                        quote: `Won ${winner.amount} ${winner.timeAgo}!`,
+                        avatar: this.getRandomAvatar()
+                    }));
+                    
+                    console.log('Loaded winners from backend:', this.winnerData.length);
+                    this.renderWinnerBoard();
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log('Backend winners not available, using fallback:', error.message);
+        }
+        
+        // Fallback to hardcoded winner data
         this.winnerData = [
             {
                 username: "Lucky****2",
@@ -1303,6 +1388,11 @@ Play Now: https://www.luckytaj.com/en-in/slot
         ];
         
         this.renderWinnerBoard();
+    }
+
+    getRandomAvatar() {
+        const avatars = ["👑", "💎", "🔥", "⭐", "💰", "🎯", "🚀", "⚡", "🏆", "🎰"];
+        return avatars[Math.floor(Math.random() * avatars.length)];
     }
     
     renderWinnerBoard() {
@@ -1594,7 +1684,7 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     // Module 4: JackpotCountdown
-    initializeJackpotCountdown() {
+    async initializeJackpotCountdown() {
         // Daily prediction times in GMT+5:30 (IST): 2:00 AM, 10:00 AM, 5:00 PM
         this.predictionTimes = [
             { hour: 2, minute: 0 },  // 2:00 AM
@@ -1602,6 +1692,32 @@ Play Now: https://www.luckytaj.com/en-in/slot
             { hour: 17, minute: 0 }  // 5:00 PM
         ];
         
+        // Try to load messages from admin panel backend first
+        try {
+            const response = await fetch('/api/jackpot/active');
+            if (response.ok) {
+                const backendMessages = await response.json();
+                
+                if (backendMessages && backendMessages.length > 0) {
+                    this.jackpotMessages = backendMessages.map(msg => msg.message);
+                    console.log('Loaded jackpot messages from backend:', this.jackpotMessages.length);
+                } else {
+                    this.setDefaultJackpotMessages();
+                }
+            } else {
+                this.setDefaultJackpotMessages();
+            }
+        } catch (error) {
+            console.log('Backend jackpot messages not available, using fallback:', error.message);
+            this.setDefaultJackpotMessages();
+        }
+        
+        this.currentMessageIndex = Math.floor(Math.random() * this.jackpotMessages.length);
+        this.checkPredictionStatus();
+        this.startCountdown();
+    }
+
+    setDefaultJackpotMessages() {
         this.jackpotMessages = [
             "Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!",
             "System prediction: Next 30 minutes mein BNG SLot jackpot hit hone wala hai!",
@@ -1611,10 +1727,6 @@ Play Now: https://www.luckytaj.com/en-in/slot
             "Special alert: Jili games mein bonus rounds active hone wale hain!",
             "Hot prediction: Live casino mein multipliers high chal rahe hain!"
         ];
-        
-        this.currentMessageIndex = Math.floor(Math.random() * this.jackpotMessages.length);
-        this.checkPredictionStatus();
-        this.startCountdown();
     }
     
     checkPredictionStatus() {

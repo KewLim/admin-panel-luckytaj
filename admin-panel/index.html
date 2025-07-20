@@ -68,6 +68,15 @@
                     <button class="tab-btn" data-tab="videos">
                         <i class="fas fa-video"></i> TV Session
                     </button>
+                    <button class="tab-btn" data-tab="games">
+                        <i class="fas fa-gamepad"></i> Daily Games
+                    </button>
+                    <button class="tab-btn" data-tab="winners">
+                        <i class="fas fa-trophy"></i> Winner Board
+                    </button>
+                    <button class="tab-btn" data-tab="jackpot">
+                        <i class="fas fa-coins"></i> Jackpot Timer
+                    </button>
                 </nav>
 
                 <!-- Content Sections -->
@@ -106,12 +115,81 @@
                         Add Video
                         </button>
                     </div>
-                    <div id="videoContent" class="video-content">
-                        <!-- Current video will be displayed here -->
+                    <div class="video-info-box" style="background: #ffffff; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                        <small><i class="fas fa-info-circle"></i> Multiple videos can be active simultaneously. A random active video will be displayed on each page refresh.</small>
                     </div>
                     <div id="videoHistory" class="video-history">
-                        <h3>Video History</h3>
-                        <!-- Video history will be loaded here -->
+                        <h3>Uploaded Videos</h3>
+                        <!-- Uploaded videos will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Daily Games Section -->
+                <section id="games" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-gamepad"></i> Daily Games Management</h2>
+                        <button class="btn btn-primary" onclick="refreshDailyGames()">
+                            Refresh Games Pool
+                        </button>
+                    </div>
+                    <div class="games-management">
+                        <div class="games-status">
+                            <h3>Current Games Pool Status</h3>
+                            <div id="gamesStatus" class="status-display">
+                                <!-- Games status will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="games-config">
+                            <h3>Game Pool Configuration</h3>
+                            <div class="form-group">
+                                <label for="totalGames">Games per Day</label>
+                                <input type="number" id="totalGames" value="6" min="3" max="12">
+                            </div>
+                            <div class="form-group">
+                                <label for="refreshTime">Daily Refresh Time (IST)</label>
+                                <input type="time" id="refreshTime" value="12:00">
+                            </div>
+                            <button class="btn btn-success" onclick="updateGamesConfig()">
+                                Update Configuration
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Winner Board Section -->
+                <section id="winners" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> Winner Board Management</h2>
+                        <button class="btn btn-primary" onclick="openWinnerModal()">
+                            Add Winner
+                        </button>
+                    </div>
+                    <div id="winnersTable" class="winners-table">
+                        <!-- Winners will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Jackpot Timer Section -->
+                <section id="jackpot" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-coins"></i> Jackpot Timer Management</h2>
+                        <button class="btn btn-primary" onclick="openJackpotModal()">
+                            Add Message
+                        </button>
+                    </div>
+                    <div class="jackpot-management">
+                        <div class="jackpot-config">
+                            <h3>Prediction Times Configuration</h3>
+                            <div class="prediction-times" id="predictionTimes">
+                                <!-- Prediction times will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="jackpot-messages">
+                            <h3>Jackpot Messages</h3>
+                            <div id="jackpotMessagesTable" class="messages-table">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                        </div>
                     </div>
                 </section>
                 </main>
@@ -235,6 +313,80 @@
                 <div class="form-actions">
                     <button type="button" onclick="closeVideoModal()" class="btn btn-secondary">Cancel</button>
                     <button type="submit" class="btn btn-primary">Upload Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Winner</h3>
+                <span class="close" onclick="closeWinnerModal()">&times;</span>
+            </div>
+            <form id="winnerForm">
+                <input type="hidden" id="winnerId" name="id">
+                <div class="form-group">
+                    <label for="winnerName">Winner Name</label>
+                    <input type="text" id="winnerName" name="name" maxlength="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerAmount">Win Amount</label>
+                    <input type="text" id="winnerAmount" name="amount" placeholder="₹15,420" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerGame">Game Name</label>
+                    <input type="text" id="winnerGame" name="game" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerTime">Time Ago</label>
+                    <select id="winnerTime" name="timeAgo">
+                        <option value="2 mins ago">2 mins ago</option>
+                        <option value="5 mins ago">5 mins ago</option>
+                        <option value="10 mins ago">10 mins ago</option>
+                        <option value="15 mins ago">15 mins ago</option>
+                        <option value="30 mins ago">30 mins ago</option>
+                        <option value="1 hour ago">1 hour ago</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeWinnerModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Winner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Jackpot Message Modal -->
+    <div id="jackpotModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Jackpot Message</h3>
+                <span class="close" onclick="closeJackpotModal()">&times;</span>
+            </div>
+            <form id="jackpotForm">
+                <input type="hidden" id="jackpotId" name="id">
+                <div class="form-group">
+                    <label for="jackpotMessage">Prediction Message</label>
+                    <textarea id="jackpotMessage" name="message" maxlength="200" rows="3" required 
+                              placeholder="Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="jackpotCategory">Game Category</label>
+                    <select id="jackpotCategory" name="category">
+                        <option value="Dragon Tiger">Dragon Tiger</option>
+                        <option value="BNG Slot">BNG Slot</option>
+                        <option value="Fishing Games">Fishing Games</option>
+                        <option value="Crazy Time">Crazy Time</option>
+                        <option value="PG Slots">PG Slots</option>
+                        <option value="Jili Games">Jili Games</option>
+                        <option value="Live Casino">Live Casino</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeJackpotModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Message</button>
                 </div>
             </form>
         </div>

@@ -34,14 +34,22 @@ const upload = multer({
     }
 });
 
-// Get current active video
+// Get random active video
 router.get('/', async (req, res) => {
     try {
-        const video = await Video.findOne({ isActive: true })
+        const activeVideos = await Video.find({ isActive: true })
             .populate('uploadedBy', 'email')
             .sort({ createdAt: -1 });
         
-        res.json(video);
+        // Return random video from active videos
+        if (activeVideos.length === 0) {
+            return res.json(null);
+        }
+        
+        const randomIndex = Math.floor(Math.random() * activeVideos.length);
+        const randomVideo = activeVideos[randomIndex];
+        
+        res.json(randomVideo);
     } catch (error) {
         console.error('Get video error:', error);
         res.status(500).json({ error: 'Failed to fetch video' });
@@ -204,6 +212,45 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error('Video delete error:', error);
         res.status(500).json({ error: 'Failed to delete video' });
+    }
+});
+
+// Get random active video (public endpoint for frontend)
+router.get('/current', async (req, res) => {
+    try {
+        const activeVideos = await Video.find({ isActive: true })
+            .sort({ createdAt: -1 });
+        
+        if (activeVideos.length === 0) {
+            return res.json({ 
+                videoId: null,
+                message: 'No active video found'
+            });
+        }
+
+        // Select random video from active videos
+        const randomIndex = Math.floor(Math.random() * activeVideos.length);
+        const activeVideo = activeVideos[randomIndex];
+
+        // Extract video ID from YouTube URL if it's a YouTube video
+        let videoId = null;
+        if (activeVideo.videoType === 'youtube') {
+            const match = activeVideo.videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+            videoId = match ? match[1] : null;
+        }
+
+        res.json({
+            _id: activeVideo._id,
+            videoType: activeVideo.videoType,
+            videoUrl: activeVideo.videoUrl,
+            videoId: videoId, // For YouTube integration
+            title: activeVideo.title,
+            description: activeVideo.description,
+            createdAt: activeVideo.createdAt
+        });
+    } catch (error) {
+        console.error('Error fetching current video:', error);
+        res.status(500).json({ error: 'Failed to fetch current video' });
     }
 });
 

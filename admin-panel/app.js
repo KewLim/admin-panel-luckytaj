@@ -181,6 +181,28 @@ class AdminPanel {
             section.classList.remove('active');
         });
         document.getElementById(tabName).classList.add('active');
+
+        // Load data for the selected tab
+        switch(tabName) {
+            case 'banners':
+                this.loadBanners();
+                break;
+            case 'comments':
+                this.loadComments();
+                break;
+            case 'videos':
+                this.loadVideos();
+                break;
+            case 'games':
+                this.loadGamesData();
+                break;
+            case 'winners':
+                this.loadWinners();
+                break;
+            case 'jackpot':
+                this.loadJackpotData();
+                break;
+        }
     }
 
     switchVideoTab(tabType) {
@@ -504,14 +526,7 @@ class AdminPanel {
     // Video Management
     async loadVideos() {
         try {
-            // Load current active video
-            const activeResponse = await fetch(`${this.baseURL}/api/video`);
-            if (activeResponse.ok) {
-                const activeVideo = await activeResponse.json();
-                this.renderCurrentVideo(activeVideo);
-            }
-
-            // Load all videos for history
+            // Load all videos for display
             const allResponse = await fetch(`${this.baseURL}/api/video/all`, {
                 headers: {
                     'Authorization': `Bearer ${this.token}`
@@ -526,7 +541,7 @@ class AdminPanel {
         }
     }
 
-    renderCurrentVideo(video) {
+    /* renderCurrentVideo(video) {
         const content = document.getElementById('videoContent');
         
         if (!video) {
@@ -539,29 +554,49 @@ class AdminPanel {
             return;
         }
 
-        let videoPlayer = '';
+        let videoThumbnail = '';
+        let videoUrl = '';
+        
         if (video.videoType === 'youtube') {
             const videoId = this.extractYouTubeId(video.videoUrl);
-            videoPlayer = `<iframe class="video-player" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            videoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
         } else {
-            videoPlayer = `<video class="video-player" controls><source src="${this.baseURL}${video.videoUrl}" type="video/mp4"></video>`;
+            videoThumbnail = '/placeholder-video-thumbnail.jpg'; // You can add a placeholder
+            videoUrl = `${this.baseURL}${video.videoUrl}`;
         }
 
         content.innerHTML = `
             <div class="current-video">
                 <h3>Current Active Video</h3>
-                ${videoPlayer}
+                <div class="video-thumbnail-container" onclick="window.open('${videoUrl}', '_blank')">
+                    <div class="video-thumbnail">
+                        <img src="${videoThumbnail}" alt="Video Thumbnail" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjMzOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNjAwIiBoZWlnaHQ9IjMzOCIgZmlsbD0iIzE4MjAyNSIvPjx0ZXh0IHg9IjMwMCIgeT0iMTY5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+📺 Video Thumbnail</dGV4dD48L3N2Zz4='">
+                        <div class="play-button">
+                            <svg width="68" height="48" viewBox="0 0 68 48">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path>
+                                <path d="M45,24 27,14 27,34" fill="#fff"></path>
+                            </svg>
+                        </div>
+                        <div class="video-duration">
+                            ${video.videoType === 'youtube' ? 'YouTube' : 'MP4'}
+                        </div>
+                    </div>
+                </div>
                 <div class="video-info">
                     <div class="video-title">${video.title || 'Untitled'}</div>
                     <div class="video-description">${video.description || ''}</div>
                     <div class="video-meta">
                         Type: ${video.videoType.toUpperCase()}<br>
-                        Uploaded: ${new Date(video.createdAt).toLocaleDateString()}
+                        Uploaded: ${new Date(video.createdAt).toLocaleDateString()}<br>
+                        <a href="${videoUrl}" target="_blank" class="btn btn-primary" style="margin-top: 10px;">
+                            <i class="fas fa-play"></i> Watch Video
+                        </a>
                     </div>
                 </div>
             </div>
         `;
-    }
+    } */
 
     renderVideoHistory(videos) {
         const history = document.getElementById('videoHistory');
@@ -575,19 +610,47 @@ class AdminPanel {
         videos.forEach(video => {
             const item = document.createElement('div');
             item.className = 'video-history-item';
+            
+            let thumbnailUrl = '';
+            let videoUrl = '';
+            
+            if (video.videoType === 'youtube') {
+                const videoId = this.extractYouTubeId(video.videoUrl);
+                thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            } else {
+                thumbnailUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iIzM0MzUzZSIvPjx0ZXh0IHg9IjE2MCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn5O6IE1QNCBWaWRlbzwvdGV4dD48L3N2Zz4=';
+                videoUrl = `${this.baseURL}${video.videoUrl}`;
+            }
+            
             item.innerHTML = `
-                <div>
-                    <strong>${video.title || 'Untitled'}</strong><br>
-                    <small>${video.videoType.toUpperCase()} • ${new Date(video.createdAt).toLocaleDateString()}</small><br>
-                    <span class="status-badge ${video.isActive ? 'status-active' : 'status-inactive'}">${video.isActive ? 'Active' : 'Inactive'}</span>
+                <div class="video-history-thumbnail">
+                    <img src="${thumbnailUrl}" alt="Video Thumbnail" onclick="window.open('${videoUrl}', '_blank')">
+                    <div class="video-history-play">▶</div>
                 </div>
-                <div>
-                    <button class="btn btn-secondary" onclick="adminPanel.toggleVideoStatus('${video._id}', ${!video.isActive})">
-                        ${video.isActive ? 'Deactivate' : 'Activate'}
-                    </button>
-                    <button class="btn btn-danger" onclick="adminPanel.deleteVideo('${video._id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <div class="video-history-details">
+                    <div>
+                        <strong>${video.title || 'Untitled'}</strong><br>
+                        <small>${video.videoType.toUpperCase()} • ${new Date(video.createdAt).toLocaleDateString()}</small><br>
+                        <span class="status-badge ${video.isActive ? 'status-active' : 'status-inactive'}">${video.isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                    <div class="video-history-actions">
+                        <div class="dropdown-menu">
+                            <button class="dropdown-trigger" onclick="toggleVideoDropdown('${video._id}')">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-content" id="dropdown-${video._id}">
+                                <button class="dropdown-item" onclick="adminPanel.toggleVideoStatus('${video._id}', ${!video.isActive}); hideVideoDropdown('${video._id}')">
+                                    <i class="fas fa-${video.isActive ? 'eye-slash' : 'eye'}"></i>
+                                    ${video.isActive ? 'Deactivate' : 'Activate'}
+                                </button>
+                                <button class="dropdown-item delete" onclick="adminPanel.deleteVideo('${video._id}'); hideVideoDropdown('${video._id}')">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
             historyContainer.appendChild(item);
@@ -785,6 +848,406 @@ class AdminPanel {
             }
         }, 5000);
     }
+
+    // ===============================
+    // NEW FEATURES - GAMES MANAGEMENT
+    // ===============================
+
+    async loadGamesData() {
+        const section = document.getElementById('games');
+        if (!section.classList.contains('active')) return;
+
+        try {
+            // Load games status
+            const statusResponse = await fetch(`${this.baseURL}/api/games/status`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+            
+            if (statusResponse.ok) {
+                const status = await statusResponse.json();
+                this.renderGamesStatus(status);
+            }
+
+            // Load config
+            const configResponse = await fetch(`${this.baseURL}/api/games/config`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+            
+            if (configResponse.ok) {
+                const config = await configResponse.json();
+                document.getElementById('totalGames').value = config.totalGames;
+                document.getElementById('refreshTime').value = config.refreshTime;
+            }
+        } catch (error) {
+            this.showError('Failed to load games data');
+        }
+    }
+
+    renderGamesStatus(status) {
+        const container = document.getElementById('gamesStatus');
+        container.innerHTML = `
+            <div class="status-item">
+                <strong>Total Games in Pool:</strong> ${status.totalGames}
+            </div>
+            <div class="status-item">
+                <strong>Configured Games per Day:</strong> ${status.configuredGames}
+            </div>
+            <div class="status-item">
+                <strong>Last Refresh:</strong> ${new Date(status.lastRefresh).toLocaleString()}
+            </div>
+            <div class="status-item">
+                <strong>Next Refresh:</strong> ${status.refreshTime} IST Daily
+            </div>
+            ${status.error ? `<div class="status-item error"><strong>Error:</strong> ${status.error}</div>` : ''}
+        `;
+    }
+
+    async refreshDailyGames() {
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/games/refresh`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            if (response.ok) {
+                await this.loadGamesData();
+                this.showSuccess('Games pool refreshed successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Refresh failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async updateGamesConfig() {
+        const totalGames = document.getElementById('totalGames').value;
+        const refreshTime = document.getElementById('refreshTime').value;
+
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/games/config`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ totalGames: parseInt(totalGames), refreshTime })
+            });
+
+            if (response.ok) {
+                await this.loadGamesData();
+                this.showSuccess('Games configuration updated successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Update failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    // ===============================
+    // WINNERS MANAGEMENT
+    // ===============================
+
+    async loadWinners() {
+        const section = document.getElementById('winners');
+        if (!section.classList.contains('active')) return;
+
+        try {
+            const response = await fetch(`${this.baseURL}/api/winners`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+            
+            if (response.ok) {
+                const winners = await response.json();
+                this.renderWinners(winners);
+            } else {
+                this.showError('Failed to load winners');
+            }
+        } catch (error) {
+            this.showError('Failed to load winners');
+        }
+    }
+
+    renderWinners(winners) {
+        const container = document.getElementById('winnersTable');
+        
+        if (winners.length === 0) {
+            container.innerHTML = '<div class="empty-state">No winners found. Add your first winner!</div>';
+            return;
+        }
+
+        container.innerHTML = winners.map(winner => `
+            <div class="winner-item">
+                <div class="winner-info">
+                    <div class="winner-avatar">${winner.name.charAt(0).toUpperCase()}</div>
+                    <div class="winner-details">
+                        <h4>${winner.name}</h4>
+                        <p>${winner.game} • ${winner.timeAgo}</p>
+                    </div>
+                </div>
+                <div class="winner-amount">${winner.amount}</div>
+                <div class="winner-actions">
+                    <span class="status-badge ${winner.active ? 'status-active' : 'status-inactive'}">
+                        ${winner.active ? 'Active' : 'Inactive'}
+                    </span>
+                    <button class="btn btn-secondary btn-sm" onclick="adminPanel.editWinner('${winner._id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="adminPanel.deleteWinner('${winner._id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    openWinnerModal(winnerId = null) {
+        const modal = document.getElementById('winnerModal');
+        const form = document.getElementById('winnerForm');
+        
+        if (winnerId) {
+            // Edit mode - populate form
+            // Implementation would fetch winner data and populate form
+        } else {
+            // Add mode - reset form
+            form.reset();
+            document.getElementById('winnerId').value = '';
+        }
+        
+        modal.style.display = 'block';
+        
+        // Set up form submission
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            await this.handleWinnerSubmit();
+        };
+    }
+
+    closeWinnerModal() {
+        document.getElementById('winnerModal').style.display = 'none';
+    }
+
+    async handleWinnerSubmit() {
+        const form = document.getElementById('winnerForm');
+        const formData = new FormData(form);
+        
+        const data = {
+            name: formData.get('name'),
+            amount: formData.get('amount'),
+            game: formData.get('game'),
+            timeAgo: formData.get('timeAgo')
+        };
+
+        try {
+            this.showLoading();
+            const winnerId = formData.get('id');
+            const url = winnerId ? `/api/winners/${winnerId}` : '/api/winners';
+            const method = winnerId ? 'PUT' : 'POST';
+
+            const response = await fetch(`${this.baseURL}${url}`, {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                this.closeWinnerModal();
+                await this.loadWinners();
+                this.showSuccess('Winner saved successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Save failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async deleteWinner(winnerId) {
+        if (!confirm('Are you sure you want to delete this winner?')) return;
+
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/winners/${winnerId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            if (response.ok) {
+                await this.loadWinners();
+                this.showSuccess('Winner deleted successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Delete failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    // ===============================
+    // JACKPOT MANAGEMENT
+    // ===============================
+
+    async loadJackpotData() {
+        const section = document.getElementById('jackpot');
+        if (!section.classList.contains('active')) return;
+
+        try {
+            const response = await fetch(`${this.baseURL}/api/jackpot`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+            
+            if (response.ok) {
+                const messages = await response.json();
+                this.renderJackpotMessages(messages);
+            }
+
+            // Load prediction times
+            this.renderPredictionTimes();
+        } catch (error) {
+            this.showError('Failed to load jackpot data');
+        }
+    }
+
+    renderPredictionTimes() {
+        const container = document.getElementById('predictionTimes');
+        const times = ['2:00 AM', '10:00 AM', '5:00 PM'];
+        
+        container.innerHTML = times.map(time => `
+            <div class="prediction-time-item">
+                <span>${time} IST</span>
+                <span class="status-badge status-active">Active</span>
+            </div>
+        `).join('');
+    }
+
+    renderJackpotMessages(messages) {
+        const container = document.getElementById('jackpotMessagesTable');
+        
+        if (messages.length === 0) {
+            container.innerHTML = '<div class="empty-state">No jackpot messages found. Add your first message!</div>';
+            return;
+        }
+
+        container.innerHTML = messages.map(message => `
+            <div class="message-item">
+                <div class="message-content">
+                    <div class="message-text">${message.message}</div>
+                    <span class="message-category">${message.category}</span>
+                </div>
+                <div class="message-actions">
+                    <span class="status-badge ${message.active ? 'status-active' : 'status-inactive'}">
+                        ${message.active ? 'Active' : 'Inactive'}
+                    </span>
+                    <button class="btn btn-secondary btn-sm" onclick="adminPanel.editJackpotMessage('${message._id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="adminPanel.deleteJackpotMessage('${message._id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    openJackpotModal(messageId = null) {
+        const modal = document.getElementById('jackpotModal');
+        const form = document.getElementById('jackpotForm');
+        
+        if (messageId) {
+            // Edit mode - populate form
+            // Implementation would fetch message data and populate form
+        } else {
+            // Add mode - reset form
+            form.reset();
+            document.getElementById('jackpotId').value = '';
+        }
+        
+        modal.style.display = 'block';
+        
+        // Set up form submission
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            await this.handleJackpotSubmit();
+        };
+    }
+
+    closeJackpotModal() {
+        document.getElementById('jackpotModal').style.display = 'none';
+    }
+
+    async handleJackpotSubmit() {
+        const form = document.getElementById('jackpotForm');
+        const formData = new FormData(form);
+        
+        const data = {
+            message: formData.get('message'),
+            category: formData.get('category')
+        };
+
+        try {
+            this.showLoading();
+            const messageId = formData.get('id');
+            const url = messageId ? `/api/jackpot/${messageId}` : '/api/jackpot';
+            const method = messageId ? 'PUT' : 'POST';
+
+            const response = await fetch(`${this.baseURL}${url}`, {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                this.closeJackpotModal();
+                await this.loadJackpotData();
+                this.showSuccess('Jackpot message saved successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Save failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async deleteJackpotMessage(messageId) {
+        if (!confirm('Are you sure you want to delete this jackpot message?')) return;
+
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/jackpot/${messageId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            if (response.ok) {
+                await this.loadJackpotData();
+                this.showSuccess('Jackpot message deleted successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Delete failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
 }
 
 // Global functions for onclick handlers
@@ -811,6 +1274,60 @@ function openVideoModal() {
 function closeVideoModal() {
     adminPanel.closeVideoModal();
 }
+
+function openWinnerModal() {
+    adminPanel.openWinnerModal();
+}
+
+function closeWinnerModal() {
+    adminPanel.closeWinnerModal();
+}
+
+function openJackpotModal() {
+    adminPanel.openJackpotModal();
+}
+
+function closeJackpotModal() {
+    adminPanel.closeJackpotModal();
+}
+
+function refreshDailyGames() {
+    adminPanel.refreshDailyGames();
+}
+
+function updateGamesConfig() {
+    adminPanel.updateGamesConfig();
+}
+
+// Video dropdown functions
+function toggleVideoDropdown(videoId) {
+    const dropdown = document.getElementById(`dropdown-${videoId}`);
+    const isVisible = dropdown.classList.contains('show');
+    
+    // Hide all other dropdowns first
+    document.querySelectorAll('.dropdown-content.show').forEach(dd => {
+        dd.classList.remove('show');
+    });
+    
+    // Toggle current dropdown
+    if (!isVisible) {
+        dropdown.classList.add('show');
+    }
+}
+
+function hideVideoDropdown(videoId) {
+    const dropdown = document.getElementById(`dropdown-${videoId}`);
+    dropdown.classList.remove('show');
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown-menu')) {
+        document.querySelectorAll('.dropdown-content.show').forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
+    }
+});
 
 // Initialize the admin panel
 const adminPanel = new AdminPanel();
