@@ -1712,9 +1712,11 @@ Play Now: https://www.luckytaj.com/en-in/slot
             this.setDefaultJackpotMessages();
         }
         
-        this.currentMessageIndex = Math.floor(Math.random() * this.jackpotMessages.length);
+        this.currentMessageIndex = 0;
+        this.messageRotationInterval = null;
         this.checkPredictionStatus();
         this.startCountdown();
+        this.startMessageRotation();
     }
 
     setDefaultJackpotMessages() {
@@ -1797,8 +1799,80 @@ Play Now: https://www.luckytaj.com/en-in/slot
     
     updateJackpotMessage() {
         const messageElement = document.getElementById('jackpotMessage');
-        if (messageElement && this.isActivePrediction) {
+        const messageCountElement = document.querySelector('.message-count');
+        
+        if (messageElement && this.jackpotMessages && this.jackpotMessages.length > 0) {
             messageElement.textContent = this.jackpotMessages[this.currentMessageIndex];
+            
+            if (messageCountElement) {
+                messageCountElement.textContent = `${this.currentMessageIndex + 1}/${this.jackpotMessages.length}`;
+            }
+            
+            this.updateMessageDots();
+        }
+    }
+    
+    updateMessageDots() {
+        const indicatorElement = document.getElementById('messageIndicator');
+        
+        // Only show dots if there are multiple messages
+        if (this.jackpotMessages.length <= 1) {
+            return;
+        }
+        
+        // Create or update dots
+        let dotsContainer = indicatorElement.querySelector('.message-dots');
+        if (!dotsContainer) {
+            dotsContainer = document.createElement('div');
+            dotsContainer.className = 'message-dots';
+            indicatorElement.appendChild(dotsContainer);
+        }
+        
+        // Clear existing dots
+        dotsContainer.innerHTML = '';
+        
+        // Create dots for each message
+        for (let i = 0; i < this.jackpotMessages.length; i++) {
+            const dot = document.createElement('div');
+            dot.className = `message-dot ${i === this.currentMessageIndex ? 'active' : ''}`;
+            dotsContainer.appendChild(dot);
+        }
+    }
+    
+    startMessageRotation() {
+        // Clear any existing rotation
+        if (this.messageRotationInterval) {
+            clearInterval(this.messageRotationInterval);
+        }
+        
+        // Only rotate if there are multiple messages
+        if (this.jackpotMessages && this.jackpotMessages.length > 1) {
+            this.messageRotationInterval = setInterval(() => {
+                this.rotateToNextMessage();
+            }, 5000); // Change message every 5 seconds
+        }
+        
+        // Initial message display
+        this.updateJackpotMessage();
+    }
+    
+    rotateToNextMessage() {
+        if (this.jackpotMessages && this.jackpotMessages.length > 1) {
+            const messageElement = document.getElementById('jackpotMessage');
+            
+            // Fade out current message
+            if (messageElement) {
+                messageElement.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    // Move to next message
+                    this.currentMessageIndex = (this.currentMessageIndex + 1) % this.jackpotMessages.length;
+                    
+                    // Update message and fade in
+                    this.updateJackpotMessage();
+                    messageElement.classList.remove('fade-out');
+                }, 250); // Half of the CSS transition duration
+            }
         }
     }
     
@@ -1837,17 +1911,25 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     showActivePredictionCTA() {
-        const messageElement = document.getElementById('jackpotMessage');
+        const messageContainer = document.getElementById('jackpotMessageContainer');
         
-        if (messageElement) {
-            messageElement.innerHTML = `
-                <div class="prediction-cta-container">
-                    <p class="next-prediction-text">🔥 Live prediction session active! 🔥</p>
-                    <a href="https://www.luckytaj.com/en-in/slot" target="_blank" class="prediction-cta-btn">
-                        <span class="cta-icon">🎰</span>
-                        <span class="cta-main-text">Play Now & Win Big!</span>
-                        <span class="cta-sub-text">Prediction is LIVE - Don't miss it!</span>
-                    </a>
+        if (messageContainer) {
+            // Stop message rotation during active prediction
+            if (this.messageRotationInterval) {
+                clearInterval(this.messageRotationInterval);
+                this.messageRotationInterval = null;
+            }
+            
+            messageContainer.innerHTML = `
+                <div class="jackpot-message">
+                    <div class="prediction-cta-container">
+                        <p class="next-prediction-text">🔥 Live prediction session active! 🔥</p>
+                        <a href="https://www.luckytaj.com/en-in/slot" target="_blank" class="prediction-cta-btn">
+                            <span class="cta-icon">🎰</span>
+                            <span class="cta-main-text">Play Now & Win Big!</span>
+                            <span class="cta-sub-text">Prediction is LIVE - Don't miss it!</span>
+                        </a>
+                    </div>
                 </div>
             `;
         }

@@ -1149,9 +1149,10 @@ class AdminPanel {
                     <span class="message-category">${message.category}</span>
                 </div>
                 <div class="message-actions">
-                    <span class="status-badge ${message.active ? 'status-active' : 'status-inactive'}">
-                        ${message.active ? 'Active' : 'Inactive'}
-                    </span>
+                    <button class="btn ${message.active ? 'btn-success' : 'btn-outline-secondary'} btn-sm" 
+                            onclick="adminPanel.toggleJackpotMessage('${message._id}', ${!message.active})">
+                        ${message.active ? 'Active' : 'Activate'}
+                    </button>
                     <button class="btn btn-secondary btn-sm" onclick="adminPanel.editJackpotMessage('${message._id}')">Edit</button>
                     <button class="btn btn-danger btn-sm" onclick="adminPanel.deleteJackpotMessage('${message._id}')">Delete</button>
                 </div>
@@ -1159,13 +1160,27 @@ class AdminPanel {
         `).join('');
     }
 
-    openJackpotModal(messageId = null) {
+    async openJackpotModal(messageId = null) {
         const modal = document.getElementById('jackpotModal');
         const form = document.getElementById('jackpotForm');
         
         if (messageId) {
-            // Edit mode - populate form
-            // Implementation would fetch message data and populate form
+            // Edit mode - fetch and populate form
+            try {
+                const response = await fetch(`${this.baseURL}/api/jackpot`, {
+                    headers: { 'Authorization': `Bearer ${this.token}` }
+                });
+                const messages = await response.json();
+                const message = messages.find(m => m._id === messageId);
+                
+                if (message) {
+                    document.getElementById('jackpotId').value = message._id;
+                    document.getElementById('jackpotMessage').value = message.message;
+                    document.getElementById('jackpotCategory').value = message.category;
+                }
+            } catch (error) {
+                console.error('Error loading message for edit:', error);
+            }
         } else {
             // Add mode - reset form
             form.reset();
@@ -1224,6 +1239,32 @@ class AdminPanel {
         }
     }
 
+    async toggleJackpotMessage(messageId, newActiveState) {
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/jackpot/${messageId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({ active: newActiveState })
+            });
+            
+            if (response.ok) {
+                await this.loadJackpotData();
+                this.showSuccess(`Jackpot message ${newActiveState ? 'activated' : 'deactivated'} successfully!`);
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Update failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
     async deleteJackpotMessage(messageId) {
         if (!confirm('Are you sure you want to delete this jackpot message?')) return;
 
@@ -1246,6 +1287,10 @@ class AdminPanel {
         } finally {
             this.hideLoading();
         }
+    }
+
+    async editJackpotMessage(messageId) {
+        await this.openJackpotModal(messageId);
     }
 
 }

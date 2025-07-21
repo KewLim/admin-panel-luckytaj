@@ -288,6 +288,15 @@ button:active {
 .btn-success:hover {
     background: #2f855a;
 }
+.btn-outline-secondary {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+.btn-outline-secondary:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
 
 /* Forms */
 .form-group {
