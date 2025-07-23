@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=390, initial-scale=1.0, user-scalable=no">
+    <title>Debug Main Page</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: Arial, sans-serif; padding: 20px; }
+        .game-card { border: 1px solid #444; margin: 10px; padding: 15px; background: #333; border-radius: 8px; }
+        .game-card img { max-width: 200px; height: 120px; object-fit: cover; }
+        .trending-games { margin: 20px 0; }
+        .debug { background: #444; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎰 Debug Main Page</h1>
+    
+    <div class="debug">
+        <h3>Debug Info:</h3>
+        <div id="debug-info">Loading...</div>
+    </div>
+
+    <div class="trending-games" id="trendingGames">
+        <h2>Your Daily Trending Games</h2>
+        <div id="gamesGrid">
+            <div style="color: yellow;">Loading games...</div>
+        </div>
+    </div>
+
+    <script>
+    console.log('Script started');
+    
+    class SimpleDailyGames {
+        constructor() {
+            this.dailyGames = [];
+            this.init();
+        }
+        
+        async init() {
+            console.log('Init started');
+            document.getElementById('debug-info').innerHTML = 'Init started...';
+            
+            await this.loadGamesData();
+            this.showTrendingGames();
+        }
+        
+        async loadGamesData() {
+            console.log('Loading games data...');
+            document.getElementById('debug-info').innerHTML = 'Loading games data...';
+            
+            try {
+                const response = await fetch('/api/games/daily');
+                console.log('API Response status:', response.status);
+                
+                if (response.ok) {
+                    const games = await response.json();
+                    console.log('Games received:', games);
+                    
+                    if (games && games.length > 0) {
+                        this.dailyGames = games;
+                        document.getElementById('debug-info').innerHTML = `✅ Loaded ${games.length} games successfully!`;
+                        console.log('DailyGames set to:', this.dailyGames);
+                        return;
+                    }
+                }
+                
+                throw new Error(`API returned status ${response.status}`);
+                
+            } catch (error) {
+                console.error('Error loading games:', error);
+                document.getElementById('debug-info').innerHTML = `❌ Error: ${error.message}`;
+                this.dailyGames = [];
+            }
+        }
+        
+        showTrendingGames() {
+            console.log('ShowTrendingGames called with:', this.dailyGames.length, 'games');
+            
+            const gamesGrid = document.getElementById('gamesGrid');
+            
+            if (this.dailyGames.length === 0) {
+                gamesGrid.innerHTML = '<div style="color: red;">❌ No games available</div>';
+                return;
+            }
+            
+            gamesGrid.innerHTML = '';
+            
+            this.dailyGames.forEach((game, index) => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = `
+                    <h3>${game.title}</h3>
+                    <img src="${game.image}" alt="${game.title}" 
+                         onload="console.log('Image loaded: ${game.title}')" 
+                         onerror="console.error('Image failed: ${game.image}'); this.style.border='3px solid red';">
+                    <p><strong>Recent Win:</strong> ${game.recentWin.amount} by ${game.recentWin.player}</p>
+                    <p>"${game.recentWin.comment}"</p>
+                `;
+                gamesGrid.appendChild(gameCard);
+                console.log('Added game card:', game.title);
+            });
+            
+            console.log('All games displayed successfully');
+        }
+    }
+    
+    // Start the simplified version
+    window.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM loaded, starting SimpleDailyGames');
+        new SimpleDailyGames();
+    });
+    </script>
+</body>
+</html>

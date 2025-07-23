@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuckyTaj - Test Suite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .test-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 5px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .test-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .nav-link {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        .description {
+            color: #E0E0E0;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        .back-links {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 LuckyTaj Test Suite</h1>
+        
+        <div class="test-section">
+            <h2>🔐 Admin Panel Tests</h2>
+            <p class="description">Test admin authentication, game management, and image gallery functionality.</p>
+            <a href="test-admin-login.html" class="test-link">🔐 Admin Login Test</a>
+            <a href="test-admin-fixed.html" class="test-link">🔧 Admin Fixed Test</a>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎮 Frontend Game Tests</h2>
+            <p class="description">Test game loading, display, and API connectivity on the frontend.</p>
+            <a href="test-frontend.html" class="test-link">🎮 Frontend API Test</a>
+            <a href="working-games-display.html" class="test-link">✨ Working Games Display</a>
+            <a href="simple-test.html" class="test-link">⚡ Simple Test</a>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔍 Debug Tools</h2>
+            <p class="description">Debug tools for troubleshooting issues and testing specific components.</p>
+            <a href="debug-main.html" class="test-link">🐛 Debug Main Page</a>
+            <a href="debug-games.html" class="test-link">🎯 Debug Games</a>
+            <a href="final-debug.html" class="test-link">🔬 Final Debug</a>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎯 Complete Workflow</h2>
+            <p class="description">End-to-end testing of the entire system from API to display.</p>
+            <a href="test-complete-workflow.html" class="test-link">🚀 Complete Workflow Test</a>
+        </div>
+        
+        <div class="back-links">
+            <h3>🌐 Navigation</h3>
+            <a href="/" class="test-link nav-link">🏠 Main Page</a>
+            <a href="/admin/" class="test-link nav-link">👨‍💼 Admin Panel</a>
+            <a href="/docs/" class="test-link nav-link">📚 Documentation</a>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <small>LuckyTaj Daily Games System - Test Environment</small>
+        </div>
+    </div>
+</body>
+</html>

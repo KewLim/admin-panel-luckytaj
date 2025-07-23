@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=390, initial-scale=1.0, user-scalable=no">
+    <title>Final Debug - Games Display</title>
+    <style>
+        body { 
+            background: #1a1a1a; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+        }
+        .trending-games { 
+            margin: 20px 0; 
+            border: 2px solid #444; 
+            padding: 20px; 
+            border-radius: 10px;
+        }
+        .game-card { 
+            border: 1px solid #666; 
+            margin: 15px; 
+            padding: 15px; 
+            background: #333; 
+            border-radius: 8px; 
+            display: inline-block;
+            width: 280px;
+            vertical-align: top;
+        }
+        .game-card img { 
+            max-width: 100%; 
+            height: 120px; 
+            object-fit: cover; 
+            border-radius: 5px;
+        }
+        .debug-panel {
+            background: #2a2a2a;
+            border: 1px solid #555;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        button { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎰 Final Debug - Games Display</h1>
+    
+    <div class="debug-panel">
+        <h3>🔍 Debug Information</h3>
+        <div id="debug-log">Starting debug session...</div>
+        <button onclick="reloadGames()">🔄 Reload Games</button>
+        <button onclick="clearDebug()">🗑️ Clear Debug</button>
+    </div>
+
+    <div class="trending-games" id="trendingGames">
+        <h2>🎮 Your Daily Trending Games</h2>
+        <div id="gamesGrid">
+            <div style="color: #FFA500; text-align: center; padding: 20px;">
+                🔄 Loading games...
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let debugLogs = [];
+    
+    function addLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        debugLogs.push(`[${timestamp}] ${message}`);
+        updateDebugDisplay();
+        
+        // Also log to console
+        console.log(`[DEBUG] ${message}`);
+    }
+    
+    function updateDebugDisplay() {
+        const debugEl = document.getElementById('debug-log');
+        debugEl.innerHTML = debugLogs.map(log => {
+            if (log.includes('✅')) return `<span class="success">${log}</span>`;
+            if (log.includes('❌')) return `<span class="error">${log}</span>`;
+            return `<span class="info">${log}</span>`;
+        }).join('<br>');
+        debugEl.scrollTop = debugEl.scrollHeight;
+    }
+    
+    function clearDebug() {
+        debugLogs = [];
+        updateDebugDisplay();
+    }
+    
+    class FinalDebugGames {
+        constructor() {
+            this.dailyGames = [];
+            addLog('🚀 FinalDebugGames constructor started');
+            this.init();
+        }
+        
+        async init() {
+            addLog('📥 Initializing...');
+            try {
+                await this.loadGamesData();
+                addLog('🎯 Load complete, showing games...');
+                this.showTrendingGames();
+            } catch (error) {
+                addLog(`❌ Init failed: ${error.message}`);
+            }
+        }
+        
+        async loadGamesData() {
+            addLog('🌐 Fetching games from /api/games/daily...');
+            
+            try {
+                const response = await fetch('/api/games/daily');
+                addLog(`📡 Response status: ${response.status} ${response.statusText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const games = await response.json();
+                addLog(`📦 Received data: ${JSON.stringify(games).substring(0, 100)}...`);
+                
+                if (!games || games.length === 0) {
+                    throw new Error('No games in response');
+                }
+                
+                this.dailyGames = games;
+                addLog(`✅ Successfully loaded ${games.length} games`);
+                
+                // Log each game briefly
+                games.forEach((game, i) => {
+                    addLog(`   ${i+1}. ${game.title} - ${game.recentWin.amount}`);
+                });
+                
+            } catch (error) {
+                addLog(`❌ Load failed: ${error.message}`);
+                this.dailyGames = [];
+                throw error;
+            }
+        }
+        
+        showTrendingGames() {
+            addLog(`🎮 showTrendingGames called with ${this.dailyGames.length} games`);
+            
+            const gamesGrid = document.getElementById('gamesGrid');
+            
+            if (this.dailyGames.length === 0) {
+                addLog('❌ No games to display');
+                gamesGrid.innerHTML = '<div style="color: #f44336; text-align: center; padding: 20px;">❌ No games available</div>';
+                return;
+            }
+            
+            addLog('🏗️ Building game cards...');
+            gamesGrid.innerHTML = '';
+            
+            this.dailyGames.forEach((game, index) => {
+                addLog(`   Creating card for: ${game.title}`);
+                
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = \`
+                    <h3 style="margin-top: 0; color: #4CAF50;">\${game.title}</h3>
+                    <img src="\${game.image}" alt="\${game.title}" 
+                         onload="addLog('✅ Image loaded: \${game.title}'); console.log('Image loaded:', this.src);" 
+                         onerror="addLog('❌ Image failed: \${game.image}'); console.error('Image failed:', this.src); this.style.border='3px solid #f44336'; this.style.background='#2a0a0a';">
+                    <p><strong>Recent Win:</strong> <span style="color: #FFD700;">\${game.recentWin.amount}</span> by <em>\${game.recentWin.player}</em></p>
+                    <p style="font-style: italic; font-size: 0.9em; color: #ccc;">"\${game.recentWin.comment}"</p>
+                    <p style="font-size: 0.8em; color: #888;">Image path: \${game.image}</p>
+                \`;
+                gamesGrid.appendChild(gameCard);
+            });
+            
+            addLog('✅ All game cards created and added to DOM');
+            
+            // Verify DOM changes
+            const cardCount = gamesGrid.children.length;
+            addLog(`🔍 Verification: ${cardCount} cards in DOM`);
+        }
+    }
+    
+    let gameInstance = null;
+    
+    async function reloadGames() {
+        addLog('🔄 Manual reload triggered');
+        try {
+            gameInstance = new FinalDebugGames();
+        } catch (error) {
+            addLog(`❌ Reload failed: ${error.message}`);
+        }
+    }
+    
+    // Auto-start when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        addLog('📄 DOM loaded, starting automatic game loading...');
+        reloadGames();
+    });
+    </script>
+</body>
+</html>

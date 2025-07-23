@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Workflow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .section { border: 1px solid #444; margin: 20px 0; padding: 20px; border-radius: 10px; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        .game-card { 
+            border: 1px solid #666; 
+            margin: 10px; 
+            padding: 15px; 
+            background: #333;
+            border-radius: 8px;
+            display: inline-block;
+            width: 300px;
+            vertical-align: top;
+        }
+        .game-card img { 
+            max-width: 100%; 
+            height: 120px; 
+            object-fit: cover; 
+            border-radius: 5px;
+        }
+        button { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #45a049; }
+        .test-results { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎮 Complete Games Workflow Test</h1>
+    
+    <div class="section">
+        <h2>1. API Connection Test</h2>
+        <div id="api-test" class="test-results">Testing...</div>
+        <button onclick="testAPI()">Retest API</button>
+    </div>
+    
+    <div class="section">
+        <h2>2. Image Loading Test</h2>
+        <div id="image-test" class="test-results">Testing...</div>
+        <button onclick="testImages()">Retest Images</button>
+    </div>
+    
+    <div class="section">
+        <h2>3. Games Display</h2>
+        <div id="games-display" class="test-results">Loading games...</div>
+        <button onclick="displayGames()">Reload Games</button>
+    </div>
+    
+    <div class="section">
+        <h2>4. Admin Panel Links</h2>
+        <div id="admin-links" class="test-results">
+            <a href="/admin/" target="_blank" style="color: #4CAF50;">Open Admin Panel</a><br>
+            <small class="info">Test adding new games through the admin interface</small>
+        </div>
+    </div>
+
+    <script>
+    async function testAPI() {
+        const result = document.getElementById('api-test');
+        try {
+            result.innerHTML = '<span class="info">Fetching from /api/games/daily...</span>';
+            
+            const response = await fetch('/api/games/daily');
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const games = await response.json();
+            result.innerHTML = `
+                <span class="success">✅ API Working!</span><br>
+                <span class="info">Received ${games.length} games</span><br>
+                <small>Response time: ${new Date().toLocaleTimeString()}</small>
+            `;
+            
+            return games;
+        } catch (error) {
+            result.innerHTML = `<span class="error">❌ API Error: ${error.message}</span>`;
+            return [];
+        }
+    }
+    
+    async function testImages() {
+        const result = document.getElementById('image-test');
+        try {
+            const games = await testAPI();
+            if (games.length === 0) {
+                result.innerHTML = '<span class="error">❌ No games to test images</span>';
+                return;
+            }
+            
+            result.innerHTML = '<span class="info">Testing image loading...</span>';
+            
+            let loadedImages = 0;
+            let failedImages = 0;
+            const totalImages = games.length;
+            
+            const promises = games.map(game => {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedImages++;
+                        resolve(true);
+                    };
+                    img.onerror = () => {
+                        failedImages++;
+                        resolve(false);
+                    };
+                    img.src = game.image;
+                });
+            });
+            
+            await Promise.all(promises);
+            
+            if (failedImages === 0) {
+                result.innerHTML = `<span class="success">✅ All ${totalImages} images loaded successfully!</span>`;
+            } else {
+                result.innerHTML = `
+                    <span class="error">⚠️ ${failedImages}/${totalImages} images failed to load</span><br>
+                    <span class="success">${loadedImages} images loaded successfully</span>
+                `;
+            }
+            
+        } catch (error) {
+            result.innerHTML = `<span class="error">❌ Image test error: ${error.message}</span>`;
+        }
+    }
+    
+    async function displayGames() {
+        const container = document.getElementById('games-display');
+        try {
+            container.innerHTML = '<span class="info">Loading games...</span>';
+            
+            const games = await testAPI();
+            if (games.length === 0) {
+                container.innerHTML = '<span class="error">❌ No games received from API</span>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="success">✅ Displaying ${games.length} games:</div>
+                <div style="margin-top: 15px;">
+                    ${games.map((game, index) => `
+                        <div class="game-card">
+                            <h3 style="margin-top: 0; color: #4CAF50;">${game.title}</h3>
+                            <img src="${game.image}" alt="${game.title}" 
+                                 onload="console.log('✅ Image loaded: ${game.title}')" 
+                                 onerror="console.error('❌ Image failed: ${game.image}'); this.style.border='3px solid #f44336'; this.alt='❌ Failed to load';">
+                            <p><strong>Recent Win:</strong> <span style="color: #FFD700;">${game.recentWin.amount}</span> by <em>${game.recentWin.player}</em></p>
+                            <p style="font-style: italic; font-size: 0.9em;">"${game.recentWin.comment}"</p>
+                            <p style="font-size: 0.8em; color: #888;">Image: ${game.image}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+        } catch (error) {
+            container.innerHTML = `<span class="error">❌ Display error: ${error.message}</span>`;
+        }
+    }
+    
+    // Run tests automatically
+    async function runAllTests() {
+        await testAPI();
+        await testImages();
+        await displayGames();
+    }
+    
+    // Start tests
+    runAllTests();
+    </script>
+</body>
+</html>

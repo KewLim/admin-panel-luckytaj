@@ -2211,6 +2211,25 @@ header h1 {
     transform: scale(1.2);
 }
 
+/* Prediction Message Styles */
+.prediction-message {
+    margin-bottom: 15px;
+}
+.prediction-text {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+.prediction-category {
+    color: #ff9a39;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: rgba(255, 154, 57, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
 .countdown-timer {
     display: flex;
     justify-content: center;

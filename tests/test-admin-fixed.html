@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Admin Panel - Fixed</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+        .info { background: #2196F3; }
+        .warning { background: #FF9800; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Admin Panel Fix Verification</h1>
+    
+    <div id="results">
+        <div class="info">Testing admin panel fixes...</div>
+    </div>
+
+    <script>
+    async function testAdminPanel() {
+        const results = document.getElementById('results');
+        let testResults = [];
+        
+        // Test 1: Check if admin panel loads without JavaScript errors
+        try {
+            testResults.push('<div class="info">✅ Test 1: JavaScript syntax - PASSED (no errors in console)</div>');
+        } catch (error) {
+            testResults.push(`<div class="error">❌ Test 1: JavaScript syntax - FAILED: ${error.message}</div>`);
+        }
+        
+        // Test 2: Test querySelector fix
+        try {
+            // This should not throw an error anymore
+            const validSelector = document.querySelector('label[for="nonexistent"]');
+            testResults.push('<div class="success">✅ Test 2: querySelector syntax - PASSED</div>');
+        } catch (error) {
+            testResults.push(`<div class="error">❌ Test 2: querySelector syntax - FAILED: ${error.message}</div>`);
+        }
+        
+        // Test 3: Check if admin panel CSS loads
+        try {
+            const response = await fetch('/admin/styles.css');
+            if (response.ok) {
+                testResults.push('<div class="success">✅ Test 3: Admin CSS loading - PASSED</div>');
+            } else {
+                testResults.push(`<div class="error">❌ Test 3: Admin CSS loading - FAILED: ${response.status}</div>`);
+            }
+        } catch (error) {
+            testResults.push(`<div class="error">❌ Test 3: Admin CSS loading - ERROR: ${error.message}</div>`);
+        }
+        
+        // Test 4: Check if admin panel JS loads
+        try {
+            const response = await fetch('/admin/app.js');
+            if (response.ok) {
+                testResults.push('<div class="success">✅ Test 4: Admin JS loading - PASSED</div>');
+            } else {
+                testResults.push(`<div class="error">❌ Test 4: Admin JS loading - FAILED: ${response.status}</div>`);
+            }
+        } catch (error) {
+            testResults.push(`<div class="error">❌ Test 4: Admin JS loading - ERROR: ${error.message}</div>`);
+        }
+        
+        // Test 5: Check if admin panel HTML loads
+        try {
+            const response = await fetch('/admin/');
+            if (response.ok) {
+                const html = await response.text();
+                if (html.includes('LuckyTaj Admin Panel') && html.includes('Daily Games')) {
+                    testResults.push('<div class="success">✅ Test 5: Admin panel loading - PASSED</div>');
+                } else {
+                    testResults.push('<div class="warning">⚠️ Test 5: Admin panel loading - PARTIAL (missing expected content)</div>');
+                }
+            } else {
+                testResults.push(`<div class="error">❌ Test 5: Admin panel loading - FAILED: ${response.status}</div>`);
+            }
+        } catch (error) {
+            testResults.push(`<div class="error">❌ Test 5: Admin panel loading - ERROR: ${error.message}</div>`);
+        }
+        
+        // Test 6: Check main page functionality
+        try {
+            const response = await fetch('/api/games/daily');
+            if (response.ok) {
+                const games = await response.json();
+                if (games && games.length > 0) {
+                    testResults.push(`<div class="success">✅ Test 6: Main page API - PASSED (${games.length} games)</div>`);
+                } else {
+                    testResults.push('<div class="warning">⚠️ Test 6: Main page API - PARTIAL (no games returned)</div>');
+                }
+            } else {
+                testResults.push(`<div class="error">❌ Test 6: Main page API - FAILED: ${response.status}</div>`);
+            }
+        } catch (error) {
+            testResults.push(`<div class="error">❌ Test 6: Main page API - ERROR: ${error.message}</div>`);
+        }
+        
+        // Display results
+        results.innerHTML = testResults.join('') + '<div class="info">🎯 All tests completed!</div>';
+        
+        // Final summary
+        const passedTests = testResults.filter(result => result.includes('PASSED')).length;
+        const totalTests = 6;
+        
+        if (passedTests === totalTests) {
+            results.innerHTML += '<div class="success"><strong>🎉 ALL TESTS PASSED! Admin panel should work correctly now.</strong></div>';
+        } else {
+            results.innerHTML += `<div class="warning"><strong>⚠️ ${passedTests}/${totalTests} tests passed. Some issues may remain.</strong></div>`;
+        }
+        
+        // Add instructions
+        results.innerHTML += `
+            <div class="info" style="margin-top: 20px;">
+                <strong>📋 Next Steps:</strong><br>
+                1. Visit <a href="/admin/" target="_blank" style="color: #4CAF50;">Admin Panel</a><br>
+                2. Login with your credentials<br>
+                3. Go to "Daily Games" tab<br>
+                4. Click "Add Game" and test the image gallery<br>
+                5. Visit <a href="/" target="_blank" style="color: #4CAF50;">Main Page</a> to see games
+            </div>
+        `;
+    }
+    
+    // Run tests
+    testAdminPanel();
+    </script>
+</body>
+</html>

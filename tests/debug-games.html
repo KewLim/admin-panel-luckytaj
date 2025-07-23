@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Games Loading</title>
+</head>
+<body>
+    <h1>Debug Games Loading</h1>
+    <div id="results"></div>
+    
+    <script>
+    async function debugGames() {
+        const results = document.getElementById('results');
+        
+        try {
+            console.log('Fetching games from API...');
+            const response = await fetch('/api/games/daily');
+            console.log('Response status:', response.status);
+            
+            if (response.ok) {
+                const games = await response.json();
+                console.log('Games loaded:', games);
+                
+                results.innerHTML = `
+                    <h2>✅ API Response (${games.length} games):</h2>
+                    <pre>${JSON.stringify(games, null, 2)}</pre>
+                    
+                    <h2>Game Details:</h2>
+                    ${games.map(game => `
+                        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+                            <h3>${game.title}</h3>
+                            <p><strong>Image:</strong> ${game.image}</p>
+                            <p><strong>Recent Win:</strong> ${game.recentWin.amount} by ${game.recentWin.player}</p>
+                            <p><strong>Comment:</strong> "${game.recentWin.comment}"</p>
+                            <img src="${game.image}" style="max-width: 200px;" onerror="this.style.border='2px solid red'; this.alt='Image failed to load: ${game.image}'">
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                results.innerHTML = `<h2>❌ API Error:</h2><p>Status: ${response.status}</p>`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            results.innerHTML = `<h2>❌ Network Error:</h2><p>${error.message}</p>`;
+        }
+    }
+    
+    debugGames();
+    </script>
+</body>
+</html>

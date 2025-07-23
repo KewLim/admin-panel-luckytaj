@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=390, initial-scale=1.0, user-scalable=no">
+    <title>Daily Trending Games - Spin Wheel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="/luckytaj-favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/luckytaj-favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/luckytaj-favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/luckytaj-favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/luckytaj-favicon/site.webmanifest" />
+</head>
+<body>
+    <div class="mobile-wrapper">
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <img src="https://www.luckytaj.com/luckytaj/img/logo.png" alt="LuckyTaj" class="logo-img">
+            </div>
+            <div class="navbar-menu">
+
+            </div>
+            <div class="navbar-actions">
+                <button class="login-btn">Login</button>
+                <a href="https://www.luckytaj.com/en-in" class="play-now-btn" target="_blank">Play Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h2>🎰 Today's Big Win Games</h2>
+            <p class="date-display" id="dateDisplay"></p>
+        </header>
+
+        <!-- Highlight Video Section -->
+        <section class="highlight-video-section">
+            <div class="video-container">
+                <h3 class="video-title">🔥 Watch Amazing Wins in Action!</h3>
+                <div class="video-wrapper">
+                    <!-- Loading skeleton for video -->
+                    <div class="video-skeleton" id="videoSkeleton">
+                        <div class="skeleton-content">
+                            <div class="skeleton-play-btn"></div>
+                            <div class="skeleton-text"></div>
+                        </div>
+                    </div>
+                    
+                    <iframe 
+                        data-src="" 
+                        src=""
+                        title="LuckyTaj Amazing Wins" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen
+                        class="highlight-video lazy-load"
+                        loading="lazy">
+                    </iframe>
+                    <div class="video-overlay">
+                        <div class="play-indicator">▶</div>
+                    </div>
+                </div>
+                <p class="video-description">Experience the thrill of big wins and exciting gameplay!</p>
+            </div>
+        </section>
+
+        <div class="spin-wheel-container">
+            <div class="slot-machine">
+                <div class="reel" id="reel1">
+                    <div class="reel-item"></div>
+                </div>
+
+                <div class="reel" id="reel2">
+                    <div class="reel-item"></div>
+                </div>
+
+                <div class="reel" id="reel3">
+                    <div class="reel-item"></div>
+                </div>
+            </div>
+            <button class="spin-button" id="spinButton" style="display: none;">Spin Again</button>
+        </div>
+
+        <div class="trending-games" id="trendingGames" style="display: none;">
+            <div class="trending-header">
+                <div class="trending-title">
+                    <h2><a href="https://www.luckytaj.com/en-in/slot" target="_blank" style="color: inherit; text-decoration: none;">Your Daily Trending Games</a></h2>
+                </div>
+                <div class="trending-actions">
+                    <button class="share-button" id="shareButton" onclick="window.dailyGames.shareToWhatsAppDirect()">
+                        <span class="share-icon">📤</span>
+                        <span class="share-text">Share Tips</span>
+                    </button>
+                </div>
+            </div>
+            
+            <a href="https://www.luckytaj.com/en-in/slot">
+                <div class="games-grid" id="gamesGrid">
+                    <!-- Game cards will be dynamically inserted here -->
+                </div>
+            </a>
+            
+            <!-- Tournament Dashboard -->
+            <div class="tournament-dashboard" id="tournamentDashboard">
+                <div class="tournament-header">
+                    <div class="tournament-title">
+                        <h3>Live Tournament Winners 🇮🇳 </h3>
+                        <span class="live-indicator">● LIVE</span>
+                    </div>
+                    <div class="tournament-stats">
+                        <span class="total-winners" id="totalWinners">₹2,45,680 Won Today</span>
+                    </div>
+                </div>
+                
+                <!-- Tournament TV Section -->
+                <div class="tournament-tv" id="tournamentTV">
+                    <div class="tv-header">
+                        <h4>📺 Live Tournament Stream</h4>
+                        <span class="live-indicator tv-live">● LIVE</span>
+                    </div>
+                    <div class="tv-container">
+                        <iframe 
+                            id="tournamentTvVideo"
+                            src=""
+                            title="Tournament Live Stream" 
+                            frameborder="0" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen
+                            class="tv-video">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <div class="winners-container">
+                    <div class="winners-list" id="winnersList">
+                        <!-- Dynamic winner records will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="tournament-cta">
+                    <button class="join-tournament-btn" onclick="window.open('https://www.luckytaj.com/en-in/slot', '_blank')">
+                        <span class="cta-text">Join Tournament Now!</span>
+                        <span class="cta-prize">Win up to ₹10,00,000.00!</span>
+                    </button>
+                </div>
+                
+                <!-- Floating Character -->
+                <div class="floating-character">
+                    <img src="https://www.pngarts.com/files/13/Clash-Royale-Characters-PNG-High-Quality-Image.png" alt="Lucky Character" class="character-img">
+                </div>
+            </div>
+            
+            <!-- Module 1: WinnerBoard -->
+            <div class="winner-board-section" id="winnerBoard">
+                <div class="module-header">
+                    <h3>🏆 Kal Ke Top Winners</h3>
+                    <span class="topic-indicator">● ON GOING</span>
+                </div>
+                <div class="winners-grid" id="winnersGrid">
+                    <!-- Winner cards will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Module 4: JackpotCountdown -->
+            <div class="jackpot-countdown" id="jackpotCountdown">
+                <div class="jackpot-header">
+                    <span class="prediction-badge">🔮 SYSTEM PREDICTION</span>
+                </div>
+                <div class="jackpot-message-container" id="jackpotMessageContainer">
+                    <div class="jackpot-message" id="jackpotMessage">
+                        Loading prediction messages...
+                    </div>
+                    <div class="message-indicator" id="messageIndicator">
+                        <span class="message-count">1/1</span>
+                    </div>
+                </div>
+                <div class="countdown-timer" id="countdownTimer">
+                    <div class="timer-segment">
+                        <span class="timer-value" id="hours">02</span>
+                        <span class="timer-label">Hours</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-segment">
+                        <span class="timer-value" id="minutes">45</span>
+                        <span class="timer-label">Minutes</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-segment">
+                        <span class="timer-value" id="seconds">33</span>
+                        <span class="timer-label">Seconds</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Module 2: CommentSection -->
+            <div class="comment-section" id="commentSection">
+                <div class="module-header">
+                    <h3>💬 Hot Topics</h3>
+                    <span class="topic-indicator">TRENDING</span>
+                </div>
+                <div class="topic-title" id="topicTitle">
+                    Aaj raat ka sabse paisa kamane wala game?
+                </div>
+                <div class="comments-container" id="commentsContainer">
+                    <!-- Comments will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Module 3: LiveInteraction -->
+            <div class="live-interaction" id="liveInteraction">
+                <div class="module-header">
+                    <h3>💬 Live Chat</h3>
+                    <span class="live-indicator chat-live">● LIVE</span>
+                </div>
+                <div class="live-feed" id="liveFeed">
+                    <!-- Live chat messages will be dynamically inserted here -->
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+    </div>
+</body>
+</html>

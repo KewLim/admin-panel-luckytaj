@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend Games Loading</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .game { border: 1px solid #ccc; margin: 10px; padding: 10px; display: inline-block; width: 300px; }
+        .game img { max-width: 200px; height: 120px; object-fit: cover; }
+        .error { color: red; font-weight: bold; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Frontend Games Loading Test</h1>
+    <div id="status">Loading...</div>
+    <div id="games-container"></div>
+
+    <script>
+    async function testGamesLoading() {
+        const status = document.getElementById('status');
+        const container = document.getElementById('games-container');
+        
+        try {
+            status.innerHTML = '<span class="success">Fetching games from /api/games/daily...</span>';
+            
+            const response = await fetch('/api/games/daily');
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const games = await response.json();
+            console.log('Games received:', games);
+            
+            if (!games || games.length === 0) {
+                status.innerHTML = '<span class="error">No games returned from API</span>';
+                return;
+            }
+            
+            status.innerHTML = `<span class="success">Successfully loaded ${games.length} games!</span>`;
+            
+            games.forEach((game, index) => {
+                const gameDiv = document.createElement('div');
+                gameDiv.className = 'game';
+                gameDiv.innerHTML = `
+                    <h3>${game.title}</h3>
+                    <img src="${game.image}" alt="${game.title}" 
+                         onload="console.log('Image loaded: ${game.image}')" 
+                         onerror="console.error('Image failed: ${game.image}'); this.style.border='2px solid red';">
+                    <p><strong>Recent Win:</strong> ${game.recentWin.amount} by ${game.recentWin.player}</p>
+                    <p><strong>Comment:</strong> "${game.recentWin.comment}"</p>
+                    <p><strong>Image URL:</strong> ${game.image}</p>
+                `;
+                container.appendChild(gameDiv);
+            });
+            
+        } catch (error) {
+            console.error('Error:', error);
+            status.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+        }
+    }
+    
+    // Test immediately and also simulate the DailyTrendingGames class behavior
+    testGamesLoading();
+    
+    // Also test how the original script loads games
+    window.testOriginalMethod = async function() {
+        try {
+            console.log('Testing original loadGamesData method...');
+            
+            const response = await fetch('/api/games/daily');
+            if (response.ok) {
+                const dailyGames = await response.json();
+                
+                if (dailyGames && dailyGames.length > 0) {
+                    const gamesData = { gamesPool: dailyGames };
+                    console.log('Games data loaded from backend:', dailyGames.length, 'games');
+                    
+                    // Simulate generateDailyGames logic
+                    let finalGames;
+                    if (gamesData.gamesPool.length <= 3) {
+                        finalGames = [...gamesData.gamesPool];
+                        console.log('Daily games loaded directly from backend (pre-selected):', finalGames);
+                    }
+                    
+                    return finalGames;
+                }
+            }
+        } catch (error) {
+            console.error('Original method error:', error);
+        }
+    };
+    </script>
+</body>
+</html>

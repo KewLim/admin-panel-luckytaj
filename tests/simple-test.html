@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Games Test</title>
+    <style>
+        .trending-games { 
+            background: #333; 
+            color: white; 
+            padding: 20px; 
+            margin: 20px; 
+            border-radius: 10px;
+        }
+        .game-card { 
+            border: 1px solid #666; 
+            margin: 10px; 
+            padding: 10px; 
+            background: #444;
+            border-radius: 5px;
+        }
+        .game-card img { 
+            max-width: 200px; 
+            height: 120px; 
+            object-fit: cover; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Games Display Test</h1>
+    
+    <div class="trending-games" id="trendingGames">
+        <h2>Your Daily Trending Games</h2>
+        <div id="gamesGrid">
+            <div style="color: yellow;">Loading games...</div>
+        </div>
+    </div>
+
+    <script>
+    async function loadAndShowGames() {
+        const gamesGrid = document.getElementById('gamesGrid');
+        
+        try {
+            console.log('Fetching games...');
+            const response = await fetch('/api/games/daily');
+            console.log('Response:', response.status);
+            
+            if (!response.ok) {
+                gamesGrid.innerHTML = `<div style="color: red;">API Error: ${response.status}</div>`;
+                return;
+            }
+            
+            const games = await response.json();
+            console.log('Games received:', games);
+            
+            if (!games || games.length === 0) {
+                gamesGrid.innerHTML = '<div style="color: red;">No games found!</div>';
+                return;
+            }
+            
+            gamesGrid.innerHTML = '';
+            
+            games.forEach((game, index) => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = `
+                    <h3>${game.title}</h3>
+                    <img src="${game.image}" alt="${game.title}" 
+                         onload="console.log('Image loaded: ${game.title}')" 
+                         onerror="console.error('Image failed: ${game.image}'); this.style.border='3px solid red';">
+                    <p><strong>Recent Win:</strong> ${game.recentWin.amount} by ${game.recentWin.player}</p>
+                    <p>"${game.recentWin.comment}"</p>
+                `;
+                gamesGrid.appendChild(gameCard);
+            });
+            
+            console.log('Games displayed successfully!');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            gamesGrid.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+        }
+    }
+    
+    // Load games immediately
+    loadAndShowGames();
+    </script>
+</body>
+</html>

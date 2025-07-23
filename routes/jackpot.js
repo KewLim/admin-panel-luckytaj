@@ -29,15 +29,16 @@ router.get('/active', async (req, res) => {
 // Add new jackpot message
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const { message, category } = req.body;
+        const { message, category, predictionTime } = req.body;
 
-        if (!message || !category) {
-            return res.status(400).json({ error: 'Message and category are required' });
+        if (!message || !category || !predictionTime) {
+            return res.status(400).json({ error: 'Message, category, and prediction time are required' });
         }
 
         const jackpotMessage = new JackpotMessage({
             message,
             category,
+            predictionTime,
             createdBy: req.admin.id
         });
 
@@ -56,7 +57,7 @@ router.post('/', authMiddleware, async (req, res) => {
 // Update jackpot message
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
-        const { message, category, active } = req.body;
+        const { message, category, predictionTime, active } = req.body;
         
         const jackpotMessage = await JackpotMessage.findById(req.params.id);
         if (!jackpotMessage) {
@@ -65,6 +66,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
         jackpotMessage.message = message || jackpotMessage.message;
         jackpotMessage.category = category || jackpotMessage.category;
+        jackpotMessage.predictionTime = predictionTime || jackpotMessage.predictionTime;
         if (typeof active !== 'undefined') {
             jackpotMessage.active = active;
         }

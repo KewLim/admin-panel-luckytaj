@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuckyTaj - Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .doc-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .doc-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 5px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .doc-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .nav-link {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        .description {
+            color: #E0E0E0;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+        .file-list li {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .back-links {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 LuckyTaj Documentation</h1>
+        
+        <div class="doc-section">
+            <h2>📖 Main Documentation</h2>
+            <p class="description">Core documentation for the LuckyTaj Daily Games System.</p>
+            
+            <ul class="file-list">
+                <li>
+                    <strong>📋 README.md</strong> - Main project documentation
+                    <p>Complete overview of the project structure, features, and setup instructions.</p>
+                </li>
+                <li>
+                    <strong>🔧 README-backend.md</strong> - Backend setup guide
+                    <p>Detailed backend configuration, API endpoints, and database setup.</p>
+                </li>
+                <li>
+                    <strong>👨‍💼 ADMIN-PANEL-USER-GUIDE.md</strong> - Admin panel guide
+                    <p>Step-by-step guide for using the admin panel to manage games and content.</p>
+                </li>
+                <li>
+                    <strong>📝 README2.md</strong> - Additional documentation
+                    <p>Supplementary documentation and technical details.</p>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="doc-section">
+            <h2>🚀 Quick Reference</h2>
+            <div class="description">
+                <h3>🌐 URLs:</h3>
+                <ul>
+                    <li><strong>Main Page:</strong> http://localhost:3001/</li>
+                    <li><strong>Admin Panel:</strong> http://localhost:3001/admin/</li>
+                    <li><strong>Test Suite:</strong> http://localhost:3001/tests/</li>
+                    <li><strong>Documentation:</strong> http://localhost:3001/docs/</li>
+                </ul>
+                
+                <h3>📁 Key Directories:</h3>
+                <ul>
+                    <li><strong>/admin-panel/</strong> - Admin interface files</li>
+                    <li><strong>/images/</strong> - Game images (48+ files)</li>
+                    <li><strong>/models/</strong> - Database models</li>
+                    <li><strong>/routes/</strong> - API endpoints</li>
+                    <li><strong>/tests/</strong> - Test files</li>
+                </ul>
+                
+                <h3>🎮 Current Status:</h3>
+                <ul>
+                    <li><strong>Games in DB:</strong> 17 active games</li>
+                    <li><strong>Images Available:</strong> 48+ game images</li>
+                    <li><strong>API Status:</strong> ✅ Working</li>
+                    <li><strong>Admin Panel:</strong> ✅ Functional</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="back-links">
+            <h3>🌐 Navigation</h3>
+            <a href="/" class="doc-link nav-link">🏠 Main Page</a>
+            <a href="/admin/" class="doc-link nav-link">👨‍💼 Admin Panel</a>
+            <a href="/tests/" class="doc-link nav-link">🧪 Test Suite</a>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <small>LuckyTaj Daily Games System - Documentation Center</small>
+        </div>
+    </div>
+</body>
+</html>

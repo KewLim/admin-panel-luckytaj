@@ -1,111 +1,153 @@
 const express = require('express');
 const router = express.Router();
 const GameConfig = require('../models/GameConfig');
+const Game = require('../models/Game');
 const authMiddleware = require('../middleware/auth');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Get current games configuration
-router.get('/config', authMiddleware, async (req, res) => {
+// Get available images from images folder
+router.get('/images', authMiddleware, async (req, res) => {
     try {
-        let config = await GameConfig.findOne().sort({ createdAt: -1 });
+        const imagesPath = path.join(__dirname, '../images');
+        const files = await fs.readdir(imagesPath);
+        const imageFiles = files.filter(file => 
+            /\.(jpg|jpeg|png|webp|gif)$/i.test(file)
+        );
         
-        if (!config) {
-            config = new GameConfig({
-                totalGames: 6,
-                refreshTime: '12:00',
-                createdBy: req.admin.id
-            });
-            await config.save();
-        }
-
-        res.json(config);
+        res.json(imageFiles.map(file => ({
+            filename: file,
+            path: `images/${file}`,
+            name: file.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        })));
     } catch (error) {
-        console.error('Error fetching games config:', error);
-        res.status(500).json({ error: 'Failed to fetch games configuration' });
+        console.error('Error fetching game images:', error);
+        res.status(500).json({ error: 'Failed to fetch game images' });
     }
 });
 
-// Update games configuration
-router.post('/config', authMiddleware, async (req, res) => {
+// Get all games from database
+router.get('/list', authMiddleware, async (req, res) => {
     try {
-        const { totalGames, refreshTime } = req.body;
+        const games = await Game.find().sort({ order: 1, createdAt: -1 });
+        res.json(games);
+    } catch (error) {
+        console.error('Error fetching games:', error);
+        res.status(500).json({ error: 'Failed to fetch games' });
+    }
+});
 
-        if (!totalGames || !refreshTime) {
-            return res.status(400).json({ error: 'Total games and refresh time are required' });
+// Add new game with selected image
+router.post('/add', authMiddleware, async (req, res) => {
+    try {
+        const { title, selectedImage, winAmount, winPlayer, winComment } = req.body;
+
+        if (!title || !selectedImage) {
+            return res.status(400).json({ error: 'Game title and image are required' });
         }
 
-        if (totalGames < 3 || totalGames > 12) {
-            return res.status(400).json({ error: 'Total games must be between 3 and 12' });
-        }
-
-        const config = new GameConfig({
-            totalGames,
-            refreshTime,
+        const game = new Game({
+            title,
+            image: selectedImage, // Store the filename from images folder
+            recentWin: {
+                amount: winAmount || '$5,000',
+                player: winPlayer || 'Lucky***Player',
+                comment: winComment || 'Amazing game! Just won big!'
+            },
             createdBy: req.admin.id
         });
 
-        await config.save();
+        await game.save();
 
-        res.json({ 
-            message: 'Games configuration updated successfully',
-            config 
+        res.status(201).json({ 
+            message: 'Game added successfully',
+            game 
         });
     } catch (error) {
-        console.error('Error updating games config:', error);
-        res.status(500).json({ error: 'Failed to update games configuration' });
+        console.error('Error adding game:', error);
+        res.status(500).json({ error: 'Failed to add game' });
     }
 });
 
-// Get current games status
-router.get('/status', authMiddleware, async (req, res) => {
+// Update game
+router.put('/:id', authMiddleware, async (req, res) => {
     try {
-        const gamesPath = path.join(__dirname, '../games-data.json');
+        const { title, recentWin, active } = req.body;
         
-        try {
-            const gamesData = await fs.readFile(gamesPath, 'utf8');
-            const games = JSON.parse(gamesData);
-            
-            const config = await GameConfig.findOne().sort({ createdAt: -1 });
-            
-            res.json({
-                totalGames: games.gamesPool?.length || 0,
-                configuredGames: config?.totalGames || 6,
-                lastRefresh: config?.lastRefresh || new Date(),
-                refreshTime: config?.refreshTime || '12:00'
-            });
-        } catch (fileError) {
-            res.json({
-                totalGames: 0,
-                configuredGames: 6,
-                lastRefresh: new Date(),
-                refreshTime: '12:00',
-                error: 'Games data file not found'
-            });
+        const game = await Game.findById(req.params.id);
+        if (!game) {
+            return res.status(404).json({ error: 'Game not found' });
         }
+
+        game.title = title || game.title;
+        game.recentWin = recentWin || game.recentWin;
+        if (typeof active !== 'undefined') game.active = active;
+
+        await game.save();
+
+        res.json({ 
+            message: 'Game updated successfully',
+            game 
+        });
     } catch (error) {
-        console.error('Error fetching games status:', error);
-        res.status(500).json({ error: 'Failed to fetch games status' });
+        console.error('Error updating game:', error);
+        res.status(500).json({ error: 'Failed to update game' });
     }
 });
 
-// Force refresh games pool
-router.post('/refresh', authMiddleware, async (req, res) => {
+// Delete game
+router.delete('/:id', authMiddleware, async (req, res) => {
     try {
-        const config = await GameConfig.findOne().sort({ createdAt: -1 });
-        
-        if (config) {
-            config.lastRefresh = new Date();
-            await config.save();
+        const game = await Game.findById(req.params.id);
+        if (!game) {
+            return res.status(404).json({ error: 'Game not found' });
         }
 
-        res.json({ 
-            message: 'Games pool refreshed successfully',
-            lastRefresh: new Date()
-        });
+        await Game.findByIdAndDelete(req.params.id);
+
+        res.json({ message: 'Game deleted successfully' });
     } catch (error) {
-        console.error('Error refreshing games:', error);
-        res.status(500).json({ error: 'Failed to refresh games pool' });
+        console.error('Error deleting game:', error);
+        res.status(500).json({ error: 'Failed to delete game' });
+    }
+});
+
+// Get 3 random active games for frontend (public endpoint)
+router.get('/daily', async (req, res) => {
+    try {
+        const activeGames = await Game.find({ active: true });
+        
+        if (activeGames.length === 0) {
+            // Fallback to games-data.json if no games in database
+            try {
+                const gamesPath = path.join(__dirname, '../games-data.json');
+                const gamesData = await fs.readFile(gamesPath, 'utf8');
+                const fallbackGames = JSON.parse(gamesData);
+                // Select 3 random games from fallback
+                const shuffled = (fallbackGames.gamesPool || []).sort(() => 0.5 - Math.random());
+                return res.json(shuffled.slice(0, 3));
+            } catch (error) {
+                return res.json([]);
+            }
+        }
+        
+        // Randomly select 3 games from active games
+        const shuffledGames = activeGames.sort(() => 0.5 - Math.random());
+        const selectedGames = shuffledGames.slice(0, 3);
+        
+        // Format for frontend compatibility
+        const formattedGames = selectedGames.map((game, index) => ({
+            id: index + 1,
+            title: game.title,
+            image: `images/${game.image}`,
+            screenshot: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMkYxQjY5Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmaWxsPSIjRkZENzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjI0Ij7wn5qoIEpBQ0tQT1QhIPCfmpg8L3RleHQ+Cjx0ZXh0IHg9IjE1MCIgeT0iMTMwIiBmaWxsPSIjRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2Ij4ke2dhbWUucmVjZW50V2luLmFtb3VudH08L3RleHQ+Cjwvc3ZnPg==`,
+            recentWin: game.recentWin
+        }));
+        
+        res.json(formattedGames);
+    } catch (error) {
+        console.error('Error fetching daily games:', error);
+        res.status(500).json({ error: 'Failed to fetch daily games' });
     }
 });
 

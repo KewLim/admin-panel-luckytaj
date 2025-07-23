@@ -71,6 +71,21 @@ class AdminPanel {
             e.preventDefault();
             this.handleVideoUpload();
         });
+
+        document.getElementById('winnerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleWinnerSubmit();
+        });
+
+        document.getElementById('jackpotForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleJackpotSubmit();
+        });
+
+        document.getElementById('gameForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleGameSubmit();
+        });
     }
 
     async verifyToken() {
@@ -858,26 +873,18 @@ class AdminPanel {
         if (!section.classList.contains('active')) return;
 
         try {
-            // Load games status
-            const statusResponse = await fetch(`${this.baseURL}/api/games/status`, {
+            // Load games list
+            const gamesResponse = await fetch(`${this.baseURL}/api/games/list`, {
                 headers: { 'Authorization': `Bearer ${this.token}` }
             });
             
-            if (statusResponse.ok) {
-                const status = await statusResponse.json();
-                this.renderGamesStatus(status);
+            if (gamesResponse.ok) {
+                const games = await gamesResponse.json();
+                this.renderGamesList(games);
             }
-
-            // Load config
-            const configResponse = await fetch(`${this.baseURL}/api/games/config`, {
-                headers: { 'Authorization': `Bearer ${this.token}` }
-            });
             
-            if (configResponse.ok) {
-                const config = await configResponse.json();
-                document.getElementById('totalGames').value = config.totalGames;
-                document.getElementById('refreshTime').value = config.refreshTime;
-            }
+            // Load available images for modals
+            await this.loadGameImages();
         } catch (error) {
             this.showError('Failed to load games data');
         }
@@ -945,6 +952,277 @@ class AdminPanel {
             } else {
                 const error = await response.json();
                 this.showError(error.error || 'Update failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    renderGamesList(games) {
+        const container = document.getElementById('gamesList');
+        
+        if (games.length === 0) {
+            container.innerHTML = '<div class="empty-state">No games found. Add your first game!</div>';
+            return;
+        }
+
+        container.innerHTML = games.map(game => `
+            <div class="game-item">
+                <div class="game-images">
+                    <img src="images/${game.image}" alt="${game.title}" class="game-image-preview" title="Game Image">
+                </div>
+                <div class="game-info">
+                    <h4 class="game-title">${game.title}</h4>
+                    <div class="game-win-info">
+                        <strong>${game.recentWin.amount}</strong> by ${game.recentWin.player}
+                    </div>
+                    <div class="game-win-comment" style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+                        "${game.recentWin.comment.substring(0, 80)}${game.recentWin.comment.length > 80 ? '...' : ''}"
+                    </div>
+                    <div class="game-created" style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
+                        Added: ${new Date(game.createdAt).toLocaleDateString()}
+                    </div>
+                </div>
+                <div class="game-actions">
+                    <button class="btn ${game.active ? 'btn-success' : 'btn-outline-secondary'} btn-sm" 
+                            onclick="adminPanel.toggleGame('${game._id}', ${!game.active})">
+                        ${game.active ? 'Active' : 'Activate'}
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="adminPanel.editGame('${game._id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="adminPanel.deleteGame('${game._id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async loadGameImages() {
+        if (this.gameImages) return; // Already loaded
+        
+        try {
+            const response = await fetch(`${this.baseURL}/api/games/images`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+            
+            if (response.ok) {
+                this.gameImages = await response.json();
+                console.log('Loaded game images:', this.gameImages.length);
+            }
+        } catch (error) {
+            console.error('Error loading game images:', error);
+        }
+    }
+
+    renderImageGallery() {
+        const gallery = document.getElementById('imageGallery');
+        if (!this.gameImages) return;
+        
+        gallery.innerHTML = this.gameImages.map(image => `
+            <div class="image-gallery-item" data-image="${image.filename}" onclick="adminPanel.selectImage('${image.filename}', '${image.name}', '${image.path}')">
+                <img src="${image.path}" alt="${image.name}">
+                <div class="image-name">${image.name}</div>
+            </div>
+        `).join('');
+    }
+
+    selectImage(filename, name, path) {
+        // Remove previous selection
+        document.querySelectorAll('.image-gallery-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        // Add selection to clicked item
+        const selectedItem = document.querySelector(`[data-image="${filename}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('selected');
+        }
+        
+        // Update hidden field and preview
+        document.getElementById('selectedImage').value = filename;
+        document.getElementById('selectedImageName').textContent = name;
+        document.getElementById('selectedImageImg').src = path;
+        document.getElementById('selectedImagePreview').style.display = 'block';
+    }
+
+    async openGameModal(gameId = null) {
+        await this.loadGameImages(); // Ensure images are loaded
+        
+        const modal = document.getElementById('gameModal');
+        const form = document.getElementById('gameForm');
+        
+        // Reset form and gallery
+        form.reset();
+        document.getElementById('gameId').value = '';
+        document.getElementById('selectedImage').value = '';
+        document.getElementById('selectedImagePreview').style.display = 'none';
+        
+        // Clear gallery selections
+        document.querySelectorAll('.image-gallery-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        if (gameId) {
+            // Edit mode - fetch and populate form
+            try {
+                const response = await fetch(`${this.baseURL}/api/games/list`, {
+                    headers: { 'Authorization': `Bearer ${this.token}` }
+                });
+                const games = await response.json();
+                const game = games.find(g => g._id === gameId);
+                
+                if (game) {
+                    document.getElementById('gameId').value = game._id;
+                    document.getElementById('gameTitle').value = game.title;
+                    document.getElementById('winAmount').value = game.recentWin.amount;
+                    document.getElementById('winPlayer').value = game.recentWin.player;
+                    document.getElementById('winComment').value = game.recentWin.comment;
+                    
+                    // Pre-select the current image and disable gallery for edit mode
+                    const gallery = document.getElementById('imageGallery');
+                    gallery.style.display = 'none';
+                    document.getElementById('selectedImage').value = game.image;
+                    document.getElementById('selectedImageName').textContent = game.image.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').replace(/-/g, ' ');
+                    document.getElementById('selectedImageImg').src = `images/${game.image}`;
+                    document.getElementById('selectedImagePreview').style.display = 'block';
+                    
+                    // Add note for edit mode
+                    const galleryLabel = document.querySelector('label[for="imageGallery"]');
+                    if (galleryLabel) {
+                        galleryLabel.innerHTML = 'Current Image <small style="color: #666;">(Image cannot be changed in edit mode)</small>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading game for edit:', error);
+            }
+        } else {
+            // Add mode - show gallery
+            document.getElementById('imageGallery').style.display = 'grid';
+            this.renderImageGallery();
+            
+            // Reset label
+            const galleryLabel = document.querySelector('label[for="imageGallery"]');
+            if (galleryLabel) {
+                galleryLabel.textContent = 'Select Game Image';
+            }
+        }
+        
+        modal.style.display = 'block';
+    }
+
+    closeGameModal() {
+        document.getElementById('gameModal').style.display = 'none';
+    }
+
+    async handleGameSubmit() {
+        const form = document.getElementById('gameForm');
+        const gameId = document.getElementById('gameId').value;
+
+        try {
+            this.showLoading();
+            
+            if (gameId) {
+                // Edit mode - JSON data for updates
+                const gameData = {
+                    title: form.title.value,
+                    recentWin: {
+                        amount: form.winAmount.value || '$5,000',
+                        player: form.winPlayer.value || 'Lucky***Player',
+                        comment: form.winComment.value || 'Amazing game! Just won big!'
+                    }
+                };
+                
+                const response = await fetch(`${this.baseURL}/api/games/${gameId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`
+                    },
+                    body: JSON.stringify(gameData)
+                });
+
+                if (response.ok) {
+                    this.closeGameModal();
+                    await this.loadGamesData();
+                    this.showSuccess('Game updated successfully!');
+                } else {
+                    const error = await response.json();
+                    this.showError(error.error || 'Update failed');
+                }
+            } else {
+                // Add mode - FormData for file upload
+                const formData = new FormData(form);
+                
+                const response = await fetch(`${this.baseURL}/api/games/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    this.closeGameModal();
+                    await this.loadGamesData();
+                    this.showSuccess('Game added successfully!');
+                } else {
+                    const error = await response.json();
+                    this.showError(error.error || 'Upload failed');
+                }
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async toggleGame(gameId, newActiveState) {
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/games/${gameId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({ active: newActiveState })
+            });
+            
+            if (response.ok) {
+                await this.loadGamesData();
+                this.showSuccess(`Game ${newActiveState ? 'activated' : 'deactivated'} successfully!`);
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Update failed');
+            }
+        } catch (error) {
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async editGame(gameId) {
+        await this.openGameModal(gameId);
+    }
+
+    async deleteGame(gameId) {
+        if (!confirm('Are you sure you want to delete this game?')) return;
+
+        try {
+            this.showLoading();
+            const response = await fetch(`${this.baseURL}/api/games/${gameId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            if (response.ok) {
+                await this.loadGamesData();
+                this.showSuccess('Game deleted successfully!');
+            } else {
+                const error = await response.json();
+                this.showError(error.error || 'Delete failed');
             }
         } catch (error) {
             this.showError('Network error. Please try again.');
@@ -1146,7 +1424,10 @@ class AdminPanel {
             <div class="message-item">
                 <div class="message-content">
                     <div class="message-text">${message.message}</div>
-                    <span class="message-category">${message.category}</span>
+                    <div class="message-meta">
+                        <span class="message-category">${message.category}</span>
+                        <span class="message-time">⏰ ${this.formatPredictionTime(message.predictionTime)}</span>
+                    </div>
                 </div>
                 <div class="message-actions">
                     <button class="btn ${message.active ? 'btn-success' : 'btn-outline-secondary'} btn-sm" 
@@ -1177,6 +1458,7 @@ class AdminPanel {
                     document.getElementById('jackpotId').value = message._id;
                     document.getElementById('jackpotMessage').value = message.message;
                     document.getElementById('jackpotCategory').value = message.category;
+                    document.getElementById('jackpotTime').value = message.predictionTime || '';
                 }
             } catch (error) {
                 console.error('Error loading message for edit:', error);
@@ -1206,7 +1488,8 @@ class AdminPanel {
         
         const data = {
             message: formData.get('message'),
-            category: formData.get('category')
+            category: formData.get('category'),
+            predictionTime: formData.get('predictionTime')
         };
 
         try {
@@ -1289,6 +1572,18 @@ class AdminPanel {
         }
     }
 
+    formatPredictionTime(predictionTime) {
+        if (!predictionTime) return 'No time set';
+        
+        const timeMap = {
+            '2:00': '2:00 AM',
+            '10:00': '10:00 AM', 
+            '17:00': '5:00 PM'
+        };
+        
+        return timeMap[predictionTime] || predictionTime;
+    }
+
     async editJackpotMessage(messageId) {
         await this.openJackpotModal(messageId);
     }
@@ -1338,6 +1633,14 @@ function closeJackpotModal() {
 
 function refreshDailyGames() {
     adminPanel.refreshDailyGames();
+}
+
+function openGameModal() {
+    adminPanel.openGameModal();
+}
+
+function closeGameModal() {
+    adminPanel.closeGameModal();
 }
 
 function updateGamesConfig() {

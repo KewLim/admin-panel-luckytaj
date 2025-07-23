@@ -43,9 +43,15 @@ app.use('/luckytaj-favicon', express.static(path.join(__dirname, 'luckytaj-favic
 // Serve admin panel static files
 app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
 
+// Serve test files
+app.use('/tests', express.static(path.join(__dirname, 'tests')));
+
+// Serve documentation
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
+
 // Serve main frontend files
 app.use(express.static(__dirname, { 
-    ignore: ['node_modules', 'admin-panel', 'uploads', 'models', 'routes', 'middleware', 'scripts']
+    ignore: ['node_modules', 'admin-panel', 'uploads', 'models', 'routes', 'middleware', 'scripts', 'tests', 'docs', 'temp']
 }));
 
 // Database connection

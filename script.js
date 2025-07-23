@@ -77,7 +77,7 @@ class DailyTrendingGames {
         this.setupLazyLoading();
         await this.loadGamesData();
         this.updateDateDisplay();
-        this.generateDailyGames();
+        // generateDailyGames() is now called inside loadGamesData()
         this.setupEventListeners();
         
         // Setup daily games refresh at 12pm IST
@@ -96,6 +96,12 @@ class DailyTrendingGames {
             this.loadRandomVideo();
         }, 500);
         
+        // Show games immediately for debugging
+        setTimeout(() => {
+            console.log('About to show games directly (bypassing slot machine)');
+            this.showTrendingGames();
+        }, 2000);
+        
         setTimeout(() => {
             this.autoSpin();
         }, 1000);
@@ -112,12 +118,30 @@ class DailyTrendingGames {
 
     async loadGamesData() {
         try {
-            const response = await fetch('./games-data.json');
-            this.gamesData = await response.json();
-            console.log('Games data loaded:', this.gamesData);
+            // Try to load games from admin panel backend first
+            const response = await fetch('/api/games/daily');
+            if (response.ok) {
+                const dailyGames = await response.json();
+                
+                if (dailyGames && dailyGames.length > 0) {
+                    this.gamesData = { gamesPool: dailyGames };
+                    console.log('Games data loaded from backend:', dailyGames.length, 'games');
+                    console.log('Sample game:', dailyGames[0]);
+                    this.generateDailyGames(); // Generate daily games after loading
+                    console.log('After generateDailyGames, this.dailyGames:', this.dailyGames);
+                    return;
+                }
+            }
+            
+            // Fallback to games-data.json
+            const fallbackResponse = await fetch('./games-data.json');
+            this.gamesData = await fallbackResponse.json();
+            console.log('Games data loaded from fallback file:', this.gamesData);
+            this.generateDailyGames(); // Generate daily games after fallback loading
         } catch (error) {
             console.error('Error loading games data:', error);
             this.gamesData = { gamesPool: [] };
+            this.generateDailyGames(); // Still try to generate with empty data
         }
     }
 
@@ -136,6 +160,14 @@ class DailyTrendingGames {
     generateDailyGames() {
         if (!this.gamesData.gamesPool.length) return;
 
+        // If we loaded directly from backend (random selection already done), use as-is
+        if (this.gamesData.gamesPool.length <= 3) {
+            this.dailyGames = [...this.gamesData.gamesPool];
+            console.log('Daily games loaded directly from backend (pre-selected):', this.dailyGames);
+            return;
+        }
+
+        // Original logic for games-data.json fallback
         // Get current time in GMT+5:30 (Indian Standard Time)
         const now = new Date();
         const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -155,7 +187,7 @@ class DailyTrendingGames {
             const gameIndex = (startIndex + i) % totalGames;
             this.dailyGames.push(this.gamesData.gamesPool[gameIndex]);
         }
-        console.log('Daily games selected for IST date:', istDate.toDateString(), this.dailyGames);
+        console.log('Daily games selected for IST date (fallback):', istDate.toDateString(), this.dailyGames);
     }
 
     // Utility function to mimic CSS clamp() in JavaScript
@@ -367,6 +399,7 @@ class DailyTrendingGames {
     autoSpin() {
         if (this.isSpinning) return;
         
+        console.log('AutoSpin called, dailyGames available:', this.dailyGames.length);
         this.isSpinning = true;
         const reels = document.querySelectorAll('.reel');
         
@@ -438,7 +471,23 @@ class DailyTrendingGames {
         const trendingGamesSection = document.getElementById('trendingGames');
         const gamesGrid = document.getElementById('gamesGrid');
 
+        console.log('ShowTrendingGames called. DailyGames:', this.dailyGames);
+        console.log('DailyGames length:', this.dailyGames.length);
+
         gamesGrid.innerHTML = '';
+
+        if (this.dailyGames.length === 0) {
+            console.error('No daily games found! Check if loadGamesData() worked properly.');
+            gamesGrid.innerHTML = '<div style="color: white; text-align: center; padding: 20px;">Loading games...</div>';
+            // Try loading games again
+            this.loadGamesData().then(() => {
+                if (this.dailyGames.length > 0) {
+                    console.log('Games loaded on retry:', this.dailyGames);
+                    this.showTrendingGames();
+                }
+            });
+            return; // Exit early if no games
+        }
 
         this.dailyGames.forEach((game, index) => {
             const gameCard = this.createGameCard(game, index);
@@ -1699,8 +1748,13 @@ Play Now: https://www.luckytaj.com/en-in/slot
                 const backendMessages = await response.json();
                 
                 if (backendMessages && backendMessages.length > 0) {
-                    this.jackpotMessages = backendMessages.map(msg => msg.message);
-                    console.log('Loaded jackpot messages from backend:', this.jackpotMessages.length);
+                    // Group messages by prediction time
+                    this.jackpotMessagesMap = {
+                        '2:00': backendMessages.filter(msg => msg.predictionTime === '2:00'),
+                        '10:00': backendMessages.filter(msg => msg.predictionTime === '10:00'),
+                        '17:00': backendMessages.filter(msg => msg.predictionTime === '17:00')
+                    };
+                    console.log('Loaded jackpot messages from backend:', backendMessages.length);
                 } else {
                     this.setDefaultJackpotMessages();
                 }
@@ -1712,23 +1766,26 @@ Play Now: https://www.luckytaj.com/en-in/slot
             this.setDefaultJackpotMessages();
         }
         
-        this.currentMessageIndex = 0;
-        this.messageRotationInterval = null;
+        this.currentMessage = null;
         this.checkPredictionStatus();
         this.startCountdown();
-        this.startMessageRotation();
     }
 
     setDefaultJackpotMessages() {
-        this.jackpotMessages = [
-            "Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!",
-            "System prediction: Next 30 minutes mein BNG SLot jackpot hit hone wala hai!",
-            "Alert! Fishing Gamed mein agle 30 min lucky streak chalega!",
-            "Mega prediction: Crazy Time bonus wheel aaj lucky hai!",
-            "Lucky prediction: PG Slots mein agle 30 min mega wins aa rahe hain!",
-            "Special alert: Jili games mein bonus rounds active hone wale hain!",
-            "Hot prediction: Live casino mein multipliers high chal rahe hain!"
-        ];
+        this.jackpotMessagesMap = {
+            '2:00': [
+                { message: "System prediction: Next 30 minutes mein BNG Slot jackpot hit hone wala hai!", category: "BNG Slot" },
+                { message: "Alert! Fishing Games mein agle 30 min lucky streak chalega!", category: "Fishing Games" }
+            ],
+            '10:00': [
+                { message: "Aaj 10:30AM se 11:00AM tak Dragon Tiger mein bonus rate double hoga!", category: "Dragon Tiger" },
+                { message: "Mega prediction: Crazy Time bonus wheel aaj lucky hai!", category: "Crazy Time" }
+            ],
+            '17:00': [
+                { message: "Lucky prediction: PG Slots mein agle 30 min mega wins aa rahe hain!", category: "PG Slots" },
+                { message: "Hot prediction: Live casino mein multipliers high chal rahe hain!", category: "Live Casino" }
+            ]
+        };
     }
     
     checkPredictionStatus() {
@@ -1740,11 +1797,13 @@ Play Now: https://www.luckytaj.com/en-in/slot
             // Active prediction session - show CTA button and count down remaining time
             this.targetTime = currentPrediction.endTime;
             this.isActivePrediction = true;
+            this.currentMessage = this.getCurrentPredictionMessage(currentPrediction.timeSlot);
             this.showActivePredictionCTA();
         } else {
             // No active prediction, show next prediction time and count down to it
             this.isActivePrediction = false;
             this.targetTime = this.getNextPredictionTime(istTime);
+            this.currentMessage = null;
             this.showNextPredictionCTA();
         }
     }
@@ -1755,6 +1814,12 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     getCurrentActivePrediction(istTime) {
+        const timeSlotMap = {
+            2: '2:00',
+            10: '10:00', 
+            17: '17:00'
+        };
+        
         for (let prediction of this.predictionTimes) {
             const predictionStart = new Date(istTime);
             predictionStart.setHours(prediction.hour, prediction.minute, 0, 0);
@@ -1764,7 +1829,8 @@ Play Now: https://www.luckytaj.com/en-in/slot
             if (istTime >= predictionStart && istTime <= predictionEnd) {
                 return {
                     startTime: predictionStart.getTime(),
-                    endTime: predictionEnd.getTime()
+                    endTime: predictionEnd.getTime(),
+                    timeSlot: timeSlotMap[prediction.hour]
                 };
             }
         }
@@ -1797,97 +1863,23 @@ Play Now: https://www.luckytaj.com/en-in/slot
         return nextPrediction.getTime();
     }
     
-    updateJackpotMessage() {
-        const messageElement = document.getElementById('jackpotMessage');
-        const messageCountElement = document.querySelector('.message-count');
-        
-        if (messageElement && this.jackpotMessages && this.jackpotMessages.length > 0) {
-            messageElement.textContent = this.jackpotMessages[this.currentMessageIndex];
-            
-            if (messageCountElement) {
-                messageCountElement.textContent = `${this.currentMessageIndex + 1}/${this.jackpotMessages.length}`;
-            }
-            
-            this.updateMessageDots();
-        }
-    }
-    
-    updateMessageDots() {
-        const indicatorElement = document.getElementById('messageIndicator');
-        
-        // Only show dots if there are multiple messages
-        if (this.jackpotMessages.length <= 1) {
-            return;
-        }
-        
-        // Create or update dots
-        let dotsContainer = indicatorElement.querySelector('.message-dots');
-        if (!dotsContainer) {
-            dotsContainer = document.createElement('div');
-            dotsContainer.className = 'message-dots';
-            indicatorElement.appendChild(dotsContainer);
-        }
-        
-        // Clear existing dots
-        dotsContainer.innerHTML = '';
-        
-        // Create dots for each message
-        for (let i = 0; i < this.jackpotMessages.length; i++) {
-            const dot = document.createElement('div');
-            dot.className = `message-dot ${i === this.currentMessageIndex ? 'active' : ''}`;
-            dotsContainer.appendChild(dot);
-        }
-    }
-    
-    startMessageRotation() {
-        // Clear any existing rotation
-        if (this.messageRotationInterval) {
-            clearInterval(this.messageRotationInterval);
-        }
-        
-        // Only rotate if there are multiple messages
-        if (this.jackpotMessages && this.jackpotMessages.length > 1) {
-            this.messageRotationInterval = setInterval(() => {
-                this.rotateToNextMessage();
-            }, 5000); // Change message every 5 seconds
-        }
-        
-        // Initial message display
-        this.updateJackpotMessage();
-    }
-    
-    rotateToNextMessage() {
-        if (this.jackpotMessages && this.jackpotMessages.length > 1) {
-            const messageElement = document.getElementById('jackpotMessage');
-            
-            // Fade out current message
-            if (messageElement) {
-                messageElement.classList.add('fade-out');
-                
-                setTimeout(() => {
-                    // Move to next message
-                    this.currentMessageIndex = (this.currentMessageIndex + 1) % this.jackpotMessages.length;
-                    
-                    // Update message and fade in
-                    this.updateJackpotMessage();
-                    messageElement.classList.remove('fade-out');
-                }, 250); // Half of the CSS transition duration
-            }
-        }
-    }
-    
     showNextPredictionCTA() {
-        const messageElement = document.getElementById('jackpotMessage');
+        const messageContainer = document.getElementById('jackpotMessageContainer');
         
-        if (messageElement) {
+        if (messageContainer) {
             // Get next prediction time to display
             const now = new Date();
             const istTime = this.getISTTime(now);
             const nextPredictionTime = this.getNextPredictionDisplayTime(istTime);
             
-            messageElement.innerHTML = `
-                <div class="prediction-cta-container">
-                    <p class="next-prediction-text">Prediction will be ready on ${nextPredictionTime} GMT+5:30</p>
+            messageContainer.innerHTML = `
+                <div class="jackpot-message">
+                    <div class="prediction-cta-container">
+                        <p class="next-prediction-text">⏰ Next prediction at ${nextPredictionTime} GMT+5:30</p>
+                    </div>
+                </div>
+                <div class="message-indicator" id="messageIndicator">
+                    <span class="message-count">Waiting...</span>
                 </div>
             `;
         }
@@ -1910,18 +1902,26 @@ Play Now: https://www.luckytaj.com/en-in/slot
         return timeLabels[0] + ' (Tomorrow)';
     }
     
+    getCurrentPredictionMessage(timeSlot) {
+        const messages = this.jackpotMessagesMap[timeSlot];
+        if (messages && messages.length > 0) {
+            // Select a random message for this time slot
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            return messages[randomIndex];
+        }
+        return null;
+    }
+    
     showActivePredictionCTA() {
         const messageContainer = document.getElementById('jackpotMessageContainer');
         
-        if (messageContainer) {
-            // Stop message rotation during active prediction
-            if (this.messageRotationInterval) {
-                clearInterval(this.messageRotationInterval);
-                this.messageRotationInterval = null;
-            }
-            
+        if (messageContainer && this.currentMessage) {
             messageContainer.innerHTML = `
                 <div class="jackpot-message">
+                    <div class="prediction-message">
+                        <p class="prediction-text">${this.currentMessage.message}</p>
+                        <span class="prediction-category">${this.currentMessage.category}</span>
+                    </div>
                     <div class="prediction-cta-container">
                         <p class="next-prediction-text">🔥 Live prediction session active! 🔥</p>
                         <a href="https://www.luckytaj.com/en-in/slot" target="_blank" class="prediction-cta-btn">
@@ -1930,6 +1930,9 @@ Play Now: https://www.luckytaj.com/en-in/slot
                             <span class="cta-sub-text">Prediction is LIVE - Don't miss it!</span>
                         </a>
                     </div>
+                </div>
+                <div class="message-indicator" id="messageIndicator">
+                    <span class="message-count">Active Prediction</span>
                 </div>
             `;
         }
@@ -1956,8 +1959,15 @@ Play Now: https://www.luckytaj.com/en-in/slot
                 // Countdown to next prediction reached, start prediction session
                 this.isActivePrediction = true;
                 this.targetTime = Date.now() + (30 * 60 * 1000); // 30 minutes from now
+                
+                // Get the current time slot for the new prediction
+                const istTime = this.getISTTime(new Date());
+                const currentPrediction = this.getCurrentActivePrediction(istTime);
+                if (currentPrediction) {
+                    this.currentMessage = this.getCurrentPredictionMessage(currentPrediction.timeSlot);
+                }
+                
                 this.showActivePredictionCTA();
-                this.updateJackpotMessage();
             }
             return;
         }
