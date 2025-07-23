@@ -17,7 +17,7 @@ router.get('/images', authMiddleware, async (req, res) => {
         
         res.json(imageFiles.map(file => ({
             filename: file,
-            path: `images/${file}`,
+            path: `/images/${file}`,
             name: file.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
         })));
     } catch (error) {
@@ -116,6 +116,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 router.get('/daily', async (req, res) => {
     try {
         const activeGames = await Game.find({ active: true });
+        console.log('Daily games API - Active games found:', activeGames.length);
         
         if (activeGames.length === 0) {
             // Fallback to games-data.json if no games in database
@@ -139,7 +140,7 @@ router.get('/daily', async (req, res) => {
         const formattedGames = selectedGames.map((game, index) => ({
             id: index + 1,
             title: game.title,
-            image: `images/${game.image}`,
+            image: `/images/${game.image}`,
             screenshot: `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMkYxQjY5Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmaWxsPSIjRkZENzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjI0Ij7wn5qoIEpBQ0tQT1QhIPCfmpg8L3RleHQ+Cjx0ZXh0IHg9IjE1MCIgeT0iMTMwIiBmaWxsPSIjRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2Ij4ke2dhbWUucmVjZW50V2luLmFtb3VudH08L3RleHQ+Cjwvc3ZnPg==`,
             recentWin: game.recentWin
         }));

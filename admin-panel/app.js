@@ -971,7 +971,7 @@ class AdminPanel {
         container.innerHTML = games.map(game => `
             <div class="game-item">
                 <div class="game-images">
-                    <img src="images/${game.image}" alt="${game.title}" class="game-image-preview" title="Game Image">
+                    <img src="/images/${game.image}" alt="${game.title}" class="game-image-preview" title="Game Image">
                 </div>
                 <div class="game-info">
                     <h4 class="game-title">${game.title}</h4>
@@ -1083,7 +1083,7 @@ class AdminPanel {
                     gallery.style.display = 'none';
                     document.getElementById('selectedImage').value = game.image;
                     document.getElementById('selectedImageName').textContent = game.image.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').replace(/-/g, ' ');
-                    document.getElementById('selectedImageImg').src = `images/${game.image}`;
+                    document.getElementById('selectedImageImg').src = `/images/${game.image}`;
                     document.getElementById('selectedImagePreview').style.display = 'block';
                     
                     // Add note for edit mode
@@ -1150,15 +1150,22 @@ class AdminPanel {
                     this.showError(error.error || 'Update failed');
                 }
             } else {
-                // Add mode - FormData for file upload
-                const formData = new FormData(form);
+                // Add mode - JSON data for game creation
+                const gameData = {
+                    title: form.title.value,
+                    selectedImage: form.selectedImage.value,
+                    winAmount: form.winAmount.value || '$5,000',
+                    winPlayer: form.winPlayer.value || 'Lucky***Player',
+                    winComment: form.winComment.value || 'Amazing game! Just won big!'
+                };
                 
                 const response = await fetch(`${this.baseURL}/api/games/add`, {
                     method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${this.token}`
                     },
-                    body: formData
+                    body: JSON.stringify(gameData)
                 });
 
                 if (response.ok) {

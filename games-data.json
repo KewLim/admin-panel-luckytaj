@@ -3,7 +3,7 @@
     {
       "id": 1,
       "title": "Jack the Giant Hunter",
-      "image": "images/jack-the-giant-hunter.webp",
+      "image": "/images/jack-the-giant-hunter.webp",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMkYxQjY5Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmaWxsPSIjRkZENzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjI0Ij7wn5qoIEpBQ0tQT1QhIPCfmpg8L3RleHQ+Cjx0ZXh0IHg9IjE1MCIgeT0iMTMwIiBmaWxsPSIjRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2Ij4kMTUsNDIwPC90ZXh0Pgo8L3N2Zz4=",
       "recentWin": {
         "amount": "$15,420",
@@ -14,7 +14,7 @@
     {
       "id": 2,
       "title": "Money Coming",
-      "image": "images/money-coming.jpg",
+      "image": "/images/money-coming.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMUEyMzJFIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmaWxsPSIjRkY2QjZCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjIwIj7wn5OBIE9ZQUwgRkxVU0gg8J+UgzwvdGV4dD4KPHRleHQgeD0iMTUwIiB5PSIxMzAiIGZpbGw9IiNGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTYiPiQ4LDc1MDwvdGV4dD4KPC9zdmc+",
       "recentWin": {
         "amount": "$8,750",
@@ -25,7 +25,7 @@
     {
       "id": 3,
       "title": "Wild Bounty Showdown",
-      "image": "images/wild-bounty-showdown.jpg",
+      "image": "/images/wild-bounty-showdown.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMEY3OTFGIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmaWxsPSIjRkZENzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE4Ij7wn4OPIEJMQUNLSkFDSyEg8J+DjzwvdGV4dD4KPHR0ZXh0IHg9IjE1MCIgeT0iMTMwIiBmaWxsPSIjRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2Ij4kMTIsNDAwPC90ZXh0Pgo8L3N2Zz4=",
       "recentWin": {
         "amount": "$12,300",
@@ -36,7 +36,7 @@
     {
       "id": 4,
       "title": "3 China Pots",
-      "image": "images/3-china-pots.jpg",
+      "image": "/images/3-china-pots.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMxQTE2M0EiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyMCI+8J+MnyBSSUQgV0lOUyEg8J+MnzwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjEzMCIgZmlsbD0iI0ZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNiI+JDIyLDg5MDwvdGV4dD48L3N2Zz4=",
       "recentWin": {
         "amount": "$22,890",
@@ -47,7 +47,7 @@
     {
       "id": 5,
       "title": "The Great Safari",
-      "image": "images/great-safari.jpg",
+      "image": "/images/great-safari.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMzQTI3MTgiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyMCI+8J+UpiBUUkVBU1VSRSEg8J+UpjwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjEzMCIgZmlsbD0iI0ZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNiI+JDYsNTQwPC90ZXh0Pjwvc3ZnPg==",
       "recentWin": {
         "amount": "$6,540",
@@ -58,7 +58,7 @@
     {
       "id": 6,
       "title": "Piggy Bank",
-      "image": "images/piggy-bank.jpg",
+      "image": "/images/piggy-bank.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMxRTFBNTQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyMCI+4pqhIExJR0hUTklORyEg4pqhPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMTMwIiBmaWxsPSIjRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2Ij4kMTgsNDAwPC90ZXh0Pjwvc3ZnPg==",
       "recentWin": {
         "amount": "$18,200",
@@ -69,7 +69,7 @@
     {
       "id": 7,
       "title": "Lucky Fortunes 3x3",
-      "image": "images/lucky-fortunes.jpg",
+      "image": "/images/lucky-fortunes.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMwRDE3M0EiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+8J+MgyBQUk9HUkVTU0lWRSEg8J+MgzwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjEzMCIgZmlsbD0iI0ZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNiI+JDksODcwPC90ZXh0Pjwvc3ZnPg==",
       "recentWin": {
         "amount": "$9,870",
@@ -80,7 +80,7 @@
     {
       "id": 8,
       "title": "Big Shot",
-      "image": "images/big-shot.jpg",
+      "image": "/images/big-shot.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMyQzE4MUQiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+4pqlIDQgT0YgQSBLSU5EISDigqU8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxMzAiIGZpbGw9IiNGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTYiPiQxNCw2NTA8L3RleHQ+PC9zdmc+",
       "recentWin": {
         "amount": "$14,650",
@@ -91,7 +91,7 @@
     {
       "id": 9,
       "title": "Super Ace",
-      "image": "images/super-ace.jpg",
+      "image": "/images/super-ace.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0MTJEMEEiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIyMCI+8J+ksyBTQUxPT04gQk9OVVMhIPCfpLM8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxMzAiIGZpbGw9IiNGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTYiPiQ3LDkyMDwvdGV4dD48L3N2Zz4=",
       "recentWin": {
         "amount": "$7,920",
@@ -102,7 +102,7 @@
     {
       "id": 10,
       "title": "Asgardian Rising",
-      "image": "images/asgardian-rising.jpg",
+      "image": "/images/asgardian-rising.jpg",
       "screenshot": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMwMjQ3NTgiLz48dGV4dCB4PSIxNTAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCI+8J+OuyBQRUFSTCBKQUNLUE9UISDigJs8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxMzAiIGZpbGw9IiNGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTYiPiQxMSw0ODA8L3RleHQ+PC9zdmc+",
       "recentWin": {
         "amount": "$11,480",
