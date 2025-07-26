@@ -3,236 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=390, initial-scale=1.0, user-scalable=no">
-    <title>Working Games Display</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 390px;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .games-section {
-            margin: 20px 0;
-        }
-        .games-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .game-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-        .game-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #FFD700;
-        }
-        .game-image {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .win-info {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-        .win-amount {
-            color: #4CAF50;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .win-player {
-            color: #FFA500;
-            font-style: italic;
-        }
-        .win-comment {
-            color: #DDD;
-            font-size: 14px;
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-        .api-status {
-            text-align: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .loading { color: #FFA500; }
-        .success { color: #4CAF50; }
-        .error { color: #f44336; }
-        button {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 5px;
-            font-weight: bold;
-        }
-        button:hover {
-            background: linear-gradient(135deg, #45a049, #4CAF50);
-        }
-    </style>
+    <title>Daily Trending Games - Spin Wheel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="/luckytaj-favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/luckytaj-favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/luckytaj-favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/luckytaj-favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/luckytaj-favicon/site.webmanifest" />
 </head>
 <body>
-    <div class="container">
-        <h1>🎰 Daily Trending Games</h1>
-        
-        <div class="api-status" id="apiStatus">
-            <div class="loading">🔄 Loading games from API...</div>
-        </div>
-        
-        <div class="games-section">
-            <h2>🎮 Your Daily Games</h2>
-            <div class="games-grid" id="gamesGrid">
-                <!-- Games will be loaded here -->
+    <div class="mobile-wrapper">
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <img src="https://www.luckytaj.com/luckytaj/img/logo.png" alt="LuckyTaj" class="logo-img">
+            </div>
+            <div class="navbar-menu">
+
+            </div>
+            <div class="navbar-actions">
+                <button class="login-btn">Login</button>
+                <a href="https://www.luckytaj.com/en-in" class="play-now-btn" target="_blank">Play Now</a>
             </div>
         </div>
-        
-        <div style="text-align: center; margin-top: 20px;">
-            <button onclick="loadGames()">🔄 Reload Games</button>
-            <button onclick="showFallbackGames()">📋 Show Sample Games</button>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h2>🎰 Today's Big Win Games</h2>
+            <p class="date-display" id="dateDisplay"></p>
+        </header>
+
+        <!-- Highlight Video Section -->
+        <section class="highlight-video-section">
+            <div class="video-container">
+                <h3 class="video-title">🔥 Watch Amazing Wins in Action!</h3>
+                <div class="video-wrapper">
+                    <!-- Loading skeleton for video -->
+                    <div class="video-skeleton" id="videoSkeleton">
+                        <div class="skeleton-content">
+                            <div class="skeleton-play-btn"></div>
+                            <div class="skeleton-text"></div>
+                        </div>
+                    </div>
+                    
+                    <iframe 
+                        data-src="" 
+                        src=""
+                        title="LuckyTaj Amazing Wins" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen
+                        class="highlight-video lazy-load"
+                        loading="lazy">
+                    </iframe>
+                    <div class="video-overlay">
+                        <div class="play-indicator">▶</div>
+                    </div>
+                </div>
+                <p class="video-description">Experience the thrill of big wins and exciting gameplay!</p>
+            </div>
+        </section>
+
+        <div class="spin-wheel-container">
+            <div class="slot-machine">
+                <div class="reel" id="reel1">
+                    <div class="reel-item"></div>
+                </div>
+
+                <div class="reel" id="reel2">
+                    <div class="reel-item"></div>
+                </div>
+
+                <div class="reel" id="reel3">
+                    <div class="reel-item"></div>
+                </div>
+            </div>
+            <button class="spin-button" id="spinButton" style="display: none;">Spin Again</button>
+        </div>
+
+        <div class="trending-games" id="trendingGames" style="display: none;">
+            <div class="trending-header">
+                <div class="trending-title">
+                    <h2><a href="https://www.luckytaj.com/en-in/slot" target="_blank" style="color: inherit; text-decoration: none;">Your Daily Trending Games</a></h2>
+                </div>
+                <div class="trending-actions">
+                    <button class="share-button" id="shareButton" onclick="window.dailyGames.shareToWhatsAppDirect()">
+                        <span class="share-icon">📤</span>
+                        <span class="share-text">Share Tips</span>
+                    </button>
+                </div>
+            </div>
+            
+            <a href="https://www.luckytaj.com/en-in/slot">
+                <div class="games-grid" id="gamesGrid">
+                    <!-- Game cards will be dynamically inserted here -->
+                </div>
+            </a>
+            
+            <!-- Tournament Dashboard -->
+            <div class="tournament-dashboard" id="tournamentDashboard">
+                <div class="tournament-header">
+                    <div class="tournament-title">
+                        <h3>Live Tournament Winners 🇮🇳 </h3>
+                        <span class="live-indicator">● LIVE</span>
+                    </div>
+                    <div class="tournament-stats">
+                        <span class="total-winners" id="totalWinners">₹2,45,680 Won Today</span>
+                    </div>
+                </div>
+                
+                <!-- Tournament TV Section -->
+                <div class="tournament-tv" id="tournamentTV">
+                    <div class="tv-header">
+                        <h4>📺 Live Tournament Stream</h4>
+                        <span class="live-indicator tv-live">● LIVE</span>
+                    </div>
+                    <div class="tv-container">
+                        <iframe 
+                            id="tournamentTvVideo"
+                            src=""
+                            title="Tournament Live Stream" 
+                            frameborder="0" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen
+                            class="tv-video">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <div class="winners-container">
+                    <div class="winners-list" id="winnersList">
+                        <!-- Dynamic winner records will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="tournament-cta">
+                    <button class="join-tournament-btn" onclick="window.open('https://www.luckytaj.com/en-in/slot', '_blank')">
+                        <span class="cta-text">Join Tournament Now!</span>
+                        <span class="cta-prize">Win up to ₹10,00,000.00!</span>
+                    </button>
+                </div>
+                
+                <!-- Floating Character -->
+                <div class="floating-character">
+                    <img src="https://www.pngarts.com/files/13/Clash-Royale-Characters-PNG-High-Quality-Image.png" alt="Lucky Character" class="character-img">
+                </div>
+            </div>
+            
+            <!-- Module 1: WinnerBoard -->
+            <div class="winner-board-section" id="winnerBoard">
+                <div class="module-header">
+                    <h3>🏆 Kal Ke Top Winners</h3>
+                    <span class="topic-indicator">● ON GOING</span>
+                </div>
+                <div class="winners-grid" id="winnersGrid">
+                    <!-- Winner cards will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Module 4: JackpotCountdown -->
+            <div class="jackpot-countdown" id="jackpotCountdown">
+                <div class="jackpot-header">
+                    <span class="prediction-badge">🔮 SYSTEM PREDICTION</span>
+                </div>
+                <div class="jackpot-message" id="jackpotMessage">
+                    Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!
+                </div>
+                <div class="countdown-timer" id="countdownTimer">
+                    <div class="timer-segment">
+                        <span class="timer-value" id="hours">02</span>
+                        <span class="timer-label">Hours</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-segment">
+                        <span class="timer-value" id="minutes">45</span>
+                        <span class="timer-label">Minutes</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-segment">
+                        <span class="timer-value" id="seconds">33</span>
+                        <span class="timer-label">Seconds</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Module 2: CommentSection -->
+            <div class="comment-section" id="commentSection">
+                <div class="module-header">
+                    <h3>💬 Hot Topics</h3>
+                    <span class="topic-indicator">TRENDING</span>
+                </div>
+                <div class="topic-title" id="topicTitle">
+                    Aaj raat ka sabse paisa kamane wala game?
+                </div>
+                <div class="comments-container" id="commentsContainer">
+                    <!-- Comments will be dynamically inserted here -->
+                </div>
+                
+                <!-- Comment Submission Form -->
+                <div class="comment-form-container">
+                    <div class="comment-form">
+                        <textarea id="commentInput" placeholder="Share your gaming tips and experience..." maxlength="300"></textarea>
+                        <div class="comment-form-actions">
+                            <span class="char-count" id="charCount">0/300</span>
+                            <button class="submit-comment-btn" id="submitCommentBtn" disabled>
+                                <i class="fas fa-paper-plane"></i> Share Comment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Module 3: LiveInteraction -->
+            <div class="live-interaction" id="liveInteraction">
+                <div class="module-header">
+                    <h3>💬 Live Chat</h3>
+                    <span class="live-indicator chat-live">● LIVE</span>
+                </div>
+                <div class="live-feed" id="liveFeed">
+                    <!-- Live chat messages will be dynamically inserted here -->
+                </div>
+            </div>
+            
+
         </div>
     </div>
 
-    <script>
-    async function loadGames() {
-        const status = document.getElementById('apiStatus');
-        const grid = document.getElementById('gamesGrid');
-        
-        try {
-            status.innerHTML = '<div class="loading">🔄 Fetching games from /api/games/daily...</div>';
-            console.log('Fetching games from API...');
-            
-            const response = await fetch('/api/games/daily');
-            console.log('API Response:', response.status, response.statusText);
-            
-            if (!response.ok) {
-                throw new Error(\`API Error: \${response.status} \${response.statusText}\`);
-            }
-            
-            const games = await response.json();
-            console.log('Games received:', games);
-            
-            if (!games || games.length === 0) {
-                throw new Error('No games in API response');
-            }
-            
-            status.innerHTML = \`<div class="success">✅ Successfully loaded \${games.length} games from API!</div>\`;
-            displayGames(games);
-            
-        } catch (error) {
-            console.error('API Error:', error);
-            status.innerHTML = \`<div class="error">❌ API Error: \${error.message}</div>\`;
-            
-            // Show fallback message
-            grid.innerHTML = \`
-                <div style="text-align: center; padding: 20px; color: #FFA500;">
-                    ⚠️ Could not load games from API<br>
-                    <small>Error: \${error.message}</small><br><br>
-                    <button onclick="showFallbackGames()" style="background: #FF9800;">Show Sample Games Instead</button>
+    <!-- OTP Authentication Modal -->
+    <div id="otpModal" class="otp-modal" style="display: none;">
+        <div class="otp-modal-content">
+            <div class="otp-modal-header">
+                <h3>🔐 Phone Verification</h3>
+                <span class="otp-close" id="otpClose">&times;</span>
+            </div>
+            <div class="otp-modal-body">
+                <div class="otp-step" id="phoneStep">
+                    <p>Enter your phone number to receive OTP</p>
+                    <div class="phone-input-container">
+                        <select id="countryCode" class="country-code">
+                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                        </select>
+                        <input type="tel" id="phoneNumber" placeholder="Enter phone number" class="phone-input" maxlength="15">
+                    </div>
+                    <button id="sendOtpBtn" class="otp-btn">Send OTP</button>
+                    <div id="recaptcha-container"></div>
                 </div>
-            \`;
-        }
-    }
-    
-    function displayGames(games) {
-        const grid = document.getElementById('gamesGrid');
-        grid.innerHTML = '';
-        
-        games.forEach((game, index) => {
-            const gameCard = document.createElement('div');
-            gameCard.className = 'game-card';
-            gameCard.innerHTML = \`
-                <div class="game-title">\${game.title}</div>
-                <img src="\${game.image}" alt="\${game.title}" class="game-image"
-                     onload="console.log('✅ Image loaded:', '\${game.title}');"
-                     onerror="console.error('❌ Image failed:', '\${game.image}'); this.style.border='3px solid #f44336'; this.alt='❌ Image failed to load';">
-                <div class="win-info">
-                    <div class="win-amount">🏆 Recent Win: \${game.recentWin.amount}</div>
-                    <div class="win-player">👤 Winner: \${game.recentWin.player}</div>
-                    <div class="win-comment">💬 "\${game.recentWin.comment}"</div>
+                
+                <div class="otp-step" id="otpStep" style="display: none;">
+                    <p>Enter the 6-digit OTP sent to your phone</p>
+                    <input type="text" id="otpCode" placeholder="Enter OTP" class="otp-input" maxlength="6">
+                    <button id="verifyOtpBtn" class="otp-btn">Verify OTP</button>
+                    <p class="resend-text">Didn't receive OTP? <button id="resendOtp" class="resend-btn">Resend</button></p>
                 </div>
-            \`;
-            grid.appendChild(gameCard);
-        });
-        
-        console.log(\`✅ Displayed \${games.length} games successfully\`);
-    }
+            </div>
+            <div class="otp-loading" id="otpLoading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
-    function showFallbackGames() {
-        const status = document.getElementById('apiStatus');
-        status.innerHTML = '<div class="success">📋 Showing sample games (fallback mode)</div>';
-        
-        const sampleGames = [
-            {
-                title: "3 China Pots",
-                image: "images/3-china-pots.jpg",
-                recentWin: {
-                    amount: "$12,450",
-                    player: "Lucky***Dragon",
-                    comment: "Three pots opened and boom! Massive win streak!"
-                }
-            },
-            {
-                title: "5 Fortune Dragon",
-                image: "images/5-fortune-dragon.jpg",
-                recentWin: {
-                    amount: "$18,750",
-                    player: "Fortune***King",
-                    comment: "Dragon blessed me with incredible fortune today!"
-                }
-            },
-            {
-                title: "777 Coins",
-                image: "images/777-coins.jpg",
-                recentWin: {
-                    amount: "$25,680",
-                    player: "Triple***Seven",
-                    comment: "Hit the jackpot! 777 never felt so good!"
-                }
-            }
-        ];
-        
-        displayGames(sampleGames);
-    }
-    
-    // Auto-load games when page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('Page loaded, starting game loading...');
-        loadGames();
-    });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="metrics-tracker.js"></script>
+    <script src="script.js"></script>
+    </div>
 </body>
 </html>

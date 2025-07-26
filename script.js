@@ -8,21 +8,21 @@ class DailyTrendingGames {
         // LuckyTaj YouTube Channel Videos - Main video section (changes daily)
         this.youtubeVideos = [
             'E7He8psjoJ8', // Example video - replace with your actual video IDs
-            //'RU-LstcZQMY',
-            //'2cbiW84IuoU', 
-            //'1uporVtLEog', 
-            //'W10-7uKWZ3I',
-            //'kQ924gJSnJ4',
-            //'1iiv7O1KH4A',
-            //'plzgfP_2Jg0',
-            //'daMgJA6wvmY',
-            //'PfoG2Uyj-Jk',
-            //'HEYsC5YJADk',
-            //'y_qGxMbpsJ0',
-            //'zvjgVpOdY7w',
-            //'DQ9Ku_8oe6Q',
-            //'u_vuwY4la7Y',
-            //'ys8rhut3gHM',
+            'RU-LstcZQMY',
+            '2cbiW84IuoU', 
+            '1uporVtLEog', 
+            'W10-7uKWZ3I',
+            'kQ924gJSnJ4',
+            '1iiv7O1KH4A',
+            'plzgfP_2Jg0',
+            'daMgJA6wvmY',
+            'PfoG2Uyj-Jk',
+            'HEYsC5YJADk',
+            'y_qGxMbpsJ0',
+            'zvjgVpOdY7w',
+            'DQ9Ku_8oe6Q',
+            'u_vuwY4la7Y',
+            'ys8rhut3gHM',
         ];
         
         // Tournament TV Videos - Changes every 6 hours
@@ -77,7 +77,7 @@ class DailyTrendingGames {
         this.setupLazyLoading();
         await this.loadGamesData();
         this.updateDateDisplay();
-        // generateDailyGames() is now called inside loadGamesData()
+        this.generateDailyGames();
         this.setupEventListeners();
         
         // Setup daily games refresh at 12pm IST
@@ -96,12 +96,6 @@ class DailyTrendingGames {
             this.loadRandomVideo();
         }, 500);
         
-        // Show games immediately for debugging
-        setTimeout(() => {
-            console.log('About to show games directly (bypassing slot machine)');
-            this.showTrendingGames();
-        }, 2000);
-        
         setTimeout(() => {
             this.autoSpin();
         }, 1000);
@@ -118,30 +112,12 @@ class DailyTrendingGames {
 
     async loadGamesData() {
         try {
-            // Try to load games from admin panel backend first
-            const response = await fetch('/api/games/daily');
-            if (response.ok) {
-                const dailyGames = await response.json();
-                
-                if (dailyGames && dailyGames.length > 0) {
-                    this.gamesData = { gamesPool: dailyGames };
-                    console.log('Games data loaded from backend:', dailyGames.length, 'games');
-                    console.log('Sample game:', dailyGames[0]);
-                    this.generateDailyGames(); // Generate daily games after loading
-                    console.log('After generateDailyGames, this.dailyGames:', this.dailyGames);
-                    return;
-                }
-            }
-            
-            // Fallback to games-data.json
-            const fallbackResponse = await fetch('./games-data.json');
-            this.gamesData = await fallbackResponse.json();
-            console.log('Games data loaded from fallback file:', this.gamesData);
-            this.generateDailyGames(); // Generate daily games after fallback loading
+            const response = await fetch('./games-data.json');
+            this.gamesData = await response.json();
+            console.log('Games data loaded:', this.gamesData);
         } catch (error) {
             console.error('Error loading games data:', error);
             this.gamesData = { gamesPool: [] };
-            this.generateDailyGames(); // Still try to generate with empty data
         }
     }
 
@@ -160,14 +136,6 @@ class DailyTrendingGames {
     generateDailyGames() {
         if (!this.gamesData.gamesPool.length) return;
 
-        // If we loaded directly from backend (random selection already done), use as-is
-        if (this.gamesData.gamesPool.length <= 3) {
-            this.dailyGames = [...this.gamesData.gamesPool];
-            console.log('Daily games loaded directly from backend (pre-selected):', this.dailyGames);
-            return;
-        }
-
-        // Original logic for games-data.json fallback
         // Get current time in GMT+5:30 (Indian Standard Time)
         const now = new Date();
         const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -187,7 +155,7 @@ class DailyTrendingGames {
             const gameIndex = (startIndex + i) % totalGames;
             this.dailyGames.push(this.gamesData.gamesPool[gameIndex]);
         }
-        console.log('Daily games selected for IST date (fallback):', istDate.toDateString(), this.dailyGames);
+        console.log('Daily games selected for IST date:', istDate.toDateString(), this.dailyGames);
     }
 
     // Utility function to mimic CSS clamp() in JavaScript
@@ -259,23 +227,7 @@ class DailyTrendingGames {
         }
     }
 
-    async loadRandomVideo() {
-        // First try to load from admin panel backend
-        try {
-            const response = await fetch('/api/video/current');
-            if (response.ok) {
-                const videoData = await response.json();
-                
-                if (videoData.videoId || videoData.videoUrl) {
-                    this.loadVideoFromBackend(videoData);
-                    return;
-                }
-            }
-        } catch (error) {
-            console.log('Backend video not available, using fallback:', error.message);
-        }
-        
-        // Fallback to hardcoded video list
+    loadRandomVideo() {
         if (this.youtubeVideos.length === 0) return;
         
         // Use date-based seeding for consistent daily video (like games)
@@ -300,64 +252,23 @@ class DailyTrendingGames {
                 videoDescription.textContent = description;
             }
             
-            this.finishVideoLoad(videoIframe, videoSkeleton, selectedVideoId);
-        }
-    }
-
-    loadVideoFromBackend(videoData) {
-        const videoIframe = document.querySelector('.highlight-video');
-        const videoSkeleton = document.getElementById('videoSkeleton');
-        const videoDescription = document.querySelector('.video-description');
-        
-        if (!videoIframe) return;
-        
-        let videoUrl;
-        let videoId;
-        
-        if (videoData.videoType === 'youtube' && videoData.videoId) {
-            // YouTube video from backend
-            videoId = videoData.videoId;
-            videoUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0`;
-        } else if (videoData.videoType === 'mp4' && videoData.videoUrl) {
-            // MP4 video from backend - need to handle differently
-            videoIframe.style.display = 'none';
-            // Could implement MP4 player here if needed
-            console.log('MP4 video not supported in embed iframe:', videoData.videoUrl);
-            return;
-        } else {
-            console.log('Invalid video data from backend');
-            return;
-        }
-        
-        videoIframe.setAttribute('data-src', videoUrl);
-        
-        // Update video description
-        if (videoDescription) {
-            const description = videoData.description || videoData.title || 'Experience the thrill of big wins and exciting gameplay!';
-            videoDescription.textContent = description;
-        }
-        
-        this.finishVideoLoad(videoIframe, videoSkeleton, videoId || 'backend-video');
-        console.log('Loaded video from backend:', videoData.title || videoId);
-    }
-
-    finishVideoLoad(videoIframe, videoSkeleton, videoIdentifier) {
-        // Simulate loading delay for better UX
-        setTimeout(() => {
-            if (videoSkeleton) {
-                videoSkeleton.classList.add('hidden');
-            }
+            // Simulate loading delay for better UX
+            setTimeout(() => {
+                if (videoSkeleton) {
+                    videoSkeleton.classList.add('hidden');
+                }
+                
+                // Load immediately if in viewport, otherwise let Intersection Observer handle it
+                const rect = videoIframe.getBoundingClientRect();
+                const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+                
+                if (inViewport) {
+                    this.loadLazyElement(videoIframe);
+                }
+            }, this.clampValue(800, window.innerWidth * 2, 1500)); // Dynamic delay
             
-            // Load immediately if in viewport, otherwise let Intersection Observer handle it
-            const rect = videoIframe.getBoundingClientRect();
-            const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
-            
-            if (inViewport) {
-                this.loadLazyElement(videoIframe);
-            }
-        }, this.clampValue(800, window.innerWidth * 2, 1500)); // Dynamic delay
-        
-        console.log('Prepared video for lazy loading:', videoIdentifier);
+            console.log('Prepared video for lazy loading:', selectedVideoId);
+        }
     }
 
     stringToSeed(str) {
@@ -399,7 +310,6 @@ class DailyTrendingGames {
     autoSpin() {
         if (this.isSpinning) return;
         
-        console.log('AutoSpin called, dailyGames available:', this.dailyGames.length);
         this.isSpinning = true;
         const reels = document.querySelectorAll('.reel');
         
@@ -471,23 +381,7 @@ class DailyTrendingGames {
         const trendingGamesSection = document.getElementById('trendingGames');
         const gamesGrid = document.getElementById('gamesGrid');
 
-        console.log('ShowTrendingGames called. DailyGames:', this.dailyGames);
-        console.log('DailyGames length:', this.dailyGames.length);
-
         gamesGrid.innerHTML = '';
-
-        if (this.dailyGames.length === 0) {
-            console.error('No daily games found! Check if loadGamesData() worked properly.');
-            gamesGrid.innerHTML = '<div style="color: white; text-align: center; padding: 20px;">Loading games...</div>';
-            // Try loading games again
-            this.loadGamesData().then(() => {
-                if (this.dailyGames.length > 0) {
-                    console.log('Games loaded on retry:', this.dailyGames);
-                    this.showTrendingGames();
-                }
-            });
-            return; // Exit early if no games
-        }
 
         this.dailyGames.forEach((game, index) => {
             const gameCard = this.createGameCard(game, index);
@@ -1368,35 +1262,7 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     // Module 1: WinnerBoard
-    async initializeWinnerBoard() {
-        // Try to load from admin panel backend first
-        try {
-            const response = await fetch('/api/winners/active');
-            if (response.ok) {
-                const backendWinners = await response.json();
-                
-                if (backendWinners && backendWinners.length > 0) {
-                    // Convert backend format to frontend format
-                    this.winnerData = backendWinners.map(winner => ({
-                        username: winner.name,
-                        game: winner.game,
-                        betAmount: null, // Not stored in backend
-                        winAmount: winner.amount,
-                        multiplier: null, // Not stored in backend
-                        quote: `Won ${winner.amount} ${winner.timeAgo}!`,
-                        avatar: this.getRandomAvatar()
-                    }));
-                    
-                    console.log('Loaded winners from backend:', this.winnerData.length);
-                    this.renderWinnerBoard();
-                    return;
-                }
-            }
-        } catch (error) {
-            console.log('Backend winners not available, using fallback:', error.message);
-        }
-        
-        // Fallback to hardcoded winner data
+    initializeWinnerBoard() {
         this.winnerData = [
             {
                 username: "Lucky****2",
@@ -1437,11 +1303,6 @@ Play Now: https://www.luckytaj.com/en-in/slot
         ];
         
         this.renderWinnerBoard();
-    }
-
-    getRandomAvatar() {
-        const avatars = ["👑", "💎", "🔥", "⭐", "💰", "🎯", "🚀", "⚡", "🏆", "🎰"];
-        return avatars[Math.floor(Math.random() * avatars.length)];
     }
     
     renderWinnerBoard() {
@@ -1733,7 +1594,7 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     // Module 4: JackpotCountdown
-    async initializeJackpotCountdown() {
+    initializeJackpotCountdown() {
         // Daily prediction times in GMT+5:30 (IST): 2:00 AM, 10:00 AM, 5:00 PM
         this.predictionTimes = [
             { hour: 2, minute: 0 },  // 2:00 AM
@@ -1741,51 +1602,19 @@ Play Now: https://www.luckytaj.com/en-in/slot
             { hour: 17, minute: 0 }  // 5:00 PM
         ];
         
-        // Try to load messages from admin panel backend first
-        try {
-            const response = await fetch('/api/jackpot/active');
-            if (response.ok) {
-                const backendMessages = await response.json();
-                
-                if (backendMessages && backendMessages.length > 0) {
-                    // Group messages by prediction time
-                    this.jackpotMessagesMap = {
-                        '2:00': backendMessages.filter(msg => msg.predictionTime === '2:00'),
-                        '10:00': backendMessages.filter(msg => msg.predictionTime === '10:00'),
-                        '17:00': backendMessages.filter(msg => msg.predictionTime === '17:00')
-                    };
-                    console.log('Loaded jackpot messages from backend:', backendMessages.length);
-                } else {
-                    this.setDefaultJackpotMessages();
-                }
-            } else {
-                this.setDefaultJackpotMessages();
-            }
-        } catch (error) {
-            console.log('Backend jackpot messages not available, using fallback:', error.message);
-            this.setDefaultJackpotMessages();
-        }
+        this.jackpotMessages = [
+            "Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!",
+            "System prediction: Next 30 minutes mein BNG SLot jackpot hit hone wala hai!",
+            "Alert! Fishing Gamed mein agle 30 min lucky streak chalega!",
+            "Mega prediction: Crazy Time bonus wheel aaj lucky hai!",
+            "Lucky prediction: PG Slots mein agle 30 min mega wins aa rahe hain!",
+            "Special alert: Jili games mein bonus rounds active hone wale hain!",
+            "Hot prediction: Live casino mein multipliers high chal rahe hain!"
+        ];
         
-        this.currentMessage = null;
+        this.currentMessageIndex = Math.floor(Math.random() * this.jackpotMessages.length);
         this.checkPredictionStatus();
         this.startCountdown();
-    }
-
-    setDefaultJackpotMessages() {
-        this.jackpotMessagesMap = {
-            '2:00': [
-                { message: "System prediction: Next 30 minutes mein BNG Slot jackpot hit hone wala hai!", category: "BNG Slot" },
-                { message: "Alert! Fishing Games mein agle 30 min lucky streak chalega!", category: "Fishing Games" }
-            ],
-            '10:00': [
-                { message: "Aaj 10:30AM se 11:00AM tak Dragon Tiger mein bonus rate double hoga!", category: "Dragon Tiger" },
-                { message: "Mega prediction: Crazy Time bonus wheel aaj lucky hai!", category: "Crazy Time" }
-            ],
-            '17:00': [
-                { message: "Lucky prediction: PG Slots mein agle 30 min mega wins aa rahe hain!", category: "PG Slots" },
-                { message: "Hot prediction: Live casino mein multipliers high chal rahe hain!", category: "Live Casino" }
-            ]
-        };
     }
     
     checkPredictionStatus() {
@@ -1797,13 +1626,11 @@ Play Now: https://www.luckytaj.com/en-in/slot
             // Active prediction session - show CTA button and count down remaining time
             this.targetTime = currentPrediction.endTime;
             this.isActivePrediction = true;
-            this.currentMessage = this.getCurrentPredictionMessage(currentPrediction.timeSlot);
             this.showActivePredictionCTA();
         } else {
             // No active prediction, show next prediction time and count down to it
             this.isActivePrediction = false;
             this.targetTime = this.getNextPredictionTime(istTime);
-            this.currentMessage = null;
             this.showNextPredictionCTA();
         }
     }
@@ -1814,12 +1641,6 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     getCurrentActivePrediction(istTime) {
-        const timeSlotMap = {
-            2: '2:00',
-            10: '10:00', 
-            17: '17:00'
-        };
-        
         for (let prediction of this.predictionTimes) {
             const predictionStart = new Date(istTime);
             predictionStart.setHours(prediction.hour, prediction.minute, 0, 0);
@@ -1829,8 +1650,7 @@ Play Now: https://www.luckytaj.com/en-in/slot
             if (istTime >= predictionStart && istTime <= predictionEnd) {
                 return {
                     startTime: predictionStart.getTime(),
-                    endTime: predictionEnd.getTime(),
-                    timeSlot: timeSlotMap[prediction.hour]
+                    endTime: predictionEnd.getTime()
                 };
             }
         }
@@ -1863,23 +1683,25 @@ Play Now: https://www.luckytaj.com/en-in/slot
         return nextPrediction.getTime();
     }
     
+    updateJackpotMessage() {
+        const messageElement = document.getElementById('jackpotMessage');
+        if (messageElement && this.isActivePrediction) {
+            messageElement.textContent = this.jackpotMessages[this.currentMessageIndex];
+        }
+    }
+    
     showNextPredictionCTA() {
-        const messageContainer = document.getElementById('jackpotMessageContainer');
+        const messageElement = document.getElementById('jackpotMessage');
         
-        if (messageContainer) {
+        if (messageElement) {
             // Get next prediction time to display
             const now = new Date();
             const istTime = this.getISTTime(now);
             const nextPredictionTime = this.getNextPredictionDisplayTime(istTime);
             
-            messageContainer.innerHTML = `
-                <div class="jackpot-message">
-                    <div class="prediction-cta-container">
-                        <p class="next-prediction-text">⏰ Next prediction at ${nextPredictionTime} GMT+5:30</p>
-                    </div>
-                </div>
-                <div class="message-indicator" id="messageIndicator">
-                    <span class="message-count">Waiting...</span>
+            messageElement.innerHTML = `
+                <div class="prediction-cta-container">
+                    <p class="next-prediction-text">Prediction will be ready on ${nextPredictionTime} GMT+5:30</p>
                 </div>
             `;
         }
@@ -1902,37 +1724,18 @@ Play Now: https://www.luckytaj.com/en-in/slot
         return timeLabels[0] + ' (Tomorrow)';
     }
     
-    getCurrentPredictionMessage(timeSlot) {
-        const messages = this.jackpotMessagesMap[timeSlot];
-        if (messages && messages.length > 0) {
-            // Select a random message for this time slot
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            return messages[randomIndex];
-        }
-        return null;
-    }
-    
     showActivePredictionCTA() {
-        const messageContainer = document.getElementById('jackpotMessageContainer');
+        const messageElement = document.getElementById('jackpotMessage');
         
-        if (messageContainer && this.currentMessage) {
-            messageContainer.innerHTML = `
-                <div class="jackpot-message">
-                    <div class="prediction-message">
-                        <p class="prediction-text">${this.currentMessage.message}</p>
-                        <span class="prediction-category">${this.currentMessage.category}</span>
-                    </div>
-                    <div class="prediction-cta-container">
-                        <p class="next-prediction-text">🔥 Live prediction session active! 🔥</p>
-                        <a href="https://www.luckytaj.com/en-in/slot" target="_blank" class="prediction-cta-btn">
-                            <span class="cta-icon">🎰</span>
-                            <span class="cta-main-text">Play Now & Win Big!</span>
-                            <span class="cta-sub-text">Prediction is LIVE - Don't miss it!</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="message-indicator" id="messageIndicator">
-                    <span class="message-count">Active Prediction</span>
+        if (messageElement) {
+            messageElement.innerHTML = `
+                <div class="prediction-cta-container">
+                    <p class="next-prediction-text">🔥 Live prediction session active! 🔥</p>
+                    <a href="https://www.luckytaj.com/en-in/slot" target="_blank" class="prediction-cta-btn">
+                        <span class="cta-icon">🎰</span>
+                        <span class="cta-main-text">Play Now & Win Big!</span>
+                        <span class="cta-sub-text">Prediction is LIVE - Don't miss it!</span>
+                    </a>
                 </div>
             `;
         }
@@ -1959,15 +1762,8 @@ Play Now: https://www.luckytaj.com/en-in/slot
                 // Countdown to next prediction reached, start prediction session
                 this.isActivePrediction = true;
                 this.targetTime = Date.now() + (30 * 60 * 1000); // 30 minutes from now
-                
-                // Get the current time slot for the new prediction
-                const istTime = this.getISTTime(new Date());
-                const currentPrediction = this.getCurrentActivePrediction(istTime);
-                if (currentPrediction) {
-                    this.currentMessage = this.getCurrentPredictionMessage(currentPrediction.timeSlot);
-                }
-                
                 this.showActivePredictionCTA();
+                this.updateJackpotMessage();
             }
             return;
         }
@@ -1985,8 +1781,581 @@ Play Now: https://www.luckytaj.com/en-in/slot
         if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
     }
 
+
+}
+
+// Firebase OTP Authentication
+class FirebaseOTPAuth {
+    constructor() {
+        this.firebaseConfig = {
+            apiKey: "AIzaSyBhWo526DKVhZxTJAIxiVjaebyRAxZsq3M",
+            authDomain: "luckytaj-d4624.firebaseapp.com",
+            projectId: "luckytaj-d4624",
+            storageBucket: "luckytaj-d4624.firebasestorage.app",
+            messagingSenderId: "476793538316",
+            appId: "1:476793538316:web:e6f727decb1e2d0480eb29",
+            measurementId: "G-YRYLFSL6F8"
+        };
+        
+        this.confirmationResult = null;
+        this.recaptchaVerifier = null;
+        this.isVerified = false;
+        this.currentPhoneNumber = null;
+        this.developmentMode = window.location.hostname === 'localhost';
+        
+        this.init();
+    }
+    
+    init() {
+        console.log('Initializing Firebase OTP Auth...');
+        console.log('Firebase available:', typeof window.firebase !== 'undefined');
+        
+        // Initialize Firebase
+        if (!window.firebase?.apps?.length) {
+            console.log('Initializing Firebase app...');
+            firebase.initializeApp(this.firebaseConfig);
+            console.log('Firebase initialized successfully');
+        } else {
+            console.log('Firebase already initialized');
+        }
+        
+        this.setupEventListeners();
+        this.setupRecaptcha();
+    }
+    
+    setupRecaptcha() {
+        try {
+            this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    console.log('reCAPTCHA solved');
+                },
+                'expired-callback': () => {
+                    console.log('reCAPTCHA expired');
+                    this.recaptchaVerifier.reset();
+                },
+                'error-callback': (error) => {
+                    console.error('reCAPTCHA error:', error);
+                }
+            });
+            
+            // For development, you might want to use visible reCAPTCHA
+            // this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            //     'size': 'normal'
+            // });
+            
+        } catch (error) {
+            console.error('Error setting up reCAPTCHA:', error);
+        }
+    }
+    
+    setupEventListeners() {
+        // Modal close
+        document.getElementById('otpClose').addEventListener('click', () => {
+            this.closeModal();
+        });
+        
+        // Send OTP button
+        document.getElementById('sendOtpBtn').addEventListener('click', () => {
+            this.sendOTP();
+        });
+        
+        // Verify OTP button
+        document.getElementById('verifyOtpBtn').addEventListener('click', () => {
+            this.verifyOTP();
+        });
+        
+        // Resend OTP button
+        document.getElementById('resendOtp').addEventListener('click', () => {
+            this.resendOTP();
+        });
+        
+        // Phone number input validation - allow spaces for formatting
+        document.getElementById('phoneNumber').addEventListener('input', (e) => {
+            // Remove all non-digits and non-spaces, then clean up multiple spaces
+            let value = e.target.value.replace(/[^0-9\s]/g, '').replace(/\s+/g, ' ');
+            e.target.value = value;
+        });
+        
+        // OTP input validation
+        document.getElementById('otpCode').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('otpModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('otpModal')) {
+                this.closeModal();
+            }
+        });
+    }
+    
+    showModal() {
+        console.log('Showing OTP modal...');
+        
+        const otpModal = document.getElementById('otpModal');
+        console.log('OTP modal element:', otpModal);
+        
+        if (otpModal) {
+            otpModal.style.display = 'flex';
+            document.getElementById('phoneStep').style.display = 'block';
+            document.getElementById('otpStep').style.display = 'none';
+            document.getElementById('otpLoading').style.display = 'none';
+            
+            // Reset form
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('otpCode').value = '';
+            document.getElementById('countryCode').value = '+91';
+            
+            console.log('OTP modal should now be visible');
+        } else {
+            console.error('OTP modal element not found!');
+        }
+    }
+    
+    closeModal() {
+        document.getElementById('otpModal').style.display = 'none';
+        this.resetState();
+    }
+    
+    resetState() {
+        this.confirmationResult = null;
+        this.currentPhoneNumber = null;
+        if (this.recaptchaVerifier) {
+            this.recaptchaVerifier.reset();
+        }
+    }
+    
+    showLoading() {
+        document.getElementById('otpLoading').style.display = 'flex';
+    }
+    
+    hideLoading() {
+        document.getElementById('otpLoading').style.display = 'none';
+    }
+    
+    async sendOTP() {
+        const countryCode = document.getElementById('countryCode').value;
+        const phoneNumberRaw = document.getElementById('phoneNumber').value;
+        
+        console.log('Raw phone number:', phoneNumberRaw);
+        
+        // Remove spaces and validate
+        const phoneNumber = phoneNumberRaw.replace(/\s/g, '');
+        
+        console.log('Cleaned phone number:', phoneNumber);
+        console.log('Phone number length:', phoneNumber.length);
+        
+        // Validate phone number length based on country code
+        let minLength = 9; // Default minimum
+        let maxLength = 15; // International standard
+        
+        if (countryCode === '+91') {
+            minLength = 9; // Indian numbers can be 9-11 digits
+            maxLength = 11;
+        } else if (countryCode === '+1') {
+            minLength = 10; // US/Canada numbers are 10 digits
+            maxLength = 10;
+        } else if (countryCode === '+44') {
+            minLength = 10; // UK numbers are typically 10-11 digits
+            maxLength = 11;
+        }
+        
+        if (!phoneNumber || phoneNumber.length < minLength || phoneNumber.length > maxLength) {
+            alert(`Please enter a valid phone number (${minLength}-${maxLength} digits for ${countryCode}). You entered: "${phoneNumber}" (${phoneNumber.length} digits)`);
+            return;
+        }
+        
+        const fullPhoneNumber = countryCode + phoneNumber;
+        console.log('Full phone number for Firebase:', fullPhoneNumber);
+        this.currentPhoneNumber = fullPhoneNumber;
+        
+        this.showLoading();
+        
+        // Development mode - simulate OTP sending without Firebase
+        if (this.developmentMode) {
+            console.log('DEVELOPMENT MODE: Simulating OTP send...');
+            
+            // Simulate API delay
+            setTimeout(() => {
+                this.hideLoading();
+                this.showOTPStep();
+                
+                // Show development OTP in console
+                const devOTP = '123456';
+                this.developmentOTP = devOTP;
+                console.log(`DEVELOPMENT OTP: ${devOTP} (Use this code to verify)`);
+                
+                // Show user-friendly message
+                alert(`DEVELOPMENT MODE: OTP sent!\nUse code: ${devOTP}\n(Check console for details)`);
+            }, 2000);
+            
+            return;
+        }
+        
+        try {
+            this.confirmationResult = await firebase.auth().signInWithPhoneNumber(
+                fullPhoneNumber, 
+                this.recaptchaVerifier
+            );
+            
+            this.hideLoading();
+            this.showOTPStep();
+            
+        } catch (error) {
+            console.error('Error sending OTP:', error);
+            this.hideLoading();
+            
+            let errorMessage = 'Error sending OTP: ';
+            
+            if (error.code === 'auth/invalid-app-credential') {
+                errorMessage += 'Firebase configuration issue. Please check the project settings.';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorMessage += 'Too many requests. Please try again later.';
+            } else if (error.code === 'auth/captcha-check-failed') {
+                errorMessage += 'reCAPTCHA verification failed. Please try again.';
+            } else if (error.message.includes('reCAPTCHA')) {
+                errorMessage += 'reCAPTCHA error. For development, you might want to configure Firebase for localhost.';
+            } else {
+                errorMessage += error.message;
+            }
+            
+            // For development purposes, show a more helpful message
+            if (window.location.hostname === 'localhost') {
+                errorMessage += '\n\nDEVELOPMENT NOTE: This is a Firebase configuration issue. The Firebase project needs to be properly configured for phone authentication and localhost domain needs to be added to authorized domains.';
+            }
+            
+            alert(errorMessage);
+            
+            if (this.recaptchaVerifier) {
+                this.recaptchaVerifier.reset();
+            }
+        }
+    }
+    
+    showOTPStep() {
+        document.getElementById('phoneStep').style.display = 'none';
+        document.getElementById('otpStep').style.display = 'block';
+    }
+    
+    async verifyOTP() {
+        const otpCode = document.getElementById('otpCode').value;
+        
+        if (!otpCode || otpCode.length !== 6) {
+            alert('Please enter a valid 6-digit OTP');
+            return;
+        }
+        
+        if (!this.confirmationResult) {
+            alert('Please request OTP first');
+            return;
+        }
+        
+        this.showLoading();
+        
+        // Development mode - simulate OTP verification
+        if (this.developmentMode) {
+            console.log('DEVELOPMENT MODE: Simulating OTP verification...');
+            
+            setTimeout(async () => {
+                if (otpCode === this.developmentOTP || otpCode === '123456') {
+                    // Log the verification to backend
+                    await this.logOTPVerification(this.currentPhoneNumber, otpCode);
+                    
+                    this.isVerified = true;
+                    this.hideLoading();
+                    this.closeModal();
+                    
+                    alert('✅ DEVELOPMENT MODE: Phone verified successfully!');
+                    
+                    // Trigger the original comment submission
+                    this.onVerificationSuccess();
+                } else {
+                    this.hideLoading();
+                    alert('❌ Invalid OTP. Use: 123456');
+                }
+            }, 1000);
+            
+            return;
+        }
+        
+        try {
+            const result = await this.confirmationResult.confirm(otpCode);
+            const user = result.user;
+            
+            // Log the verification to backend
+            await this.logOTPVerification(this.currentPhoneNumber, otpCode);
+            
+            this.isVerified = true;
+            this.hideLoading();
+            this.closeModal();
+            
+            alert('Phone number verified successfully!');
+            
+            // Trigger the original comment submission or other action
+            this.onVerificationSuccess();
+            
+        } catch (error) {
+            console.error('Error verifying OTP:', error);
+            this.hideLoading();
+            alert('Invalid OTP. Please try again.');
+        }
+    }
+    
+    async logOTPVerification(phoneNumber, otpCode) {
+        try {
+            const response = await fetch('/api/otp/log', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: phoneNumber,
+                    otpCode: otpCode,
+                    timestamp: new Date().toISOString()
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to log OTP verification');
+            }
+            
+        } catch (error) {
+            console.error('Error logging OTP verification:', error);
+        }
+    }
+    
+    async resendOTP() {
+        if (!this.currentPhoneNumber) {
+            alert('Please enter phone number first');
+            return;
+        }
+        
+        this.showLoading();
+        
+        // Development mode - simulate OTP resend
+        if (this.developmentMode) {
+            console.log('DEVELOPMENT MODE: Simulating OTP resend...');
+            
+            setTimeout(() => {
+                const devOTP = '123456';
+                this.developmentOTP = devOTP;
+                this.hideLoading();
+                
+                console.log(`DEVELOPMENT OTP RESENT: ${devOTP}`);
+                alert(`DEVELOPMENT MODE: OTP resent!\nUse code: ${devOTP}`);
+            }, 1500);
+            
+            return;
+        }
+        
+        try {
+            // Reset recaptcha
+            if (this.recaptchaVerifier) {
+                this.recaptchaVerifier.reset();
+            }
+            
+            this.setupRecaptcha();
+            
+            this.confirmationResult = await firebase.auth().signInWithPhoneNumber(
+                this.currentPhoneNumber, 
+                this.recaptchaVerifier
+            );
+            
+            this.hideLoading();
+            alert('OTP resent successfully');
+            
+        } catch (error) {
+            console.error('Error resending OTP:', error);
+            this.hideLoading();
+            alert('Error resending OTP: ' + error.message);
+        }
+    }
+    
+    setupCommentForm() {
+        console.log('Setting up comment form...');
+        
+        // Character count functionality
+        const commentInput = document.getElementById('commentInput');
+        const charCount = document.getElementById('charCount');
+        const submitBtn = document.getElementById('submitCommentBtn');
+        
+        console.log('Comment form elements:', { commentInput, charCount, submitBtn });
+        
+        if (commentInput) {
+            commentInput.addEventListener('input', (e) => {
+                const length = e.target.value.length;
+                charCount.textContent = `${length}/300`;
+                
+                // Update char count styling
+                charCount.className = 'char-count';
+                if (length > 250) {
+                    charCount.classList.add('warning');
+                }
+                if (length >= 300) {
+                    charCount.classList.add('error');
+                }
+                
+                // Disable submit if empty
+                submitBtn.disabled = length === 0;
+            });
+        }
+        
+        // Submit comment functionality
+        if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+                this.handleCommentSubmission();
+            });
+        }
+        
+        // Listen for successful verification to proceed with comment
+        document.addEventListener('phoneVerified', (e) => {
+            this.proceedWithCommentSubmission();
+        });
+    }
+    
+    handleCommentSubmission() {
+        console.log('Comment submission triggered');
+        
+        const commentInput = document.getElementById('commentInput');
+        const commentText = commentInput.value.trim();
+        
+        console.log('Comment text:', commentText);
+        
+        if (!commentText) {
+            alert('Please enter a comment');
+            return;
+        }
+        
+        // Check if user is already verified
+        console.log('Is user verified:', this.isUserVerified());
+        
+        if (this.isUserVerified()) {
+            this.proceedWithCommentSubmission();
+        } else {
+            // Store the comment for after verification
+            this.pendingComment = commentText;
+            console.log('Requesting verification...');
+            this.requestVerification();
+        }
+    }
+    
+    async proceedWithCommentSubmission() {
+        const commentInput = document.getElementById('commentInput');
+        const submitBtn = document.getElementById('submitCommentBtn');
+        const commentText = this.pendingComment || commentInput.value.trim();
+        
+        if (!commentText) {
+            return;
+        }
+        
+        // Disable submit button during submission
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        
+        try {
+            // Here you could submit the comment to your backend
+            // For now, we'll just simulate a successful submission
+            await this.simulateCommentSubmission(commentText);
+            
+            // Clear the form
+            commentInput.value = '';
+            document.getElementById('charCount').textContent = '0/300';
+            this.pendingComment = null;
+            
+            // Show success message
+            this.showCommentSuccess();
+            
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+            alert('Error submitting comment. Please try again.');
+        } finally {
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Share Comment';
+        }
+    }
+    
+    async simulateCommentSubmission(commentText) {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // You can implement actual comment submission logic here
+        console.log('Comment submitted:', {
+            text: commentText,
+            phoneNumber: this.currentPhoneNumber,
+            timestamp: new Date().toISOString()
+        });
+    }
+    
+    showCommentSuccess() {
+        // Create a temporary success message
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        `;
+        successMsg.textContent = '✅ Comment submitted successfully!';
+        
+        document.body.appendChild(successMsg);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            successMsg.remove();
+        }, 3000);
+    }
+    
+    onVerificationSuccess() {
+        // This method will be called after successful verification
+        // You can customize what happens after verification here
+        console.log('Phone verification successful');
+        
+        // For example, if this was triggered by a comment submission,
+        // you could now proceed with the actual comment submission
+        const event = new CustomEvent('phoneVerified', {
+            detail: { phoneNumber: this.currentPhoneNumber }
+        });
+        document.dispatchEvent(event);
+    }
+    
+    // Method to check if user is verified
+    isUserVerified() {
+        return this.isVerified;
+    }
+    
+    // Method to trigger OTP flow (call this when user tries to submit comment)
+    requestVerification() {
+        if (this.isVerified) {
+            this.onVerificationSuccess();
+            return true;
+        }
+        
+        this.showModal();
+        return false;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     window.dailyGames = new DailyTrendingGames();
+    window.otpAuth = new FirebaseOTPAuth();
+    
+    // Set up comment form after DOM is loaded
+    window.otpAuth.setupCommentForm();
+    
+    // Add test function to window for debugging
+    window.testOTPPopup = function() {
+        console.log('Testing OTP popup...');
+        window.otpAuth.showModal();
+    };
+    
+    console.log('Firebase OTP Auth initialized. You can test the popup by typing: testOTPPopup() in console');
 });

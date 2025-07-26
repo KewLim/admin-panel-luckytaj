@@ -2305,5 +2305,168 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// OTP Management Functions
+let currentOTPPage = 1;
+const otpLogsPerPage = 50;
+
+async function loadOTPLogs(page = 1) {
+    try {
+        const response = await fetch(`/api/otp/logs?page=${page}&limit=${otpLogsPerPage}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayOTPLogs(data.logs);
+            updateOTPPagination(data.pagination);
+            currentOTPPage = page;
+        } else {
+            throw new Error('Failed to load OTP logs');
+        }
+    } catch (error) {
+        console.error('Error loading OTP logs:', error);
+        document.getElementById('otpTableBody').innerHTML = `
+            <tr>
+                <td colspan="5" class="loading-message" style="color: red;">
+                    Error loading OTP logs: ${error.message}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+async function loadOTPStats() {
+    try {
+        const response = await fetch('/api/otp/stats');
+        const data = await response.json();
+        
+        if (data.success) {
+            const stats = data.stats;
+            document.getElementById('totalRequests').textContent = stats.totalRequests;
+            document.getElementById('todayRequests').textContent = stats.todayRequests;
+            document.getElementById('uniquePhones').textContent = stats.uniquePhoneNumbers;
+            
+            if (stats.lastRequestTime) {
+                const lastTime = new Date(stats.lastRequestTime);
+                const timeStr = lastTime.toLocaleString();
+                document.getElementById('lastRequestTime').textContent = timeStr;
+            } else {
+                document.getElementById('lastRequestTime').textContent = 'Never';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading OTP stats:', error);
+    }
+}
+
+function displayOTPLogs(logs) {
+    const tbody = document.getElementById('otpTableBody');
+    
+    if (!logs || logs.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="loading-message">
+                    No OTP logs found
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = logs.map(log => {
+        const timestamp = new Date(log.timestamp).toLocaleString();
+        const truncatedUA = log.userAgent.length > 50 ? 
+            log.userAgent.substring(0, 50) + '...' : log.userAgent;
+        
+        return `
+            <tr>
+                <td class="timestamp">${timestamp}</td>
+                <td class="phone-number">${log.phone}</td>
+                <td><span class="otp-code">${log.otpCode}</span></td>
+                <td class="ip-address">${log.ip}</td>
+                <td class="user-agent" title="${log.userAgent}">${truncatedUA}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateOTPPagination(pagination) {
+    const paginationDiv = document.getElementById('otpPagination');
+    
+    if (pagination.total <= 1) {
+        paginationDiv.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '';
+    
+    // Previous button
+    paginationHTML += `
+        <button onclick="loadOTPLogs(${pagination.current - 1})" 
+                ${pagination.current === 1 ? 'disabled' : ''}>
+            <i class="fas fa-chevron-left"></i> Previous
+        </button>
+    `;
+    
+    // Page info
+    paginationHTML += `
+        <span class="pagination-info">
+            Page ${pagination.current} of ${pagination.total}
+            (${pagination.totalLogs} total logs)
+        </span>
+    `;
+    
+    // Next button
+    paginationHTML += `
+        <button onclick="loadOTPLogs(${pagination.current + 1})" 
+                ${pagination.current === pagination.total ? 'disabled' : ''}>
+            Next <i class="fas fa-chevron-right"></i>
+        </button>
+    `;
+    
+    paginationDiv.innerHTML = paginationHTML;
+}
+
+async function refreshOTPLogs() {
+    await loadOTPStats();
+    await loadOTPLogs(currentOTPPage);
+}
+
+async function clearOTPLogs() {
+    if (!confirm('Are you sure you want to clear all OTP logs? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/otp/clear', {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(data.message);
+            await refreshOTPLogs();
+        } else {
+            throw new Error('Failed to clear logs');
+        }
+    } catch (error) {
+        console.error('Error clearing OTP logs:', error);
+        alert('Error clearing logs: ' + error.message);
+    }
+}
+
 // Initialize the admin panel
 const adminPanel = new AdminPanel();
+
+// Load OTP data when OTP tab is activated
+document.addEventListener('DOMContentLoaded', function() {
+    // Override the existing tab switching to load OTP data
+    const originalSwitchTab = adminPanel.switchTab;
+    adminPanel.switchTab = function(tabName) {
+        originalSwitchTab.call(this, tabName);
+        
+        if (tabName === 'otp-requests') {
+            loadOTPStats();
+            loadOTPLogs(1);
+        }
+    };
+});

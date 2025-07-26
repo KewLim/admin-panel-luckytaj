@@ -13,6 +13,8 @@ const videoRoutes = require('./routes/video');
 const gamesRoutes = require('./routes/games');
 const winnersRoutes = require('./routes/winners');
 const jackpotRoutes = require('./routes/jackpot');
+const metricsRoutes = require('./routes/metrics');
+const otpRoutes = require('./routes/otp');
 
 const app = express();
 
@@ -23,12 +25,27 @@ app.use(cors({
     credentials: true
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+// Rate limiting - More lenient for auth endpoints
+const authLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, // 5 minutes
+    max: 10, // limit each IP to 10 login attempts per 5 minutes
+    message: { error: 'Too many login attempts, please try again in 5 minutes' },
+    standardHeaders: true,
+    legacyHeaders: false,
 });
-app.use('/api/', limiter);
+
+// General API rate limiting - more lenient
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 500, // increased from 100 to 500 requests per windowMs
+    message: { error: 'Too many requests, please try again later' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply specific rate limiting to auth endpoints
+app.use('/api/auth/login', authLimiter);
+app.use('/api/', apiLimiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -55,12 +72,17 @@ app.use(express.static(__dirname, {
 }));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/luckytaj-admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    connectTimeoutMS: 10000,
+    serverSelectionTimeoutMS: 5000,
 })
 .then(() => console.log('Connected to MongoDB'))
-.catch((err) => console.error('MongoDB connection error:', err));
+.catch((err) => {
+    console.error('MongoDB connection error:', err);
+    console.log('Server will continue without MongoDB connection');
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -70,6 +92,8 @@ app.use('/api/video', videoRoutes);
 app.use('/api/games', gamesRoutes);
 app.use('/api/winners', winnersRoutes);
 app.use('/api/jackpot', jackpotRoutes);
+app.use('/api/metrics', metricsRoutes);
+app.use('/api/otp', otpRoutes);
 
 // Serve admin panel
 app.get('/admin', (req, res) => {
@@ -99,12 +123,12 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 3001;
-const HOST = process.env.HOST || '127.0.0.1';
+const PORT = process.env.PORT || 3003;
 
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
     console.log(`Admin backend server running on port ${PORT}`);
     console.log(`Admin panel available at: http://localhost:${PORT}/admin`);
+    console.log(`API endpoints available at: http://localhost:${PORT}/api/`);
 }).on('error', (err) => {
     console.error('Server failed to start:', err);
     process.exit(1);

