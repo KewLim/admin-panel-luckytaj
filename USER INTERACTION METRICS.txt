@@ -1,0 +1,80 @@
+📈 SECTION: USER INTERACTION METRICS
+
+OBJECTIVE:
+Track how players are engaging with each game tip shown on the landing page.
+
+--------------------------
+1. Total Views (Per Tip & Overall)
+--------------------------
+- Track every time a tip is displayed (regardless of whether the user is logged in).
+- Store the tip ID, timestamp, and optional session or IP.
+- Maintain:
+  - View count per tip
+  - Global view count for all tips
+
+Data Schema Example:
+{
+  tip_id: "tip_20250724_001",
+  timestamp: "2025-07-24T14:33:00Z",
+  session_id: "sess_abc123", // optional
+  ip: "103.22.XX.XX"
+}
+
+--------------------------
+2. Unique Visitors
+--------------------------
+- Count distinct visitors per tip (based on session ID, user ID if logged in, or IP).
+- Maintain:
+  - Unique view count per tip
+  - Overall unique visitor count
+
+Logic:
+- Only count one view per visitor per tip per day.
+
+--------------------------
+3. Click-Through Rate (CTR)
+--------------------------
+- Track when a player clicks from a tip to launch a game or open an external link.
+- Store:
+  - tip_id
+  - click_url
+  - timestamp
+  - session_id / user_id (optional)
+
+CTR Formula:
+CTR = (Clicks on Tip) / (Total Views on Tip) * 100
+
+--------------------------
+4. Time on Page (Avg. for each tip)
+--------------------------
+- Record entry timestamp when user lands on tip
+- Record exit or interaction timestamp (e.g. scroll away, click, close)
+- Calculate time difference
+- Store:
+  - tip_id
+  - session_id
+  - time_spent_ms
+
+Calculate:
+- Average time per tip by aggregating all sessions
+
+--------------------------
+5. Device Type / Platform Split (Mobile/Desktop)
+--------------------------
+- Detect user-agent on page load
+- Classify as:
+  - Mobile (Android/iOS)
+  - Desktop (Windows/Mac)
+  - Other (Tablet, etc.)
+
+Store:
+{
+  tip_id: "tip_20250724_001",
+  device_type: "mobile",
+  os: "Android",
+  browser: "Chrome",
+  timestamp: "2025-07-24T14:33:00Z"
+}
+
+Aggregate result:
+- Show how many users viewed the tips from Mobile vs Desktop.

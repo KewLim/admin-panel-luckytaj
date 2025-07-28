@@ -1,0 +1,84 @@
+# Standard Operating Procedure (SOP) for Firebase OTP Authentication Integration
+
+## Objective
+Implement a sign-in popup on the front end that triggers when a user attempts to submit a comment. The popup will collect a phone number, send an OTP using Firebase, and allow the user to verify. The backend should log which phone number requested OTP and what OTP was received (for testing only — not recommended in production).
+
+---
+
+## FRONTEND TASK (HTML/JavaScript)
+
+### 1. Sign-in Popup UI
+- Create a modal popup component that appears when a user clicks "Submit Comment" but is not verified yet.
+- Input fields:
+  - Phone number input (with country code)
+  - OTP input (appears after OTP is sent)
+  - Submit buttons: “Send OTP” and “Verify OTP”
+
+### 2. Firebase Setup (Frontend)
+- Install Firebase SDK via CDN or NPM.
+- Initialize Firebase using the following config:
+  ```js
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhWo526DKVhZxTJAIxiVjaebyRAxZsq3M",
+    authDomain: "luckytaj-d4624.firebaseapp.com",
+    projectId: "luckytaj-d4624",
+    storageBucket: "luckytaj-d4624.firebasestorage.app",
+    messagingSenderId: "476793538316",
+    appId: "1:476793538316:web:e6f727decb1e2d0480eb29",
+    measurementId: "G-YRYLFSL6F8"
+  };
+  ```
+
+### 3. Firebase Auth (Send OTP)
+- Use `RecaptchaVerifier` with `size: 'invisible'`.
+- Use `signInWithPhoneNumber()` to send the OTP.
+- Store `confirmationResult` globally.
+
+### 4. Firebase Auth (Verify OTP)
+- After user enters OTP, call `confirmationResult.confirm(code)`.
+- If successful, get the `user.phoneNumber` and call backend API `/api/otp-log` to log it (send both phone + OTP code for testing).
+
+---
+
+## BACKEND TASK (Node.js/Express)
+
+### 1. Firebase Admin Setup
+- Install Firebase Admin SDK
+- Initialize Firebase Admin with serviceAccountKey.json
+
+### 2. New API Endpoint `/api/otp-log`
+- Accept POST requests from frontend after OTP is verified.
+- Body should include:
+  - `phone`: verified phone number
+  - `otpCode`: code used for verification (for logging only)
+- Log the request in a MongoDB collection or a local file (`otp-log.txt`)
+
+Example:
+```json
+{
+  "phone": "+919812345678",
+  "otpCode": "123456"
+}
+```
+
+### 3. Create a Page `/admin/otp-requests`
+- Display a table of:
+  - Phone numbers
+  - Timestamps of OTP requests
+  - OTP values received (testing/debug only)
+- Protect this page with a basic admin password or JWT auth
+
+---
+
+## SECURITY WARNING (PRODUCTION)
+- NEVER log OTP values in production.
+- This log is ONLY for internal test verification during development.
+- Delete logs before going live.
+
+---
+
+## DONE WHEN:
+- Popup triggers correctly
+- OTP works end-to-end via Firebase
+- Backend logs OTP requests visibly
+- Admin route `/admin/otp-requests` renders phone logs

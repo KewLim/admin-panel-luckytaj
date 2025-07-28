@@ -1894,12 +1894,18 @@ class FirebaseOTPAuth {
         console.log('Showing OTP modal...');
         
         const otpModal = document.getElementById('otpModal');
+        const phoneStep = document.getElementById('phoneStep');
+        const otpStep = document.getElementById('otpStep');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        
         console.log('OTP modal element:', otpModal);
+        console.log('Phone step element:', phoneStep);
+        console.log('Send OTP button element:', sendOtpBtn);
         
         if (otpModal) {
             otpModal.style.display = 'flex';
-            document.getElementById('phoneStep').style.display = 'block';
-            document.getElementById('otpStep').style.display = 'none';
+            phoneStep.style.display = 'block';
+            otpStep.style.display = 'none';
             document.getElementById('otpLoading').style.display = 'none';
             
             // Reset form
@@ -1907,7 +1913,17 @@ class FirebaseOTPAuth {
             document.getElementById('otpCode').value = '';
             document.getElementById('countryCode').value = '+91';
             
-            console.log('OTP modal should now be visible');
+            // Ensure Send OTP button is visible
+            if (sendOtpBtn) {
+                sendOtpBtn.style.display = 'block';
+                sendOtpBtn.style.visibility = 'visible';
+                console.log('Send OTP button should be visible');
+            } else {
+                console.error('Send OTP button not found!');
+            }
+            
+            console.log('OTP modal should now be visible with phone step');
+            console.log('Phone step display:', phoneStep.style.display);
         } else {
             console.error('OTP modal element not found!');
         }
@@ -1971,6 +1987,9 @@ class FirebaseOTPAuth {
         this.currentPhoneNumber = fullPhoneNumber;
         
         this.showLoading();
+        
+        // Log OTP request to admin panel
+        await this.logOTPRequest(fullPhoneNumber);
         
         // Development mode - simulate OTP sending without Firebase
         if (this.developmentMode) {
@@ -2046,7 +2065,7 @@ class FirebaseOTPAuth {
             return;
         }
         
-        if (!this.confirmationResult) {
+        if (!this.confirmationResult && !this.developmentMode) {
             alert('Please request OTP first');
             return;
         }
@@ -2102,6 +2121,32 @@ class FirebaseOTPAuth {
         }
     }
     
+    async logOTPRequest(phoneNumber) {
+        try {
+            const response = await fetch('/api/otp/request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: phoneNumber,
+                    timestamp: new Date().toISOString()
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to log OTP request');
+            }
+            
+            const result = await response.json();
+            console.log('OTP request logged successfully:', result.otpCode);
+            return result.otpCode;
+        } catch (error) {
+            console.error('Error logging OTP request:', error);
+            return null;
+        }
+    }
+
     async logOTPVerification(phoneNumber, otpCode) {
         try {
             const response = await fetch('/api/otp/log', {
@@ -2132,6 +2177,9 @@ class FirebaseOTPAuth {
         }
         
         this.showLoading();
+        
+        // Log OTP resend request to admin panel
+        await this.logOTPRequest(this.currentPhoneNumber);
         
         // Development mode - simulate OTP resend
         if (this.developmentMode) {

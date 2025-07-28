@@ -26,6 +26,17 @@ router.get('/images', authMiddleware, async (req, res) => {
     }
 });
 
+// Public endpoint for active games (for frontend real-time display)
+router.get('/public', async (req, res) => {
+    try {
+        const games = await Game.find({ active: true }).limit(20);
+        res.json(games);
+    } catch (error) {
+        console.error('Error fetching public games:', error);
+        res.status(500).json({ error: 'Failed to fetch games' });
+    }
+});
+
 // Get all games from database
 router.get('/list', authMiddleware, async (req, res) => {
     try {
