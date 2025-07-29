@@ -507,7 +507,7 @@ class AdminPanel {
             // Update overview cards with real data
             document.getElementById('totalViews').textContent = overview.totalViews.value.toLocaleString();
             document.getElementById('uniqueVisitors').textContent = overview.uniqueVisitors.value.toLocaleString();
-            document.getElementById('clickThroughRate').textContent = overview.clickThroughRate.value + '%';
+            document.getElementById('clickThroughRate').textContent = Math.round(overview.clickThroughRate.value) + '%';
             document.getElementById('avgTimeOnPage').textContent = overview.avgTimeOnPage.value + 's';
             
             // Update change indicators
@@ -546,10 +546,10 @@ class AdminPanel {
             const tipsTableBody = document.getElementById('tipsTableBody');
             tipsTableBody.innerHTML = tips.map(tip => `
                 <div class="tips-row">
-                    <div class="col-tip">${tip.tipId}</div>
+                    <div class="col-tip">${(tip.displayId || tip.tipId).replace(/^\+/, '')}</div>
                     <div class="col-views">${tip.views.toLocaleString()}</div>
                     <div class="col-unique">${tip.uniqueVisitors || 'N/A'}</div>
-                    <div class="col-ctr">${tip.ctr.toFixed(1)}%</div>
+                    <div class="col-ctr">${Math.round(tip.ctr)}%</div>
                     <div class="col-time">${tip.avgTimeSeconds || 0}s</div>
                 </div>
             `).join('');
@@ -685,7 +685,7 @@ class AdminPanel {
         const viewVariation = Math.floor(Math.random() * 1000) + 200;
         const totalViews = baseViews + viewVariation;
         const uniqueVisitors = Math.floor(totalViews * 0.67);
-        const ctr = (2.8 + Math.random() * 0.8).toFixed(1);
+        const ctr = Math.round(2.8 + Math.random() * 0.8);
         const timeOnPage = Math.floor(38 + Math.random() * 10);
         
         // Update overview cards with dynamic mock data
@@ -697,7 +697,7 @@ class AdminPanel {
         // Generate realistic change indicators
         const viewsChange = (Math.random() * 20 - 5).toFixed(1);
         const visitorsChange = (Math.random() * 15 - 3).toFixed(1);
-        const ctrChange = (Math.random() * 6 - 2).toFixed(1);
+        const ctrChange = Math.round(Math.random() * 6 - 2);
         const timeChange = (Math.random() * 10 - 3).toFixed(1);
         
         document.getElementById('totalViewsChange').textContent = `${viewsChange >= 0 ? '+' : ''}${viewsChange}% from last 24h`;
@@ -2419,7 +2419,7 @@ function displayOTPLogs(logs) {
         return `
             <tr>
                 <td class="timestamp">${timestamp}</td>
-                <td class="phone-number">${log.phone}</td>
+                <td class="phone-number">${log.phone.replace(/^\+/, '')}</td>
                 <td><span class="otp-code">${log.otpCode}</span></td>
                 <td class="action-column">${actionBadge}</td>
                 <td class="status-column">${statusBadge}</td>

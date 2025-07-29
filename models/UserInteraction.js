@@ -18,6 +18,11 @@ const userInteractionSchema = new mongoose.Schema({
         type: String,
         index: true
     },
+    phoneNumber: {
+        type: String,
+        index: true,
+        sparse: true
+    },
     ipAddress: {
         type: String,
         required: true
@@ -140,12 +145,64 @@ userInteractionSchema.statics.getClickThroughRate = async function(startDate, en
         $lte: endDate || new Date()
     };
     
-    const [views, clicks] = await Promise.all([
-        this.countDocuments({ interactionType: 'view', timestamp: dateRange }),
-        this.countDocuments({ interactionType: 'click', timestamp: dateRange })
-    ]);
+    // Calculate CTR per user (sessionId) then average across all users
+    const pipeline = [
+        {
+            $match: {
+                timestamp: dateRange,
+                interactionType: { $in: ['view', 'click'] }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    sessionId: '$sessionId',
+                    tipId: '$tipId',
+                    interactionType: '$interactionType'
+                },
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    sessionId: '$_id.sessionId',
+                    tipId: '$_id.tipId'
+                },
+                views: {
+                    $sum: {
+                        $cond: [{ $eq: ['$_id.interactionType', 'view'] }, '$count', 0]
+                    }
+                },
+                clicks: {
+                    $sum: {
+                        $cond: [{ $eq: ['$_id.interactionType', 'click'] }, '$count', 0]
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                ctr: {
+                    $cond: [
+                        { $gt: ['$views', 0] },
+                        { $multiply: [{ $divide: ['$clicks', '$views'] }, 100] },
+                        0
+                    ]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                avgCTR: { $avg: '$ctr' },
+                userCount: { $sum: 1 }
+            }
+        }
+    ];
     
-    return views > 0 ? ((clicks / views) * 100).toFixed(2) : 0;
+    const result = await this.aggregate(pipeline);
+    return result[0]?.avgCTR || 0;
 };
 
 userInteractionSchema.statics.getAverageTimeOnPage = async function(startDate, endDate) {
@@ -249,14 +306,49 @@ userInteractionSchema.statics.getTipPerformance = async function(startDate, endD
             }
         },
         {
+            $lookup: {
+                from: 'userinteractions',
+                let: { currentTipId: '$_id' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: ['$tipId', '$$currentTipId'] },
+                            phoneNumber: { $exists: true, $ne: null }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: '$phoneNumber',
+                            count: { $sum: 1 }
+                        }
+                    },
+                    { $sort: { count: -1 } },
+                    { $limit: 1 }
+                ],
+                as: 'phoneInfo'
+            }
+        },
+        {
             $project: {
                 tipId: '$_id',
+                displayId: {
+                    $cond: [
+                        { $gt: [{ $size: '$phoneInfo' }, 0] },
+                        { $arrayElemAt: ['$phoneInfo._id', 0] },
+                        '$_id'
+                    ]
+                },
                 views: 1,
                 clicks: 1,
                 ctr: {
-                    $cond: [
-                        { $gt: ['$views', 0] },
-                        { $multiply: [{ $divide: ['$clicks', '$views'] }, 100] },
+                    $round: [
+                        {
+                            $cond: [
+                                { $gt: ['$views', 0] },
+                                { $multiply: [{ $divide: ['$clicks', '$views'] }, 100] },
+                                0
+                            ]
+                        },
                         0
                     ]
                 },

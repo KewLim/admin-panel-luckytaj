@@ -74,6 +74,20 @@ router.post('/log', async (req, res) => {
             matchingRequest.status = 'verified';
             matchingRequest.verifiedAt = logEntry.timestamp;
             console.log(`Updated request ${matchingRequest.id} status to verified`);
+            
+            // Call metrics endpoint to link phone with tip ID if tipId is available
+            if (req.body.tipId) {
+                try {
+                    const axios = require('axios');
+                    await axios.post(`http://localhost:${process.env.PORT || 3003}/api/metrics/link-phone`, {
+                        tipId: req.body.tipId,
+                        phoneNumber: phone
+                    });
+                    console.log(`Linked verified phone ${phone} to tip ${req.body.tipId}`);
+                } catch (error) {
+                    console.error('Error linking phone to tip:', error.message);
+                }
+            }
         }
         
         // Save to file (async, don't wait)

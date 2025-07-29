@@ -280,6 +280,39 @@ router.get('/realtime', auth, async (req, res) => {
     }
 });
 
+// Link phone number to tip ID (called when user verifies phone)
+router.post('/link-phone', async (req, res) => {
+    try {
+        const { tipId, phoneNumber } = req.body;
+        
+        if (!tipId || !phoneNumber) {
+            return res.status(400).json({ 
+                error: 'Tip ID and phone number are required' 
+            });
+        }
+        
+        // Remove '+' symbol from phone number for consistency
+        const cleanPhoneNumber = phoneNumber.replace(/^\+/, '');
+        
+        // Update all interactions for this tip ID to include phone number
+        const result = await UserInteraction.updateMany(
+            { tipId: tipId },
+            { $set: { phoneNumber: cleanPhoneNumber } }
+        );
+        
+        console.log(`Linked phone ${cleanPhoneNumber} to tip ${tipId} - updated ${result.modifiedCount} records`);
+        
+        res.json({
+            success: true,
+            message: `Phone number linked to tip ${tipId}`,
+            updatedRecords: result.modifiedCount
+        });
+    } catch (error) {
+        console.error('Error linking phone to tip:', error);
+        res.status(500).json({ error: 'Failed to link phone number' });
+    }
+});
+
 // Clean old data (optional endpoint for maintenance)
 router.delete('/cleanup', auth, async (req, res) => {
     try {

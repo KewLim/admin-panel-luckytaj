@@ -62,6 +62,9 @@
                     <button class="tab-btn active" data-tab="metrics">
                         <i class="fas fa-chart-bar"></i> User Interaction Metrics
                     </button>
+                    <button class="tab-btn" data-tab="otp-requests">
+                        <i class="fas fa-mobile-alt"></i> OTP Requests
+                    </button>
                     <button class="tab-btn" data-tab="comments">
                         <i class="fas fa-comments"></i> Fake Comments
                     </button>
@@ -77,9 +80,7 @@
                     <button class="tab-btn" data-tab="jackpot">
                         <i class="fas fa-coins"></i> Jackpot Timer
                     </button>
-                    <button class="tab-btn" data-tab="otp-requests">
-                        <i class="fas fa-mobile-alt"></i> OTP Requests
-                    </button>
+                    
                 </nav>
 
                 <!-- Content Sections -->
@@ -88,7 +89,7 @@
                 <section id="metrics" class="content-section active">
                     <div class="section-header">
                         <h2><i class="fas fa-chart-bar"></i> User Interaction Metrics</h2>
-                        <button class="btn btn-primary" onclick="refreshMetrics()">
+                        <button class="btn btn-primary refresh-btn" onclick="refreshMetrics()">
                             <i class="fas fa-sync-alt"></i> Refresh Data
                         </button>
                     </div>
@@ -120,7 +121,7 @@
                             <div class="metric-card">
                                 <div class="metric-icon"><i class="fas fa-mouse-pointer"></i></div>
                                 <div class="metric-content">
-                                    <h3>Click-Through Rate</h3>
+                                    <h3>Average CTR</h3>
                                     <div class="metric-value" id="clickThroughRate">0%</div>
                                     <div class="metric-change" id="clickThroughRateChange">+0% from yesterday</div>
                                 </div>
@@ -173,7 +174,7 @@
                                         <div class="col-tip">Tip ID</div>
                                         <div class="col-views">Views</div>
                                         <div class="col-unique">Unique</div>
-                                        <div class="col-ctr">CTR</div>
+                                        <div class="col-ctr">Avg CTR</div>
                                         <div class="col-time">Avg. Time</div>
                                     </div>
                                     <div id="tipsTableBody">
@@ -277,9 +278,9 @@
                 <!-- OTP Requests Section -->
                 <section id="otp-requests" class="content-section">
                     <div class="section-header">
-                        <h2><i class="fas fa-mobile-alt"></i> OTP Requests & Verification Logs</h2>
+                        <h2><i class="fas fa-mobile-alt"></i> OTP Requests Logs</h2>
                         <div class="otp-actions">
-                            <button class="btn btn-info" onclick="refreshOTPLogs()">
+                            <button class="btn btn-primary refresh-btn" onclick="refreshOTPLogs()">
                                 <i class="fas fa-sync-alt"></i> Refresh
                             </button>
                         </div>
@@ -342,11 +343,11 @@
 
                     <!-- OTP Logs Table -->
                     <div class="otp-logs-container">
-                        <div class="table-container">
+                        <div class="table-wrapper">
                             <table class="otp-table" id="otpTable">
                                 <thead>
                                     <tr>
-                                        <th>Timestamp</th>
+                                        <th>Created Time</th>
                                         <th>Phone Number</th>
                                         <th>OTP Code</th>
                                         <th>Action</th>
