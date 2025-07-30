@@ -28,7 +28,7 @@ app.use(cors({
 // Rate limiting - More lenient for auth endpoints
 const authLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 10, // limit each IP to 10 login attempts per 5 minutes
+    max: 50, // increased to 50 login attempts per 5 minutes for admin panel
     message: { error: 'Too many login attempts, please try again in 5 minutes' },
     standardHeaders: true,
     legacyHeaders: false,

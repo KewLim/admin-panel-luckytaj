@@ -174,31 +174,29 @@ class AdminPanel {
                 return;
             }
             
-            // Handle 429 rate limiting
+            // Handle 429 rate limiting - wait and retry on same port
             if (response.status === 429) {
-                if (attempt < this.alternativePorts.length) {
-                    // Try alternative port immediately
-                    const nextPort = this.alternativePorts[attempt];
-                    console.log(`Port ${loginURL.split(':')[2] || 'default'} rate limited, trying port ${nextPort}...`);
+                if (attempt < 3) { // Only retry 3 times for rate linking
+                    const waitTime = Math.min((attempt + 1) * 3000, 10000); // 3s, 6s, 9s (max 10s)
+                    console.log(`Rate limited, waiting ${waitTime/1000}s before retry...`);
                     errorDiv.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-exchange-alt"></i>
-                            Rate limited. Trying port ${nextPort}...
+                            <i class="fas fa-clock"></i>
+                            Rate limited. Waiting ${waitTime/1000} seconds before retry...
                         </div>
                     `;
                     errorDiv.style.display = 'block';
                     
-                    // Try next port after brief delay
                     setTimeout(() => {
                         this.handleLogin(attempt + 1);
-                    }, 300);
+                    }, waitTime);
                     return;
                 } else {
-                    // All ports tried and rate limited
+                    // Max retries for rate limiting
                     errorDiv.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            All servers are rate limited. Please wait 5 minutes and try again.
+                            <i class="fas fa-clock"></i>
+                            Too many attempts. Please wait 5 minutes and try again.
                         </div>
                     `;
                     errorDiv.style.display = 'block';
@@ -215,21 +213,20 @@ class AdminPanel {
         } catch (error) {
             console.error('Login network error:', error);
             
-            // Network error - try alternative port if available
-            if (attempt < this.alternativePorts.length) {
-                const nextPort = this.alternativePorts[attempt];
-                console.log(`Network error on ${loginURL}, trying port ${nextPort}...`);
+            // Only retry network errors 2 times on the same URL
+            if (attempt < 2) {
+                console.log(`Network error, retrying in 2 seconds... (attempt ${attempt + 1})`);
                 errorDiv.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-wifi"></i>
-                        Connection failed. Trying port ${nextPort}...
+                        Connection failed. Retrying in 2 seconds...
                     </div>
                 `;
                 errorDiv.style.display = 'block';
                 
                 setTimeout(() => {
                     this.handleLogin(attempt + 1);
-                }, 500);
+                }, 2000);
                 return;
             }
             
@@ -1044,6 +1041,132 @@ class AdminPanel {
     }
 
     // Comment Management
+    async seedSampleComments() {
+        const sampleComments = [
+            { username: "Desi****07", comment: "Kal Boxing King mein 20k jeet gaya bhai", avatar: "🎯" },
+            { username: "Payal****ka", comment: "Lightning Roulette ne toh aaj kamaal kar diya", avatar: "💫" },
+            { username: "BigS****am", comment: "Crazy Time still OP, consistent win milta hai.", avatar: "🎲" },
+            { username: "Lucky****ha", comment: "Crazy Time ka bonus round hit kiya, full paisa double", avatar: "🍀" },
+            { username: "Mast****Ji", comment: "Bhai timing matters a lot, raat 9-11 best hai.", avatar: "⏰" },
+            { username: "Game****rl", comment: "Small bet se start karo, phir gradually increase.", avatar: "🎮" },
+            { username: "Spin****Raj", comment: "PG Slot ka bonus round fatafat aaya", avatar: "🎰" },
+            { username: "Lucky****ya", comment: "Evolution Gaming stream mast chal rahi thi", avatar: "♣️" },
+            { username: "Reel****tar", comment: "Jili ke slots mein back to back wild mila 🔥", avatar: "🤑" },
+            { username: "Baccarat****ji", comment: "Evolution Baccarat ne kal raat paisa double kar diya", avatar: "🃏" },
+            { username: "Game****Ver", comment: "Fishing Yilufa mein bada bonus fish mila 😍", avatar: "🐟" },
+            { username: "Munni****Baaz", comment: "Fastspin slots full speed mein chal rahe hain", avatar: "⚡" },
+            { username: "Desi****Patel", comment: "Evolution Gaming ka thrill alag hi level ka hai", avatar: "🎴" },
+            { username: "Rocket****ram", comment: "Crazy Time ka 10x multiplier dekh ke aankh phadak gayi 😂", avatar: "🚀" },
+            { username: "Neha****Queen", comment: "BNG slots mein wilds line ban gayi thi", avatar: "👸" },
+            { username: "Chintu****Win", comment: "Fish Hunter mein gold cannon ka kamaal dekha", avatar: "🔫" },
+            { username: "King****Don", comment: "Live Roulette ne toh life bana di bhai", avatar: "🎯" },
+            { username: "Tota****Bhai", comment: "PG Slots ka Fortune Tiger hit hai is week", avatar: "🐯" },
+            { username: "Fast****Girl", comment: "Dinosaur Tycoon mein mast boss fight hua", avatar: "🦖" },
+            { username: "Ludo****OP", comment: "Cash or Crash mein risky tha, par maza aaya", avatar: "🪂" },
+            { username: "Spin****Didi", comment: "Treasure Bowl se treasure hi nikal gaya 😄", avatar: "💰" },
+            { username: "Tiger****Maa", comment: "Dragon Tiger mein dragon streak chalu tha", avatar: "🐉" },
+            { username: "Kismat****Boy", comment: "Monopoly Live ka Chance round full OP tha", avatar: "🏦" },
+            { username: "Reel****Rani", comment: "PG Slot Fortune Rabbit ka bonus banger", avatar: "🐰" },
+            { username: "Munna****Spin", comment: "Fishing ka laser cannon toh sab ud gaya", avatar: "💥" },
+            { username: "Deal****King", comment: "Deal or No Deal mein banker barbaad ho gaya 😂", avatar: "💼" },
+            { username: "Bet****Veer", comment: "Ganesha Fortune ka win ratio kaafi accha chal raha hai", avatar: "🃏" },
+            { username: "Fish****Fan", comment: "Ocean King ne 200x diya bro", avatar: "🌊" },
+            { username: "Lucky****Star", comment: "Jili ka Crazy Seven kaafi smooth chal raha hai", avatar: "⭐" },
+            { username: "Patakha****Ji", comment: "Lightning Roulette mein 100x mila aaj", avatar: "⚡" },
+            { username: "Dilli****Lad", comment: "Fastspin slots are totally underrated", avatar: "🎲" },
+            { username: "Drama****Dee", comment: "Baccarat ka banker streak next level tha", avatar: "📈" },
+            { username: "Lover****999", comment: "Slots ke graphics full Bollywood vibes de rahe hain", avatar: "🎬" },
+            { username: "Jhakas****OP", comment: "Fishing Yilufa full paisa vasool game hai", avatar: "🎣" },
+            { username: "Gamer****Toh", comment: "Crazy Time ke results unpredictable rehte hain", avatar: "🎡" },
+            { username: "Naari****Power", comment: "Aaj girls bhi top leaderboard mein hain", avatar: "💃" },
+            { username: "Andar****Pro", comment: "Fortune Gems ke liye time fix kar liya ab", avatar: "🕒" },
+            { username: "OP****Dhamaka", comment: "Fish Catch mein golden bomb mila finally", avatar: "💣" },
+            { username: "Reel****Sultan", comment: "PG Slots ne ek aur mega win diya", avatar: "🏆" },
+            { username: "Toofan****Boy", comment: "Fastspin reels are full thunder mode", avatar: "🌪️" },
+            { username: "Spin****Lover", comment: "Jili Lucky Ball ka round dekh ke maza aa gaya", avatar: "🎱" },
+            { username: "Mast****Babu", comment: "Dealer ka luck match karta hai kya?", avatar: "🤔" },
+            { username: "Bano****Raja", comment: "Evolution ka tension next level hai 😬", avatar: "🃏" },
+            { username: "Fish****Mitra", comment: "Fish Hunter mein cannon upgrade ke baad OP ho gaya", avatar: "🔫" },
+            { username: "Aish****Launda", comment: "Evolution Live Games ka vibe hi alag hai", avatar: "🎥" },
+            { username: "Shanti****Patni", comment: "Crazy Time stream dekh ke betting sikhi", avatar: "📺" },
+            { username: "Desi****Spin", comment: "Jili ka Golden Empire slot sahi chal raha hai", avatar: "👑" },
+            { username: "Game****Kaka", comment: "Fish Battle Royale aaj full intense tha", avatar: "🔥" },
+            { username: "Spin****Guru", comment: "PG Slot mein full jackpot laga aaj", avatar: "💸" },
+            { username: "Rajni****Power", comment: "Live Blackjack stream kaafi informative thi", avatar: "♠️" },
+            { username: "Toofan****Di", comment: "Slots mein 5x combo bana diya accidentally", avatar: "💥" },
+            { username: "Tez****Chhora", comment: "Fastspin reels toh lightning se bhi tez hain", avatar: "⚡" },
+            { username: "Item****Queen", comment: "Treasure Hunter ne aaj bhi line banayi hai!", avatar: "🏹" },
+            { username: "Udaan****Girl", comment: "Fishing Yilufa ka dragon fish epic tha", avatar: "🐉" },
+            { username: "Ladka****OP", comment: "Evolution Live ka UI bhi smooth lag raha hai", avatar: "🖥️" },
+            { username: "Choti****Didi", comment: "Crazy Time wheel ne aaj fire de diya 🔥", avatar: "🎡" },
+            { username: "Spin****Wale", comment: "PG Slot Tiger Warrior ka round lucky gaya", avatar: "🐅" },
+            { username: "Bhola****Bhai", comment: "Dealer ki smile se hi pata chal gaya jeetne wale ka 😄", avatar: "😎" },
+            { username: "Masti****Dost", comment: "Fastspin slot speed OP hai", avatar: "🏁" },
+            { username: "Desi****Diva", comment: "Jili slots are underrated gems", avatar: "💎" },
+            { username: "Patel****King", comment: "Fish game ka cannon blast sabse mazedaar part hai", avatar: "🔫" },
+            { username: "Madam****Ji", comment: "PG game stream kal ka top trending tha", avatar: "🎥" },
+            { username: "Munna****Fish", comment: "Laser cannon ka blast dekha? Full screen wipeout", avatar: "🚨" },
+            { username: "Quick****OP", comment: "Live Blackjack ka pace sahi lagta hai", avatar: "⏱️" },
+            { username: "Raja****999", comment: "Fortune Ox slot mein bada win aaya finally", avatar: "🐂" },
+            { username: "Bebo****Lover", comment: "Streamer ki commentary aur bonus dono OP", avatar: "🎤" }
+        ];
+
+        let successCount = 0;
+        let errorCount = 0;
+        const batchSize = 5; // Process 5 comments at a time
+        
+        this.showSuccess(`Starting to add ${sampleComments.length} comments in batches of ${batchSize}...`);
+
+        for (let i = 0; i < sampleComments.length; i += batchSize) {
+            const batch = sampleComments.slice(i, i + batchSize);
+            
+            for (const comment of batch) {
+                try {
+                    const response = await fetch(`${this.baseURL}/api/comments`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: comment.username,
+                            comment: comment.comment,
+                            message: comment.comment, // API might use 'message' field
+                            avatar: comment.avatar
+                        })
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                    
+                    // Small delay between requests within batch
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    
+                } catch (error) {
+                    errorCount++;
+                }
+            }
+            
+            // Longer pause between batches to respect rate limits
+            if (i + batchSize < sampleComments.length) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                this.showSuccess(`Processed ${Math.min(i + batchSize, sampleComments.length)}/${sampleComments.length} comments...`);
+            }
+        }
+
+        if (successCount > 0) {
+            this.showSuccess(`Added ${successCount} sample comments successfully!`);
+            await this.loadComments();
+        }
+        
+        if (errorCount > 0) {
+            this.showError(`Failed to add ${errorCount} comments (might already exist)`);
+        }
+    }
+
     async loadComments() {
         try {
             const response = await fetch(`${this.baseURL}/api/comments`, {
@@ -1278,7 +1401,7 @@ class AdminPanel {
             
             if (video.videoType === 'youtube') {
                 const videoId = this.extractYouTubeId(video.videoUrl);
-                thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
                 videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
             } else {
                 thumbnailUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iIzM0MzUzZSIvPjx0ZXh0IHg9IjE2MCIgeT0iOTAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn5O6IE1QNCBWaWRlbzwvdGV4dD48L3N2Zz4=';
@@ -1286,32 +1409,33 @@ class AdminPanel {
             }
             
             item.innerHTML = `
-                <div class="video-history-thumbnail">
-                    <img src="${thumbnailUrl}" alt="Video Thumbnail" onclick="window.open('${videoUrl}', '_blank')">
-                    <div class="video-history-play">▶</div>
-                </div>
-                <div class="video-history-details">
-                    <div>
-                        <strong>${video.title || 'Untitled'}</strong><br>
-                        <small>${video.videoType.toUpperCase()} • ${new Date(video.createdAt).toLocaleDateString()}</small><br>
-                        <span class="status-badge ${video.isActive ? 'status-active' : 'status-inactive'}">${video.isActive ? 'Active' : 'Inactive'}</span>
+                <div class="video-history-thumbnail" onclick="previewTVSessionVideo('${videoUrl}')" style="width: 160px; height: 90px; position: relative; cursor: pointer; border-radius: 8px; overflow: hidden;">
+                    <img src="${thumbnailUrl}" alt="Video thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="video-history-play" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 18px; background: rgba(255, 0, 0, 0.8); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-play"></i>
                     </div>
-                    <div class="video-history-actions">
-                        <div class="dropdown-menu">
-                            <button class="dropdown-trigger" onclick="toggleVideoDropdown('${video._id}')">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div class="dropdown-content" id="dropdown-${video._id}">
-                                <button class="dropdown-item" onclick="adminPanel.toggleVideoStatus('${video._id}', ${!video.isActive}); hideVideoDropdown('${video._id}')">
-                                    <i class="fas fa-${video.isActive ? 'eye-slash' : 'eye'}"></i>
-                                    ${video.isActive ? 'Deactivate' : 'Activate'}
-                                </button>
-                                <button class="dropdown-item delete" onclick="adminPanel.deleteVideo('${video._id}'); hideVideoDropdown('${video._id}')">
-                                    <i class="fas fa-trash"></i>
-                                    Delete
-                                </button>
-                            </div>
+                </div>
+                <div class="video-history-details" style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start; margin-left: 16px;">
+                    <div class="video-history-info">
+                        <h4 style="color: #333; font-size: 16px; font-weight: 600; margin-bottom: 8px;">${video.title || 'Untitled'} ${video.isActive ? '(Active)' : ''}</h4>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 8px;">${video.videoType.toUpperCase()} video for TV session</p>
+                        <div class="video-meta" style="font-size: 12px; color: #94a3b8;">
+                            <span>${video.videoType.toUpperCase()}</span> • <span>Added: ${new Date(video.createdAt).toLocaleDateString()}</span>
                         </div>
+                        <div style="margin-top: 8px;">
+                            <span class="status-badge ${video.isActive ? 'status-active' : 'status-inactive'}">${video.isActive ? 'Active' : 'Inactive'}</span>
+                        </div>
+                    </div>
+                    <div class="tournament-video-actions" style="display: flex; gap: 8px;">
+                        <button class="btn-small btn-preview" onclick="previewTVSessionVideo('${videoUrl}')" style="padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; background: #48bb78; color: white; cursor: pointer;">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn-small btn-toggle" onclick="adminPanel.toggleVideoStatus('${video._id}', ${!video.isActive})" style="padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; background: ${video.isActive ? '#ffc107' : '#28a745'}; color: white; cursor: pointer;">
+                            <i class="fas fa-${video.isActive ? 'eye-slash' : 'eye'}"></i> ${video.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button class="btn-small btn-delete" onclick="adminPanel.deleteVideo('${video._id}')" style="padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; background: #f56565; color: white; cursor: pointer;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
                     </div>
                 </div>
             `;
@@ -2604,7 +2728,7 @@ function renderTournamentPlaylist() {
                             <span>YouTube</span> • <span>Video ID: ${videoId}</span>
                         </div>
                     </div>
-                    <div class="video-history-actions" style="display: flex; gap: 8px;">
+                    <div class="tournament-video-actions" style="display: flex; gap: 8px;">
                         <button class="btn-small btn-preview" onclick="previewTournamentVideo('${videoId}')" style="padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; background: #48bb78; color: white; cursor: pointer;">
                             <i class="fas fa-eye"></i> Preview
                         </button>
@@ -2667,6 +2791,10 @@ function playCurrentTournamentVideo() {
 
 function previewTournamentVideo(videoId) {
     window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+}
+
+function previewTVSessionVideo(videoUrl) {
+    window.open(videoUrl, '_blank');
 }
 
 function deleteTournamentVideo(index) {

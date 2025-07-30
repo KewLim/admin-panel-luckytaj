@@ -14,7 +14,6 @@ class DailyTrendingGames {
         this.tournamentTvVideos = [
             'Fr3bXkHriGM', 
             'POl3GtraHeo&t',
-            'ma5lm-ExMaA',
             'akm4ys-WUN0',
             'n14gIPk9_yo',
             'GPXxOzK8A50',
@@ -1357,79 +1356,7 @@ Play Now: https://www.luckytaj.com/en-in/slot
         "Aaj ke liye koi time-based winning trick hai kya?"
         ];
         
-        this.comments = [
-            { username: "Desi****07", comment: "Kal Boxing King mein 20k jeet gaya bhai", time: "3 mins ago", avatar: "🎯" },
-            { username: "Payal****ka", comment: "Lightning Roulette ne toh aaj kamaal kar diya", time: "5 mins ago", avatar: "💫" },
-            { username: "BigS****am", comment: "Crazy Time still OP, consistent win milta hai.", time: "10 mins ago", avatar: "🎲" },
-            { username: "Lucky****ha", comment: "Crazy Time ka bonus round hit kiya, full paisa double", time: "15 mins ago", avatar: "🍀" },
-            { username: "Mast****Ji", comment: "Bhai timing matters a lot, raat 9-11 best hai.", time: "20 mins ago", avatar: "⏰" },
-            { username: "Game****rl", comment: "Small bet se start karo, phir gradually increase.", time: "25 mins ago", avatar: "🎮" },
-            { username: "Spin****Raj", comment: "PG Slot ka bonus round fatafat aaya", time: "2 mins ago", avatar: "🎰" },
-            { username: "Lucky****ya", comment: "Evolution Gaming stream mast chal rahi thi", time: "3 mins ago", avatar: "♣️" },
-            { username: "Reel****tar", comment: "Jili ke slots mein back to back wild mila 🔥", time: "4 mins ago", avatar: "🤑" },
-            { username: "Baccarat****ji", comment: "Evolution Baccarat ne kal raat paisa double kar diya", time: "5 mins ago", avatar: "🃏" },
-            { username: "Game****Ver", comment: "Fishing Yilufa mein bada bonus fish mila 😍", time: "6 mins ago", avatar: "🐟" },
-            { username: "Munni****Baaz", comment: "Fastspin slots full speed mein chal rahe hain", time: "7 mins ago", avatar: "⚡" },
-            { username: "Desi****Patel", comment: "Evolution Gaming ka thrill alag hi level ka hai", time: "8 mins ago", avatar: "🎴" },
-            { username: "Rocket****ram", comment: "Crazy Time ka 10x multiplier dekh ke aankh phadak gayi 😂", time: "9 mins ago", avatar: "🚀" },
-            { username: "Neha****Queen", comment: "BNG slots mein wilds line ban gayi thi", time: "10 mins ago", avatar: "👸" },
-            { username: "Chintu****Win", comment: "Fish Hunter mein gold cannon ka kamaal dekha", time: "11 mins ago", avatar: "🔫" },
-
-            { username: "King****Don", comment: "Live Roulette ne toh life bana di bhai", time: "12 mins ago", avatar: "🎯" },
-            { username: "Tota****Bhai", comment: "PG Slots ka Fortune Tiger hit hai is week", time: "13 mins ago", avatar: "🐯" },
-            { username: "Fast****Girl", comment: "Dinosaur Tycoon mein mast boss fight hua", time: "14 mins ago", avatar: "🦖" },
-            { username: "Ludo****OP", comment: "Cash or Crash mein risky tha, par maza aaya", time: "15 mins ago", avatar: "🪂" },
-            { username: "Spin****Didi", comment: "Treasure Bowl se treasure hi nikal gaya 😄", time: "16 mins ago", avatar: "💰" },
-            { username: "Tiger****Maa", comment: "Dragon Tiger mein dragon streak chalu tha", time: "17 mins ago", avatar: "🐉" },
-            { username: "Kismat****Boy", comment: "Monopoly Live ka Chance round full OP tha", time: "18 mins ago", avatar: "🏦" },
-            { username: "Reel****Rani", comment: "PG Slot Fortune Rabbit ka bonus banger", time: "19 mins ago", avatar: "🐰" },
-            { username: "Munna****Spin", comment: "Fishing ka laser cannon toh sab ud gaya", time: "20 mins ago", avatar: "💥" },
-            { username: "Deal****King", comment: "Deal or No Deal mein banker barbaad ho gaya 😂", time: "21 mins ago", avatar: "💼" },
-
-            { username: "Bet****Veer", comment: "Ganesha Fortune ka win ratio kaafi accha chal raha hai", time: "22 mins ago", avatar: "🃏" },
-            { username: "Fish****Fan", comment: "Ocean King ne 200x diya bro", time: "23 mins ago", avatar: "🌊" },
-            { username: "Lucky****Star", comment: "Jili ka Crazy Seven kaafi smooth chal raha hai", time: "24 mins ago", avatar: "⭐" },
-            { username: "Patakha****Ji", comment: "Lightning Roulette mein 100x mila aaj", time: "25 mins ago", avatar: "⚡" },
-            { username: "Dilli****Lad", comment: "Fastspin slots are totally underrated", time: "26 mins ago", avatar: "🎲" },
-            { username: "Drama****Dee", comment: "Baccarat ka banker streak next level tha", time: "27 mins ago", avatar: "📈" },
-            { username: "Lover****999", comment: "Slots ke graphics full Bollywood vibes de rahe hain", time: "28 mins ago", avatar: "🎬" },
-            { username: "Jhakas****OP", comment: "Fishing Yilufa full paisa vasool game hai", time: "29 mins ago", avatar: "🎣" },
-            { username: "Gamer****Toh", comment: "Crazy Time ke results unpredictable rehte hain", time: "30 mins ago", avatar: "🎡" },
-            { username: "Naari****Power", comment: "Aaj girls bhi top leaderboard mein hain", time: "31 mins ago", avatar: "💃" },
-
-            { username: "Andar****Pro", comment: "Fortune Gems ke liye time fix kar liya ab", time: "32 mins ago", avatar: "🕒" },
-            { username: "OP****Dhamaka", comment: "Fish Catch mein golden bomb mila finally", time: "33 mins ago", avatar: "💣" },
-            { username: "Reel****Sultan", comment: "PG Slots ne ek aur mega win diya", time: "34 mins ago", avatar: "🏆" },
-            { username: "Toofan****Boy", comment: "Fastspin reels are full thunder mode", time: "35 mins ago", avatar: "🌪️" },
-            { username: "Spin****Lover", comment: "Jili Lucky Ball ka round dekh ke maza aa gaya", time: "36 mins ago", avatar: "🎱" },
-            { username: "Mast****Babu", comment: "Dealer ka luck match karta hai kya?", time: "37 mins ago", avatar: "🤔" },
-            { username: "Bano****Raja", comment: "Evolution ka tension next level hai 😬", time: "38 mins ago", avatar: "🃏" },
-            { username: "Fish****Mitra", comment: "Fish Hunter mein cannon upgrade ke baad OP ho gaya", time: "39 mins ago", avatar: "🔫" },
-            { username: "Aish****Launda", comment: "Evolution Live Games ka vibe hi alag hai", time: "40 mins ago", avatar: "🎥" },
-            { username: "Shanti****Patni", comment: "Crazy Time stream dekh ke betting sikhi", time: "41 mins ago", avatar: "📺" },
-
-            { username: "Desi****Spin", comment: "Jili ka Golden Empire slot sahi chal raha hai", time: "42 mins ago", avatar: "👑" },
-            { username: "Game****Kaka", comment: "Fish Battle Royale aaj full intense tha", time: "43 mins ago", avatar: "🔥" },
-            { username: "Spin****Guru", comment: "PG Slot mein full jackpot laga aaj", time: "44 mins ago", avatar: "💸" },
-            { username: "Rajni****Power", comment: "Live Blackjack stream kaafi informative thi", time: "45 mins ago", avatar: "♠️" },
-            { username: "Toofan****Di", comment: "Slots mein 5x combo bana diya accidentally", time: "46 mins ago", avatar: "💥" },
-            { username: "Tez****Chhora", comment: "Fastspin reels toh lightning se bhi tez hain", time: "47 mins ago", avatar: "⚡" },
-            { username: "Item****Queen", comment: "Treasure Hunter ne aaj bhi line banayi hai!", time: "48 mins ago", avatar: "🏹" },
-            { username: "Udaan****Girl", comment: "Fishing Yilufa ka dragon fish epic tha", time: "49 mins ago", avatar: "🐉" },
-            { username: "Ladka****OP", comment: "Evolution Live ka UI bhi smooth lag raha hai", time: "50 mins ago", avatar: "🖥️" },
-            { username: "Choti****Didi", comment: "Crazy Time wheel ne aaj fire de diya 🔥", time: "51 mins ago", avatar: "🎡" },
-
-            { username: "Spin****Wale", comment: "PG Slot Tiger Warrior ka round lucky gaya", time: "52 mins ago", avatar: "🐅" },
-            { username: "Bhola****Bhai", comment: "Dealer ki smile se hi pata chal gaya jeetne wale ka 😄", time: "53 mins ago", avatar: "😎" },
-            { username: "Masti****Dost", comment: "Fastspin slot speed OP hai", time: "54 mins ago", avatar: "🏁" },
-            { username: "Desi****Diva", comment: "Jili slots are underrated gems", time: "55 mins ago", avatar: "💎" },
-            { username: "Patel****King", comment: "Fish game ka cannon blast sabse mazedaar part hai", time: "56 mins ago", avatar: "🔫" },
-            { username: "Madam****Ji", comment: "PG game stream kal ka top trending tha", time: "57 mins ago", avatar: "🎥" },
-            { username: "Munna****Fish", comment: "Laser cannon ka blast dekha? Full screen wipeout", time: "58 mins ago", avatar: "🚨" },
-            { username: "Quick****OP", comment: "Live Blackjack ka pace sahi lagta hai", time: "59 mins ago", avatar: "⏱️" },
-            { username: "Raja****999", comment: "Fortune Ox slot mein bada win aaya finally", time: "60 mins ago", avatar: "🐂" },
-            { username: "Bebo****Lover", comment: "Streamer ki commentary aur bonus dono OP", time: "61 mins ago", avatar: "🎤" }
-        ];
+        this.comments = [];
         
         this.currentTopicIndex = 0;
         this.renderCommentSection();
@@ -1438,43 +1365,151 @@ Play Now: https://www.luckytaj.com/en-in/slot
         setInterval(() => {
             this.rotateCommentTopic();
         }, 30000);
+        
+        // Auto-refresh comments every 45 seconds for live feed effect
+        setInterval(() => {
+            this.renderCommentSection();
+            this.loadCommentsIntoGenericSections();
+        }, 45000);
+        
+        // Initial load for generic comment sections
+        this.loadCommentsIntoGenericSections();
     }
     
-    renderCommentSection() {
+    async loadCommentsIntoGenericSections() {
+        const commentSections = document.querySelectorAll('.comment-section');
+        
+        commentSections.forEach(async (section) => {
+            // Skip if this is the main comment section module (it has its own handler)
+            if (section.id === 'commentSection') return;
+            
+            try {
+                const response = await fetch('/api/comments/active');
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data)) {
+                    // Clear existing content
+                    section.innerHTML = '';
+                    
+                    // Randomly shuffle and take up to 8 comments for generic sections
+                    const shuffledComments = [...data].sort(() => Math.random() - 0.5);
+                    const commentsToShow = shuffledComments.slice(0, 8);
+                    
+                    commentsToShow.forEach((comment, index) => {
+                        setTimeout(() => {
+                            const commentEl = document.createElement('div');
+                            commentEl.className = 'comment';
+                            
+                            const avatar = comment.avatar || '🎯';
+                            const username = comment.username || 'Anonymous';
+                            const message = comment.comment || comment.message || '';
+                            const timeAgo = comment.timestamp || comment.time || 'Just now';
+                            
+                            commentEl.innerHTML = `
+                                <div class="comment-bubble">
+                                    <div class="comment-user">
+                                        <span class="comment-avatar">${avatar}</span>
+                                        <span class="comment-username">${username}</span>
+                                        <span class="comment-time">${timeAgo}</span>
+                                    </div>
+                                    <div class="comment-message">${message}</div>
+                                </div>
+                            `;
+                            
+                            section.appendChild(commentEl);
+                        }, index * 300); // Staggered appearance for live feel
+                    });
+                }
+            } catch (error) {
+                console.warn('Could not load comments for generic section:', error);
+            }
+        });
+    }
+    
+    async renderCommentSection() {
         const topicTitle = document.getElementById('topicTitle');
         const commentsContainer = document.getElementById('commentsContainer');
         
         if (!topicTitle || !commentsContainer) return;
         
         topicTitle.textContent = this.topics[this.currentTopicIndex];
-        
         commentsContainer.innerHTML = '';
         
-        // Randomly shuffle comments to show different ones each time
-        const shuffledComments = [...this.comments].sort(() => Math.random() - 0.5);
-        
-        // Show only 6 random comments to keep it manageable
-        const commentsToShow = shuffledComments.slice(0, 6);
-        
-        commentsToShow.forEach((comment, index) => {
-            setTimeout(() => {
-                const commentItem = document.createElement('div');
-                commentItem.className = 'comment-item';
+        try {
+            const response = await fetch('/api/comments/active');
+            const data = await response.json();
+            
+            if (response.ok && Array.isArray(data)) {
+                // API returns array directly, not wrapped in comments property
+                const comments = data;
                 
-                commentItem.innerHTML = `
-                    <div class="comment-avatar">${comment.avatar}</div>
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-username">${comment.username}</span>
-                            <span class="comment-time">${comment.time}</span>
-                        </div>
-                        <div class="comment-text">${comment.comment}</div>
+                // Randomly shuffle comments to show different ones each time
+                const shuffledComments = [...comments].sort(() => Math.random() - 0.5);
+                
+                // Show only 6 random comments to keep it manageable
+                const commentsToShow = shuffledComments.slice(0, 6);
+                
+                commentsToShow.forEach((comment, index) => {
+                    setTimeout(() => {
+                        const commentItem = document.createElement('div');
+                        commentItem.className = 'comment-item';
+                        
+                        // Map API fields to expected format
+                        const avatar = comment.avatar || '🎯';
+                        const username = comment.username || 'Anonymous';
+                        const message = comment.comment || comment.message || '';
+                        const timeAgo = comment.timestamp || comment.time || 'Just now';
+                        
+                        commentItem.innerHTML = `
+                            <div class="comment-avatar">${avatar}</div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-username">${username}</span>
+                                    <span class="comment-time">${timeAgo}</span>
+                                </div>
+                                <div class="comment-text">${message}</div>
+                            </div>
+                        `;
+                        
+                        commentsContainer.appendChild(commentItem);
+                    }, index * 500);
+                });
+            }
+        } catch (error) {
+            console.warn('Could not load comments from API, using fallback');
+            // Show a placeholder message when API fails
+            const placeholderItem = document.createElement('div');
+            placeholderItem.className = 'comment-item';
+            placeholderItem.innerHTML = `
+                <div class="comment-avatar">🎮</div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-username">System</span>
+                        <span class="comment-time">Now</span>
                     </div>
-                `;
-                
-                commentsContainer.appendChild(commentItem);
-            }, index * 500);
-        });
+                    <div class="comment-text">Loading live comments...</div>
+                </div>
+            `;
+            commentsContainer.appendChild(placeholderItem);
+        }
+    }
+    
+    formatTimeAgo(dateString) {
+        if (!dateString) return null;
+        
+        const now = new Date();
+        const commentDate = new Date(dateString);
+        const diffMs = now - commentDate;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins} mins ago`;
+        
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours} hours ago`;
+        
+        const diffDays = Math.floor(diffHours / 24);
+        return `${diffDays} days ago`;
     }
     
     rotateCommentTopic() {

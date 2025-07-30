@@ -2310,6 +2310,59 @@ header h1 {
     line-height: 1.3;
 }
 
+/* Generic comment bubble styling */
+.comment {
+    margin-bottom: 12px;
+    animation: commentFadeIn 0.6s ease-out;
+}
+
+.comment-bubble {
+    background: linear-gradient(135deg, rgba(255, 154, 57, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 154, 57, 0.2);
+    border-radius: 12px;
+    padding: 10px 12px;
+    backdrop-filter: blur(10px);
+}
+
+.comment-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.7rem;
+}
+
+.comment-user .comment-avatar {
+    font-size: 0.9rem;
+}
+
+.comment-user .comment-username {
+    color: #ff9a39;
+    font-weight: 600;
+}
+
+.comment-user .comment-time {
+    color: rgba(255, 255, 255, 0.6);
+    margin-left: auto;
+}
+
+.comment-message {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.3;
+}
+
+@keyframes commentFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Module 3: LiveInteraction Styles */
 .live-interaction {
     margin: 20px auto;
