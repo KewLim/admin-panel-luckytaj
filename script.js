@@ -5,27 +5,12 @@ class DailyTrendingGames {
         this.isSpinning = false;
         this.notificationPermission = null;
         
-        // LuckyTaj YouTube Channel Videos - Main video section (changes daily)
-        this.youtubeVideos = [
-            'E7He8psjoJ8', // Example video - replace with your actual video IDs
-            'RU-LstcZQMY',
-            '2cbiW84IuoU', 
-            '1uporVtLEog', 
-            'W10-7uKWZ3I',
-            'kQ924gJSnJ4',
-            '1iiv7O1KH4A',
-            'plzgfP_2Jg0',
-            'daMgJA6wvmY',
-            'PfoG2Uyj-Jk',
-            'HEYsC5YJADk',
-            'y_qGxMbpsJ0',
-            'zvjgVpOdY7w',
-            'DQ9Ku_8oe6Q',
-            'u_vuwY4la7Y',
-            'ys8rhut3gHM',
-        ];
+        // Video data - now fetched dynamically from backend
+        this.youtubeVideos = [];
+        this.allVideos = [];
+        this.videosLoaded = false;
         
-        // Tournament TV Videos - Changes every 6 hours
+        // Tournament TV Videos - Keep separate playlist for live streaming
         this.tournamentTvVideos = [
             'Fr3bXkHriGM', 
             'POl3GtraHeo&t',
@@ -42,25 +27,6 @@ class DailyTrendingGames {
             'GQUl8O97-S8',
         ];
         
-        // Video descriptions mapping for dynamic content
-        this.videoDescriptions = {
-            'E7He8psjoJ8': 'Watch incredible jackpot wins and mega payouts from our top players!',
-            'RU-LstcZQMY': 'Experience the excitement of live casino action with massive multipliers!',
-            '2cbiW84IuoU': 'See how players turn small bets into life-changing wins at LuckyTaj!',
-            '1uporVtLEog': 'Discover the hottest slot games with amazing bonus features and free spins!',
-            'W10-7uKWZ3I': 'Join the winners circle with these incredible casino success stories!',
-            'kQ924gJSnJ4': 'Feel the rush of hitting progressive jackpots and massive cash prizes!',
-            '1iiv7O1KH4A': 'Learn winning strategies from our most successful high-roller players!',
-            'plzgfP_2Jg0': 'Witness epic bonus rounds and spectacular win celebrations!',
-            'daMgJA6wvmY': 'Get inspired by these amazing comeback stories and big win moments!',
-            'PfoG2Uyj-Jk': 'Experience the thrill of tournament victories and championship wins!',
-            'HEYsC5YJADk': 'See why LuckyTaj players keep winning big every single day!',
-            'y_qGxMbpsJ0': 'Watch real players hit incredible streaks and massive payouts!',
-            'zvjgVpOdY7w': 'Discover the secrets behind these mind-blowing jackpot wins!',
-            'DQ9Ku_8oe6Q': 'Experience heart-stopping moments of pure casino excitement!',
-            'u_vuwY4la7Y': 'Join thousands of players celebrating their biggest wins at LuckyTaj!'
-        };
-        
         // Tournament Dashboard Data
         this.tournamentWinners = [];
         this.dailyTotalWinnings = 0;
@@ -76,6 +42,7 @@ class DailyTrendingGames {
     async init() {
         this.setupLazyLoading();
         await this.loadGamesData();
+        await this.fetchVideos(); // Load videos from API
         this.updateDateDisplay();
         this.generateDailyGames();
         this.setupEventListeners();
@@ -119,6 +86,36 @@ class DailyTrendingGames {
             console.error('Error loading games data:', error);
             this.gamesData = { gamesPool: [] };
         }
+    }
+
+    async fetchVideos() {
+        try {
+            const response = await fetch('/api/videos/list');
+            const videos = await response.json();
+            
+            if (Array.isArray(videos) && videos.length > 0) {
+                this.allVideos = videos;
+                // Use API videos for main video section only
+                this.youtubeVideos = videos.map(video => video.id);
+                this.videosLoaded = true;
+                console.log('Videos loaded from API:', videos.length);
+                // Tournament TV keeps its own playlist - don't override
+            } else {
+                console.warn('No videos found from API, using fallback');
+                this.setFallbackVideos();
+            }
+        } catch (error) {
+            console.error('Error fetching videos from API:', error);
+            this.setFallbackVideos();
+        }
+    }
+
+    setFallbackVideos() {
+        // Fallback videos in case API fails - only for main video section
+        this.youtubeVideos = ['E7He8psjoJ8', 'RU-LstcZQMY', '2cbiW84IuoU'];
+        this.videosLoaded = true;
+        console.log('Using fallback videos');
+        // Tournament TV videos are already set in constructor
     }
 
     updateDateDisplay() {
@@ -228,15 +225,19 @@ class DailyTrendingGames {
     }
 
     loadRandomVideo() {
-        if (this.youtubeVideos.length === 0) return;
+        if (!this.videosLoaded || this.allVideos.length === 0) {
+            console.warn('Videos not loaded yet, retrying...');
+            setTimeout(() => this.loadRandomVideo(), 1000);
+            return;
+        }
         
         // Use date-based seeding for consistent daily video (like games)
         const today = new Date();
         const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-        const videoIndex = daysSinceEpoch % this.youtubeVideos.length;
+        const videoIndex = daysSinceEpoch % this.allVideos.length;
         
-        const selectedVideoId = this.youtubeVideos[videoIndex];
-        const videoUrl = `https://www.youtube.com/embed/${selectedVideoId}?rel=0&modestbranding=1&showinfo=0`;
+        const selectedVideo = this.allVideos[videoIndex];
+        const videoUrl = selectedVideo.url + '?rel=0&modestbranding=1&showinfo=0';
         
         // Update the iframe data-src for lazy loading
         const videoIframe = document.querySelector('.highlight-video');
@@ -246,10 +247,9 @@ class DailyTrendingGames {
         if (videoIframe) {
             videoIframe.setAttribute('data-src', videoUrl);
             
-            // Update video description dynamically based on video ID
+            // Update video description dynamically from API data
             if (videoDescription) {
-                const description = this.videoDescriptions[selectedVideoId] || 'Experience the thrill of big wins and exciting gameplay!';
-                videoDescription.textContent = description;
+                videoDescription.textContent = selectedVideo.description || 'Experience the thrill of big wins and exciting gameplay!';
             }
             
             // Simulate loading delay for better UX

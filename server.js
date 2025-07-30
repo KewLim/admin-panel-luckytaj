@@ -56,6 +56,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve favicon files
 app.use('/luckytaj-favicon', express.static(path.join(__dirname, 'luckytaj-favicon')));
+app.use('/favicon', express.static(path.join(__dirname, 'favicon')));
 
 // Serve admin panel static files
 app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
@@ -89,6 +90,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/banners', bannerRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/video', videoRoutes);
+app.use('/api/videos', videoRoutes); // Add direct /api/videos route for easy access
 app.use('/api/games', gamesRoutes);
 app.use('/api/winners', winnersRoutes);
 app.use('/api/jackpot', jackpotRoutes);
@@ -98,6 +100,11 @@ app.use('/api/otp', otpRoutes);
 // Serve admin panel
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-panel', 'index.html'));
+});
+
+// Serve admin video management page
+app.get('/admin/videos', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-panel', 'videos.html'));
 });
 
 // Serve main frontend

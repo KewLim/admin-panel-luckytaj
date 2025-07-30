@@ -254,4 +254,46 @@ router.get('/current', async (req, res) => {
     }
 });
 
+// Get all active videos as array (public endpoint for frontend)  
+router.get('/list', async (req, res) => {
+    try {
+        const activeVideos = await Video.find({ isActive: true })
+            .sort({ createdAt: -1 });
+        
+        if (activeVideos.length === 0) {
+            return res.json([]);
+        }
+
+        // Transform videos to the required format
+        const videosArray = activeVideos.map(video => {
+            let videoId = null;
+            let videoUrl = video.videoUrl;
+            
+            // Extract video ID from YouTube URL if it's a YouTube video
+            if (video.videoType === 'youtube') {
+                const match = video.videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+                videoId = match ? match[1] : null;
+                // For YouTube videos, return the embed URL
+                videoUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : video.videoUrl;
+            }
+
+            return {
+                id: videoId || video._id.toString(),
+                title: video.title || 'Amazing Wins',
+                url: videoUrl,
+                thumbnail: video.videoType === 'youtube' && videoId ? 
+                    `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null,
+                description: video.description || 'Experience the thrill of big wins and exciting gameplay!',
+                videoType: video.videoType,
+                createdAt: video.createdAt
+            };
+        });
+
+        res.json(videosArray);
+    } catch (error) {
+        console.error('Error fetching videos array:', error);
+        res.status(500).json({ error: 'Failed to fetch videos' });
+    }
+});
+
 module.exports = router;
