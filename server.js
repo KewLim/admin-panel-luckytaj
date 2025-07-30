@@ -107,6 +107,11 @@ app.get('/admin/videos', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-panel', 'videos.html'));
 });
 
+// Serve tournament TV management page
+app.get('/admin/tournament-tv', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-panel', 'tournament-tv.html'));
+});
+
 // Serve main frontend
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));

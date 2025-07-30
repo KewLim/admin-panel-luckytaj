@@ -2534,6 +2534,212 @@ async function clearOTPLogs() {
     }
 }
 
+// Tournament TV Management
+let tournamentTVPlaylist = [
+    'Fr3bXkHriGM', 
+    'POl3GtraHeo&t',
+    'ma5lm-ExMaA',
+    'akm4ys-WUN0',
+    'n14gIPk9_yo',
+    'GPXxOzK8A50',
+    'f0tUF8RLHwE',
+    'CfrVafvX3XI',
+    'D8g38fkFHFw',
+    'be1pSS2NSbY',
+    '7Bw0FSjSRpI',
+    'sZo46xEeOi4',
+    'GQUl8O97-S8',
+];
+
+let currentTournamentVideoIndex = 0;
+
+function loadTournamentTVPlaylist() {
+    currentTournamentVideoIndex = Math.floor(Math.random() * tournamentTVPlaylist.length);
+    const videoId = tournamentTVPlaylist[currentTournamentVideoIndex];
+    
+    // Display current video
+    const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    document.getElementById('currentTournamentThumbnail').src = thumbnail;
+    document.getElementById('currentTournamentTitle').textContent = 'Tournament Live Stream';
+    document.getElementById('currentTournamentDescription').textContent = 'Live tournament action and highlights';
+    
+    // Render playlist
+    renderTournamentPlaylist();
+}
+
+function renderTournamentPlaylist() {
+    const container = document.getElementById('tournamentPlaylistContainer');
+    
+    if (tournamentTVPlaylist.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-tv"></i>
+                <h3>No videos in playlist</h3>
+                <p>Add videos to create the tournament TV playlist</p>
+                <button class="btn btn-primary" onclick="openTournamentVideoModal()">
+                    <i class="fas fa-plus"></i> Add First Video
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = tournamentTVPlaylist.map((videoId, index) => {
+        const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        const isCurrentVideo = index === currentTournamentVideoIndex;
+        
+        return `
+            <div class="video-history-item ${isCurrentVideo ? 'current-playing' : ''}" style="margin-bottom: 15px;">
+                <div class="video-history-thumbnail" onclick="previewTournamentVideo('${videoId}')" style="width: 160px; height: 90px; position: relative; cursor: pointer; border-radius: 8px; overflow: hidden;">
+                    <img src="${thumbnail}" alt="Video thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="video-history-play" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 18px; background: rgba(255, 0, 0, 0.8); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-history-details" style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start; margin-left: 16px;">
+                    <div class="video-history-info">
+                        <h4 style="color: #333; font-size: 16px; font-weight: 600; margin-bottom: 8px;">Tournament Video ${index + 1} ${isCurrentVideo ? '(Currently Playing)' : ''}</h4>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 8px;">Tournament highlights and live action</p>
+                        <div class="video-meta" style="font-size: 12px; color: #94a3b8;">
+                            <span>YouTube</span> • <span>Video ID: ${videoId}</span>
+                        </div>
+                    </div>
+                    <div class="video-history-actions" style="display: flex; gap: 8px;">
+                        <button class="btn-small btn-preview" onclick="previewTournamentVideo('${videoId}')" style="padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; background: #48bb78; color: white; cursor: pointer;">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        <button class="btn-small btn-delete" onclick="deleteTournamentVideo(${index})" style="padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; background: #f56565; color: white; cursor: pointer;">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openTournamentVideoModal() {
+    document.getElementById('tournamentVideoModal').style.display = 'flex';
+    resetTournamentVideoForms();
+}
+
+function closeTournamentVideoModal() {
+    document.getElementById('tournamentVideoModal').style.display = 'none';
+    resetTournamentVideoForms();
+}
+
+function resetTournamentVideoForms() {
+    document.getElementById('tournamentYoutubeForm').reset();
+    document.getElementById('tournamentStreamForm').reset();
+}
+
+function switchTournamentVideoTab(type) {
+    // Update tab buttons
+    document.querySelectorAll('#tournamentVideoModal .video-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`#tournamentVideoModal [data-type="${type}"]`).classList.add('active');
+
+    // Update forms
+    document.querySelectorAll('#tournamentVideoModal .video-form').forEach(form => {
+        form.classList.remove('active');
+    });
+    
+    if (type === 'youtube') {
+        document.getElementById('tournamentYoutubeForm').classList.add('active');
+    } else {
+        document.getElementById('tournamentStreamForm').classList.add('active');
+    }
+}
+
+function extractYouTubeId(url) {
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
+function playCurrentTournamentVideo() {
+    if (tournamentTVPlaylist.length > 0) {
+        const videoId = tournamentTVPlaylist[currentTournamentVideoIndex];
+        window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+    }
+}
+
+function previewTournamentVideo(videoId) {
+    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+}
+
+function deleteTournamentVideo(index) {
+    if (confirm('Are you sure you want to remove this video from the tournament TV playlist?')) {
+        tournamentTVPlaylist.splice(index, 1);
+        
+        // Update current video index if needed
+        if (currentTournamentVideoIndex >= index && currentTournamentVideoIndex > 0) {
+            currentTournamentVideoIndex = Math.max(0, currentTournamentVideoIndex - 1);
+        }
+        
+        renderTournamentPlaylist();
+        loadTournamentTVPlaylist();
+        
+        // Show success message
+        showTournamentSuccess('Video removed from playlist');
+    }
+}
+
+function showTournamentSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-message';
+    successDiv.textContent = message;
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #48bb78;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(successDiv);
+    
+    setTimeout(() => {
+        successDiv.remove();
+    }, 3000);
+}
+
+// Tournament TV form submissions
+document.addEventListener('DOMContentLoaded', function() {
+    // YouTube form submission
+    document.getElementById('tournamentYoutubeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const videoUrl = formData.get('videoUrl');
+        
+        const videoId = extractYouTubeId(videoUrl);
+        if (!videoId) {
+            alert('Invalid YouTube URL. Please check the URL and try again.');
+            return;
+        }
+        
+        // Add to playlist
+        tournamentTVPlaylist.push(videoId);
+        
+        closeTournamentVideoModal();
+        renderTournamentPlaylist();
+        showTournamentSuccess('Video added to tournament TV playlist');
+    });
+    
+    // Stream form submission
+    document.getElementById('tournamentStreamForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Live stream integration coming soon!');
+    });
+});
+
 // Initialize the admin panel
 const adminPanel = new AdminPanel();
 
@@ -2559,6 +2765,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 await loadOTPStats();
                 await loadOTPLogs(currentOTPPage);
             }, 5000);
+        } else if (tabName === 'tournament-tv') {
+            // Load tournament TV playlist when tab is activated
+            loadTournamentTVPlaylist();
         } else {
             // Stop refresh when switching away from OTP tab
             if (otpRefreshInterval) {

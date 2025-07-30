@@ -71,6 +71,9 @@
                     <button class="tab-btn" data-tab="videos">
                         <i class="fas fa-video"></i> TV Session
                     </button>
+                    <button class="tab-btn" data-tab="tournament-tv">
+                        <i class="fas fa-tv"></i> Tournament TV
+                    </button>
                     <button class="tab-btn" data-tab="games">
                         <i class="fas fa-gamepad"></i> Daily Games
                     </button>
@@ -213,6 +216,50 @@
                     <div id="videoHistory" class="video-history">
                         <h3>Uploaded Videos</h3>
                         <!-- Uploaded videos will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Tournament TV Section -->
+                <section id="tournament-tv" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-tv"></i> Tournament TV Playlist</h2>
+                        <button class="btn btn-primary" onclick="openTournamentVideoModal()">
+                            Add Video to Playlist
+                        </button>
+                    </div>
+                    
+                    <!-- Current Playing Section -->
+                    <div class="video-content" style="margin-bottom: 20px;">
+                        <h3>🔴 Currently Playing</h3>
+                        <div class="current-video" id="currentTournamentVideo">
+                            <div class="video-thumbnail-container" onclick="playCurrentTournamentVideo()">
+                                <div class="video-thumbnail">
+                                    <img id="currentTournamentThumbnail" src="" alt="Current Video" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover;">
+                                    <div class="play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 0, 0, 0.9); color: white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                        <i class="fas fa-play"></i>
+                                    </div>
+                                    <div class="video-duration" style="position: absolute; bottom: 8px; right: 8px; background: rgba(255, 0, 0, 0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">LIVE</div>
+                                </div>
+                            </div>
+                            <div class="video-info" style="margin-top: 15px; text-align: center;">
+                                <div class="video-title" id="currentTournamentTitle" style="font-weight: 600; color: #333; margin-bottom: 10px; font-size: 18px;">Loading current video...</div>
+                                <div class="video-description" id="currentTournamentDescription" style="color: #4a5568; margin-bottom: 15px; font-size: 14px;">Tournament live stream</div>
+                                <div class="video-meta" style="font-size: 12px; color: #718096;">
+                                    <span>🔴 LIVE</span> • <span id="currentTournamentType">YouTube</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="video-info-box" style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                        <small><i class="fas fa-info-circle"></i> Videos are randomly selected from this playlist for the live tournament stream. Manage the tournament TV playlist content here.</small>
+                    </div>
+                    
+                    <div id="tournamentPlaylist" class="video-history">
+                        <h3>Tournament TV Playlist</h3>
+                        <div id="tournamentPlaylistContainer">
+                            <!-- Tournament playlist videos will be loaded here -->
+                        </div>
                     </div>
                 </section>
 
@@ -370,6 +417,78 @@
                 </section>
                 </main>
             </div>
+        </div>
+    </div>
+
+    <!-- Tournament TV Video Modal -->
+    <div id="tournamentVideoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Video to Tournament TV Playlist</h3>
+                <span class="close" onclick="closeTournamentVideoModal()">&times;</span>
+            </div>
+            
+            <!-- Video Type Tabs -->
+            <div class="video-tabs">
+                <button class="video-tab-btn active" data-type="youtube" onclick="switchTournamentVideoTab('youtube')">
+                    <i class="fab fa-youtube"></i> YouTube URL
+                </button>
+                <button class="video-tab-btn" data-type="stream" onclick="switchTournamentVideoTab('stream')">
+                    <i class="fas fa-broadcast-tower"></i> Live Stream
+                </button>
+            </div>
+            
+            <!-- YouTube Form -->
+            <form id="tournamentYoutubeForm" class="video-form active">
+                <div class="form-group">
+                    <label for="tournamentYoutubeUrl">YouTube Video URL</label>
+                    <input type="url" id="tournamentYoutubeUrl" name="videoUrl" 
+                           placeholder="https://www.youtube.com/watch?v=..." required>
+                    <small class="form-help">Paste the YouTube video URL for tournament highlights</small>
+                </div>
+                <div class="form-group">
+                    <label for="tournamentVideoTitle">Display Title</label>
+                    <input type="text" id="tournamentVideoTitle" name="title" maxlength="200" 
+                           placeholder="Tournament Highlights - Amazing Wins">
+                </div>
+                <div class="form-group">
+                    <label for="tournamentVideoDescription">Description</label>
+                    <textarea id="tournamentVideoDescription" name="description" maxlength="500" rows="3"
+                              placeholder="Epic tournament moments and big wins"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeTournamentVideoModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add to Playlist
+                    </button>
+                </div>
+            </form>
+
+            <!-- Live Stream Form -->
+            <form id="tournamentStreamForm" class="video-form">
+                <div class="form-group">
+                    <label for="tournamentStreamUrl">Live Stream URL</label>
+                    <input type="url" id="tournamentStreamUrl" name="streamUrl" 
+                           placeholder="https://www.twitch.tv/... or https://www.youtube.com/watch?v=...">
+                    <small class="form-help">Twitch, YouTube Live, or other streaming platform URL</small>
+                </div>
+                <div class="form-group">
+                    <label for="tournamentStreamTitle">Stream Title</label>
+                    <input type="text" id="tournamentStreamTitle" name="title" maxlength="200" 
+                           placeholder="Live Tournament Stream">
+                </div>
+                <div class="form-group">
+                    <label for="tournamentStreamDescription">Description</label>
+                    <textarea id="tournamentStreamDescription" name="description" maxlength="500" rows="3"
+                              placeholder="Live tournament action"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeTournamentVideoModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-broadcast-tower"></i> Add Stream
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
