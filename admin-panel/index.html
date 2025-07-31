@@ -113,9 +113,9 @@
                             <div class="metric-card">
                                 <div class="metric-icon"><i class="fas fa-users"></i></div>
                                 <div class="metric-content">
-                                    <h3>Unique Visitors</h3>
-                                    <div class="metric-value" id="uniqueVisitors">-</div>
-                                    <div class="metric-change" id="uniqueVisitorsChange">+0% from last 24h</div>
+                                    <h3>Verified Phones</h3>
+                                    <div class="metric-value" id="verifiedPhones">-</div>
+                                    <div class="metric-change" id="verifiedPhonesChange">+0% from last 24h</div>
                                 </div>
                                 <div class="metric-chart">
                                     <canvas id="visitorsChart" width="80" height="40"></canvas>
@@ -170,18 +170,51 @@
                         
                         <!-- Per Tip Performance -->
                         <div class="metrics-section">
-                            <h3>Tip Performance</h3>
+                            <div class="section-header-inline">
+                                <h3>Player Performance</h3>
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" id="tipSearchInput" placeholder="Search by Phone or Player ID..." class="search-input">
+                                        <button id="clearSearchBtn" class="clear-search" style="display: none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="tips-performance">
                                 <div id="tipsTable" class="tips-table">
                                     <div class="table-header">
-                                        <div class="col-tip">Tip ID</div>
+                                        <div class="col-tip">Player ID</div>
                                         <div class="col-views">Views</div>
-                                        <div class="col-unique">Unique</div>
+                                        <div class="col-unique">Sessions</div>
                                         <div class="col-ctr">Avg CTR</div>
                                         <div class="col-time">Avg. Time</div>
+                                        <div class="col-activity">Last Activity</div>
                                     </div>
                                     <div id="tipsTableBody">
                                         <div class="no-data">No tip data available</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Latest Player Activity -->
+                        <div class="metrics-section">
+                            <div class="section-header-inline">
+                                <h3><i class="fas fa-clock"></i> Latest Player Activity</h3>
+                                <div class="activity-status">
+                                    <span class="live-indicator"></span>
+                                    <span>Auto-refreshing</span>
+                                </div>
+                            </div>
+                            <div class="player-activity">
+                                <div class="activity-container">
+                                    <div id="latestActivity" class="activity-list">
+                                        <div class="activity-loading">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Loading latest player activity...</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

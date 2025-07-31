@@ -137,7 +137,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3003;
 
-app.listen(PORT, '127.0.0.1', () => {
+app.listen(PORT, () => {
     console.log(`Admin backend server running on port ${PORT}`);
     console.log(`Admin panel available at: http://localhost:${PORT}/admin`);
     console.log(`API endpoints available at: http://localhost:${PORT}/api/`);

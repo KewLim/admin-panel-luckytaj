@@ -60,6 +60,9 @@ class AdminPanel {
             });
         });
 
+        // Search functionality for tip performance
+        this.setupSearchFunctionality();
+
         // Video tab switching in modal
         document.querySelectorAll('.video-tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -360,12 +363,26 @@ class AdminPanel {
                 this.loadMetrics(true); // silent loading
             }
         }, 30000);
+        
+        // Update player activity every 5 seconds
+        this.activityInterval = setInterval(() => {
+            if (document.getElementById('metrics').classList.contains('active')) {
+                this.loadLatestActivity();
+            }
+        }, 5000);
+        
+        // Load initial activity
+        this.loadLatestActivity();
     }
     
     stopRealTimeUpdates() {
         if (this.metricsInterval) {
             clearInterval(this.metricsInterval);
             this.metricsInterval = null;
+        }
+        if (this.activityInterval) {
+            clearInterval(this.activityInterval);
+            this.activityInterval = null;
         }
     }
     
@@ -398,14 +415,14 @@ class AdminPanel {
     }
 
     // User Interaction Metrics Management
-    async loadMetrics(silent = false) {
+    async loadMetrics(silent = false, search = '') {
         try {
             if (!silent) this.showLoading();
             
             const [overview, devices, tips, trend] = await Promise.all([
                 this.fetchMetricsOverview(),
                 this.fetchDeviceDistribution(),
-                this.fetchTipPerformance(),
+                this.fetchTipPerformance(1, search),
                 this.fetchMetricsTrend()
             ]);
             
@@ -459,10 +476,12 @@ class AdminPanel {
         return response.ok ? await response.json() : null;
     }
 
-    async fetchTipPerformance(days = 1) {
+    async fetchTipPerformance(days = 1, search = '') {
         try {
+            const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+            
             // Try to fetch real-time data from port 3003
-            const frontendResponse = await fetch(`http://localhost:3003/api/metrics/tips?days=${days}`, {
+            const frontendResponse = await fetch(`http://localhost:3003/api/metrics/tips?days=${days}${searchParam}`, {
                 headers: { 'Authorization': `Bearer ${this.token}` }
             });
             if (frontendResponse.ok) {
@@ -473,11 +492,12 @@ class AdminPanel {
         }
         
         // Fallback to admin API
-        const response = await fetch(`${this.baseURL}/api/metrics/tips?days=${days}`, {
+        const response = await fetch(`${this.baseURL}/api/metrics/tips?days=${days}${searchParam}`, {
             headers: { 'Authorization': `Bearer ${this.token}` }
         });
         return response.ok ? await response.json() : null;
     }
+
 
     async fetchMetricsTrend(days = 7) {
         try {
@@ -499,23 +519,168 @@ class AdminPanel {
         return response.ok ? await response.json() : null;
     }
 
+    async fetchLatestActivity(limit = 10) {
+        try {
+            // Try to fetch from port 3003 first
+            const frontendResponse = await fetch(`http://localhost:3003/api/metrics?sort=latest&limit=${limit}`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+            if (frontendResponse.ok) {
+                return await frontendResponse.json();
+            }
+        } catch (error) {
+            console.log('Frontend API not available, using admin API');
+        }
+        
+        // Fallback to admin API
+        const response = await fetch(`${this.baseURL}/api/metrics?sort=latest&limit=${limit}`, {
+            headers: { 'Authorization': `Bearer ${this.token}` }
+        });
+        return response.ok ? await response.json() : null;
+    }
+
+    async loadLatestActivity() {
+        try {
+            const activityData = await this.fetchLatestActivity(10);
+            if (activityData && activityData.success) {
+                this.renderLatestActivity(activityData.data);
+            }
+        } catch (error) {
+            console.error('Error loading latest activity:', error);
+        }
+    }
+
+    renderLatestActivity(activities) {
+        const container = document.getElementById('latestActivity');
+        if (!container) return;
+
+        if (!activities || activities.length === 0) {
+            container.innerHTML = `
+                <div class="no-activity">
+                    <i class="fas fa-clock"></i>
+                    <span>No recent player activity</span>
+                </div>
+            `;
+            return;
+        }
+
+        const activityHTML = activities.map(activity => {
+            const timeAgo = this.getTimeAgo(new Date(activity.clickTimestamp));
+            const deviceIcon = this.getDeviceIcon(activity.deviceType);
+            const gameType = activity.gameType || activity.clickTarget || 'Game Click';
+            const tipShort = activity.tipId;
+            
+            return `
+                <div class="activity-item">
+                    <div class="activity-main">
+                        <div class="activity-icon">
+                            ${deviceIcon}
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-player">
+                                ${activity.verifiedPhone || 'Guest Player'}
+                            </div>
+                            <div class="activity-game">${gameType}</div>
+                        </div>
+                    </div>
+                    <div class="activity-meta">
+                        <div class="activity-time">${timeAgo}</div>
+                        <div class="activity-tip">${tipShort}</div>
+                        ${activity.verifiedPhone ? `<div class="activity-phone">${activity.verifiedPhone}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = activityHTML;
+    }
+
+    getDeviceIcon(deviceType) {
+        switch(deviceType?.toLowerCase()) {
+            case 'mobile':
+                return '<i class="fas fa-mobile-alt"></i>';
+            case 'tablet':
+                return '<i class="fas fa-tablet-alt"></i>';
+            case 'desktop':
+                return '<i class="fas fa-desktop"></i>';
+            default:
+                return '<i class="fas fa-mouse-pointer"></i>';
+        }
+    }
+
+    getTimeAgo(timestamp) {
+        const now = new Date();
+        const diff = now - timestamp;
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days > 0) return `${days}d ago`;
+        if (hours > 0) return `${hours}h ago`;
+        if (minutes > 0) return `${minutes}m ago`;
+        return `${seconds}s ago`;
+    }
+
+    setupSearchFunctionality() {
+        const searchInput = document.getElementById('tipSearchInput');
+        const clearBtn = document.getElementById('clearSearchBtn');
+        
+        if (!searchInput || !clearBtn) return;
+
+        let searchTimeout;
+
+        // Handle search input with debouncing
+        searchInput.addEventListener('input', (e) => {
+            const searchValue = e.target.value.trim();
+            
+            // Show/hide clear button
+            if (searchValue) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            // Debounce search requests
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.loadMetrics(true, searchValue);
+            }, 300);
+        });
+
+        // Handle clear button
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            this.loadMetrics(true, '');
+        });
+
+        // Handle Enter key
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout);
+                this.loadMetrics(true, e.target.value.trim());
+            }
+        });
+    }
+
     renderRealMetrics(overview, devices, tips, trend) {
         if (overview) {
             // Update overview cards with real data
             document.getElementById('totalViews').textContent = overview.totalViews.value.toLocaleString();
-            document.getElementById('uniqueVisitors').textContent = overview.uniqueVisitors.value.toLocaleString();
+            document.getElementById('verifiedPhones').textContent = overview.verifiedPhones.value.toLocaleString();
             document.getElementById('clickThroughRate').textContent = Math.round(overview.clickThroughRate.value) + '%';
             document.getElementById('avgTimeOnPage').textContent = overview.avgTimeOnPage.value + 's';
             
             // Update change indicators
             document.getElementById('totalViewsChange').textContent = `${overview.totalViews.change >= 0 ? '+' : ''}${overview.totalViews.change}% from last 24h`;
-            document.getElementById('uniqueVisitorsChange').textContent = `${overview.uniqueVisitors.change >= 0 ? '+' : ''}${overview.uniqueVisitors.change}% from last 24h`;
+            document.getElementById('verifiedPhonesChange').textContent = `${overview.verifiedPhones.change >= 0 ? '+' : ''}${overview.verifiedPhones.change}% from last 24h`;
             document.getElementById('clickThroughRateChange').textContent = `${overview.clickThroughRate.change >= 0 ? '+' : ''}${overview.clickThroughRate.change}% from yesterday`;
             document.getElementById('avgTimeOnPageChange').textContent = `${overview.avgTimeOnPage.change >= 0 ? '+' : ''}${overview.avgTimeOnPage.change}% from yesterday`;
             
             // Update change colors
             this.updateChangeColors('totalViewsChange', overview.totalViews.change);
-            this.updateChangeColors('uniqueVisitorsChange', overview.uniqueVisitors.change);
+            this.updateChangeColors('verifiedPhonesChange', overview.verifiedPhones.change);
             this.updateChangeColors('clickThroughRateChange', overview.clickThroughRate.change);
             this.updateChangeColors('avgTimeOnPageChange', overview.avgTimeOnPage.change);
         }
@@ -541,15 +706,53 @@ class AdminPanel {
         if (tips && tips.length > 0) {
             // Update tips performance table
             const tipsTableBody = document.getElementById('tipsTableBody');
-            tipsTableBody.innerHTML = tips.map(tip => `
+            tipsTableBody.innerHTML = tips.map(tip => {
+                const lastActivityTime = tip.lastActivityTime ? this.getTimeAgo(new Date(tip.lastActivityTime)) : 'No activity';
+                
+                // Display phone number if available, otherwise show shortened tip ID
+                let displayText = tip.tipId;
+                let isPhoneNumber = false;
+                
+                // Check if displayId looks like a phone number
+                if (tip.displayId && tip.displayId !== tip.tipId) {
+                    const cleanDisplayId = tip.displayId.replace(/^\+/, '');
+                    // Check if it's a phone number pattern (10-15 digits)
+                    if (cleanDisplayId.match(/^\d{10,15}$/)) {
+                        displayText = cleanDisplayId;
+                        isPhoneNumber = true;
+                    } else if (tip.displayId.startsWith('+') && tip.displayId.match(/^\+\d{10,15}$/)) {
+                        displayText = tip.displayId.replace(/^\+/, '');
+                        isPhoneNumber = true;
+                    } else {
+                        displayText = tip.displayId;
+                    }
+                } else {
+                    // Show shortened tip ID
+                    displayText = tip.tipId;
+                }
+                
+                // Debug log to see what data we're getting
+                console.log('Tip data:', { 
+                    tipId: tip.tipId, 
+                    displayId: tip.displayId, 
+                    isVerifiedPhone: tip.isVerifiedPhone,
+                    finalDisplay: displayText,
+                    isPhoneNumber: isPhoneNumber
+                });
+                
+                return `
                 <div class="tips-row">
-                    <div class="col-tip">${(tip.displayId || tip.tipId).replace(/^\+/, '')}</div>
+                    <div class="col-tip ${isPhoneNumber ? 'verified-phone' : ''}" title="${isPhoneNumber ? 'Verified Phone Number' : 'Tip ID'}">
+                        ${displayText.replace(/^\+/, '')}
+                        ${isPhoneNumber ? '<i class="fas fa-check-circle verified-icon"></i>' : ''}
+                    </div>
                     <div class="col-views">${tip.views.toLocaleString()}</div>
                     <div class="col-unique">${tip.uniqueVisitors || 'N/A'}</div>
                     <div class="col-ctr">${Math.round(tip.ctr)}%</div>
                     <div class="col-time">${tip.avgTimeSeconds || 0}s</div>
+                    <div class="col-activity">${lastActivityTime}</div>
                 </div>
-            `).join('');
+            `}).join('');
         } else {
             document.getElementById('tipsTableBody').innerHTML = '<div class="no-data">No tip data available yet</div>';
         }
@@ -681,30 +884,30 @@ class AdminPanel {
         const baseViews = 12000;
         const viewVariation = Math.floor(Math.random() * 1000) + 200;
         const totalViews = baseViews + viewVariation;
-        const uniqueVisitors = Math.floor(totalViews * 0.67);
+        const verifiedPhones = Math.floor(Math.random() * 15) + 8;
         const ctr = Math.round(2.8 + Math.random() * 0.8);
         const timeOnPage = Math.floor(38 + Math.random() * 10);
         
         // Update overview cards with dynamic mock data
         document.getElementById('totalViews').textContent = totalViews.toLocaleString();
-        document.getElementById('uniqueVisitors').textContent = uniqueVisitors.toLocaleString();
+        document.getElementById('verifiedPhones').textContent = verifiedPhones.toLocaleString();
         document.getElementById('clickThroughRate').textContent = ctr + '%';
         document.getElementById('avgTimeOnPage').textContent = timeOnPage + 's';
         
         // Generate realistic change indicators
         const viewsChange = (Math.random() * 20 - 5).toFixed(1);
-        const visitorsChange = (Math.random() * 15 - 3).toFixed(1);
+        const phonesChange = (Math.random() * 15 - 3).toFixed(1);
         const ctrChange = Math.round(Math.random() * 6 - 2);
         const timeChange = (Math.random() * 10 - 3).toFixed(1);
         
         document.getElementById('totalViewsChange').textContent = `${viewsChange >= 0 ? '+' : ''}${viewsChange}% from last 24h`;
-        document.getElementById('uniqueVisitorsChange').textContent = `${visitorsChange >= 0 ? '+' : ''}${visitorsChange}% from last 24h`;
+        document.getElementById('verifiedPhonesChange').textContent = `${phonesChange >= 0 ? '+' : ''}${phonesChange}% from last 24h`;
         document.getElementById('clickThroughRateChange').textContent = `${ctrChange >= 0 ? '+' : ''}${ctrChange}% from yesterday`;
         document.getElementById('avgTimeOnPageChange').textContent = `${timeChange >= 0 ? '+' : ''}${timeChange}% from yesterday`;
         
         // Update change colors
         this.updateChangeColors('totalViewsChange', viewsChange);
-        this.updateChangeColors('uniqueVisitorsChange', visitorsChange);
+        this.updateChangeColors('verifiedPhonesChange', phonesChange);
         this.updateChangeColors('clickThroughRateChange', ctrChange);
         this.updateChangeColors('avgTimeOnPageChange', timeChange);
         
@@ -838,8 +1041,8 @@ class AdminPanel {
                     tooltip: { 
                         enabled: true,
                         callbacks: {
-                            title: () => 'Unique Visitors',
-                            label: (context) => `Visitors: ${context.parsed.y.toLocaleString()}`
+                            title: () => 'Verified Phones',
+                            label: (context) => `Phones: ${context.parsed.y.toLocaleString()}`
                         }
                     }
                 }
@@ -2372,6 +2575,7 @@ class AdminPanel {
 function refreshMetrics() {
     adminPanel.loadMetrics();
 }
+
 
 function openCommentModal() {
     adminPanel.openCommentModal();
