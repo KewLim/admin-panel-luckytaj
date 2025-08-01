@@ -2440,7 +2440,7 @@ button:active {
 }
 
 .table-container {
-    background: var(--bg-secondary);
+    background: var(--bg);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -2467,7 +2467,8 @@ button:active {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
 }
 
 .tips-table td {
@@ -2511,7 +2512,7 @@ button:active {
     background: var(--green-badge);
     padding: 6px 12px;
     border-radius: 6px;
-    border: 1px solid #10b981;
+
     box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
     font-size: 14px;
     letter-spacing: 0.5px;
@@ -2521,9 +2522,10 @@ button:active {
 }
 
 .verified-icon {
-    color: #178b6a;
-    font-size: 12px;
-    animation: pulse-check 2s infinite;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    vertical-align: middle;
 }
 
 @keyframes pulse-check {

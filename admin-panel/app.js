@@ -793,7 +793,7 @@ class AdminPanel {
                 return `
                 <tr>
                     <td class="${isPhoneNumber ? 'verified-phone' : ''}" title="${isPhoneNumber ? 'Verified Phone Number' : 'Tip ID'}">
-                        ${isPhoneNumber ? `<span>${displayText.replace(/^\+/, '')}<i class="fas fa-check-circle verified-icon"></i></span>` : displayText.replace(/^\+/, '')}
+                        ${isPhoneNumber ? `<span>${displayText.replace(/^\+/, '')}<img src="https://cdn-icons-png.flaticon.com/512/7641/7641727.png" class="verified-icon" alt="Verified"></span>` : displayText.replace(/^\+/, '')}
                     </td>
                     <td>${tip.views.toLocaleString()}</td>
                     <td>${tip.uniqueVisitors || 'N/A'}</td>
