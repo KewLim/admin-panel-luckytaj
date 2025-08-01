@@ -35,12 +35,12 @@
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </form>
-                <div id="loginError" class="error-message" style="display: none;"></div>
+                <div id="loginError" class="error-message d-none"></div>
             </div>
         </div>
 
         <!-- Admin Dashboard -->
-        <div id="dashboard" class="dashboard" style="display: none;">
+        <div id="dashboard" class="dashboard d-none">
             <!-- Header -->
             <header class="dashboard-header">
                 <div class="header-left">
@@ -49,6 +49,10 @@
                 </div>
                 <div class="header-right">
                     <span id="adminEmail" class="admin-email"></span>
+                    <div class="theme-toggle" id="themeToggle">🌙</div>
+                    <div class="india-time-display">
+                        <span id="indiaTime" class="time-text"></span>
+                    </div>
                     <button id="logoutBtn" class="btn btn-secondary">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -153,14 +157,14 @@
                                     <div class="device-stat">
                                         <span class="device-label"><i class="fas fa-mobile-alt"></i> Mobile</span>
                                         <div class="device-bar">
-                                            <div class="device-fill mobile" style="width: 0%"></div>
+                                            <div class="device-fill mobile"></div>
                                         </div>
                                         <span class="device-percentage" id="mobilePercentage">0%</span>
                                     </div>
                                     <div class="device-stat">
                                         <span class="device-label"><i class="fas fa-desktop"></i> Desktop</span>
                                         <div class="device-bar">
-                                            <div class="device-fill desktop" style="width: 0%"></div>
+                                            <div class="device-fill desktop"></div>
                                         </div>
                                         <span class="device-percentage" id="desktopPercentage">0%</span>
                                     </div>
@@ -176,7 +180,7 @@
                                     <div class="search-box">
                                         <i class="fas fa-search search-icon"></i>
                                         <input type="text" id="tipSearchInput" placeholder="Search by Phone or Player ID..." class="search-input">
-                                        <button id="clearSearchBtn" class="clear-search" style="display: none;">
+                                        <button id="clearSearchBtn" class="clear-search d-none">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
@@ -243,7 +247,7 @@
                         Add Video
                         </button>
                     </div>
-                    <div class="video-info-box" style="background: #ffffff; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <div class="video-info-box">
                         <small><i class="fas fa-info-circle"></i> Multiple videos can be active simultaneously. A random active video will be displayed on each page refresh.</small>
                     </div>
                     <div id="videoHistory" class="video-history">
@@ -262,29 +266,29 @@
                     </div>
                     
                     <!-- Current Playing Section -->
-                    <div class="video-content" style="margin-bottom: 20px;">
+                    <div class="video-content video-content-section">
                         <h3>🔴 Currently Playing</h3>
                         <div class="current-video" id="currentTournamentVideo">
                             <div class="video-thumbnail-container" onclick="playCurrentTournamentVideo()">
                                 <div class="video-thumbnail">
-                                    <img id="currentTournamentThumbnail" src="" alt="Current Video" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover;">
-                                    <div class="play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 0, 0, 0.9); color: white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                    <img id="currentTournamentThumbnail" src="" alt="Current Video" class="current-tournament-thumbnail">
+                                    <div class="play-button">
                                         <i class="fas fa-play"></i>
                                     </div>
-                                    <div class="video-duration" style="position: absolute; bottom: 8px; right: 8px; background: rgba(255, 0, 0, 0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">LIVE</div>
+                                    <div class="video-duration-badge">LIVE</div>
                                 </div>
                             </div>
-                            <div class="video-info" style="margin-top: 15px; text-align: center;">
-                                <div class="video-title" id="currentTournamentTitle" style="font-weight: 600; color: #333; margin-bottom: 10px; font-size: 18px;">Loading current video...</div>
-                                <div class="video-description" id="currentTournamentDescription" style="color: #4a5568; margin-bottom: 15px; font-size: 14px;">Tournament live stream</div>
-                                <div class="video-meta" style="font-size: 12px; color: #718096;">
+                            <div class="video-info video-info-center">
+                                <div class="video-title video-title-main" id="currentTournamentTitle">Loading current video...</div>
+                                <div class="video-description video-description-text" id="currentTournamentDescription">Tournament live stream</div>
+                                <div class="video-meta video-meta-info">
                                     <span>🔴 LIVE</span> • <span id="currentTournamentType">YouTube</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="video-info-box" style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <div class="video-info-box secondary">
                         <small><i class="fas fa-info-circle"></i> Videos are randomly selected from this playlist for the live tournament stream. Manage the tournament TV playlist content here.</small>
                     </div>
                     
@@ -748,17 +752,39 @@
                     <div id="imageGallery" class="image-gallery">
                         <!-- Image gallery will be loaded here -->
                     </div>
-                    <div class="selected-image-preview" id="selectedImagePreview" style="display: none; margin-top: 10px;">
+                    <div class="selected-image-preview" id="selectedImagePreview">
                         <strong>Selected:</strong> <span id="selectedImageName"></span>
-                        <img id="selectedImageImg" style="max-height: 20px; margin-left: 10px; border-radius: 2px;">
+                        <img id="selectedImageImg">
                     </div>
                 </div>
                 <div class="form-group">
                     <h4>Recent Win Information (Optional)</h4>
+                    
+                    <!-- Auto-generate controls -->
+                    <div class="auto-generate-section">
+                        <h5 class="auto-generate-title">
+                            <i class="fas fa-magic"></i> Auto-Generate Options
+                        </h5>
+                        <div class="auto-generate-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoAmount" onchange="toggleAutoGenerate('amount')">
+                                <span class="checkbox-text">Auto Amount (₹3,000-₹40,000)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoPlayer" onchange="toggleAutoGenerate('player')">
+                                <span class="checkbox-text">Auto Player Name</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoComment" onchange="toggleAutoGenerate('comment')">
+                                <span class="checkbox-text">Auto Comment</span>
+                            </label>
+                        </div>
+                    </div>
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="winAmount">Win Amount</label>
-                            <input type="text" id="winAmount" name="winAmount" placeholder="$15,420">
+                            <input type="text" id="winAmount" name="winAmount" placeholder="₹15,420">
                         </div>
                         <div class="form-group">
                             <label for="winPlayer">Player Name</label>
@@ -780,7 +806,7 @@
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner">
             <i class="fas fa-spinner fa-spin"></i>
             <p>Loading...</p>

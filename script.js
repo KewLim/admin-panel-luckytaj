@@ -78,12 +78,26 @@ class DailyTrendingGames {
 
     async loadGamesData() {
         try {
-            const response = await fetch('./games-data.json');
-            this.gamesData = await response.json();
-            console.log('Games data loaded:', this.gamesData);
+            // First try to load from API
+            const response = await fetch('/api/games/daily');
+            const dailyGames = await response.json();
+            
+            if (Array.isArray(dailyGames) && dailyGames.length > 0) {
+                // Use API games directly for display
+                this.dailyGames = dailyGames;
+                this.gamesData = { gamesPool: dailyGames };
+                console.log('Games data loaded from API:', dailyGames);
+                return;
+            }
+            
+            // No games available from API - inform user to contact admin
+            console.log('No games available from API. Database may be empty.');
+            this.gamesData = { gamesPool: [] };
+            this.showNoGamesMessage();
         } catch (error) {
             console.error('Error loading games data:', error);
             this.gamesData = { gamesPool: [] };
+            this.showNoGamesMessage();
         }
     }
 
@@ -130,6 +144,12 @@ class DailyTrendingGames {
     }
 
     generateDailyGames() {
+        // If games are already loaded from API, skip generation
+        if (this.dailyGames && this.dailyGames.length > 0) {
+            console.log('Daily games already loaded from API:', this.dailyGames);
+            return;
+        }
+        
         if (!this.gamesData.gamesPool.length) return;
 
         // Get current time in GMT+5:30 (Indian Standard Time)
@@ -143,11 +163,20 @@ class DailyTrendingGames {
         
         // Use modulo logic as specified in README
         const totalGames = this.gamesData.gamesPool.length;
+        
+        // Handle empty games array
+        if (totalGames === 0) {
+            this.dailyGames = [];
+            console.log('No games available for daily selection');
+            return;
+        }
+        
         const startIndex = daysSinceEpoch % totalGames;
         
-        // Select 3 games using rotating index
+        // Select 3 games using rotating index (or fewer if less than 3 games available)
         this.dailyGames = [];
-        for (let i = 0; i < 3; i++) {
+        const gamesToSelect = Math.min(3, totalGames);
+        for (let i = 0; i < gamesToSelect; i++) {
             const gameIndex = (startIndex + i) % totalGames;
             this.dailyGames.push(this.gamesData.gamesPool[gameIndex]);
         }
@@ -382,6 +411,12 @@ class DailyTrendingGames {
 
         gamesGrid.innerHTML = '';
 
+        // Check if we have games to display
+        if (!this.dailyGames || this.dailyGames.length === 0) {
+            this.showNoGamesMessage();
+            return;
+        }
+
         this.dailyGames.forEach((game, index) => {
             const gameCard = this.createGameCard(game, index);
             gamesGrid.appendChild(gameCard);
@@ -556,6 +591,28 @@ class DailyTrendingGames {
                 }
             }, 300);
         }, 3000);
+    }
+
+    showNoGamesMessage() {
+        const gamesGrid = document.getElementById('gamesGrid');
+        if (gamesGrid) {
+            gamesGrid.innerHTML = `
+                <div class="no-games-message" style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; border: 2px dashed #cbd5e0;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🎮</div>
+                    <h3 style="color: #2d3748; margin-bottom: 12px; font-size: 24px;">No Games Available</h3>
+                    <p style="color: #4a5568; margin-bottom: 20px; line-height: 1.6;">Our game database is being updated. Please check back soon or contact our support team.</p>
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <a href="https://wa.me/+919876543210" target="_blank" style="background: #25d366; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+                            📱 WhatsApp Support
+                        </a>
+                        <button onclick="location.reload()" style="background: #667eea; color: white; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500;">
+                            🔄 Refresh Page
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        this.showSuccessMessage('⚠️ No games available. Please contact support.');
     }
 
     setupDailyGamesRefresh() {

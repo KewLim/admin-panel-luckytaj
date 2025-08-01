@@ -1,3 +1,66 @@
+/* CSS Variables for Light Theme (Default) */
+:root {
+    --bg: #ffffff;           /* Main background */
+    --bg-secondary: #f8f9fa; /* Cards, modals, boxes */
+    --surface: #e9ecef;      /* Buttons, input fields */
+    --text: #212529;         /* Main text */
+    --text-muted: #6c757d;   /* Hints, secondary info */
+    --accent: #007bff;       /* Primary accent (blue) */
+    --accent-hover: #0056b3; /* Hover state for accent */
+    --border: #dee2e6;       /* Border lines */
+    --error: #dc3545;        /* Red for errors */
+    --success: #28a745;      /* Green for success */
+    --green-badge: #a7f3d0;
+    --phone-number: #065f46;
+    --green-text: #28a745; 
+    --red-text: #dc3545;
+    --purple-text: #667eea;
+    --device-fill-dekstop: #764ba2;
+    --device-fill-mobile: #667eea;
+}
+
+/* Light theme explicit (same as default) */
+[data-theme="light"] {
+    --bg: #ffffff;           /* Main background */
+    --bg-secondary: #f8f9fa; /* Cards, modals, boxes */
+    --surface: #e9ecef;      /* Buttons, input fields */
+    --text: #212529;         /* Main text */
+    --text-muted: #6c757d;   /* Hints, secondary info */
+    --accent: #007bff;       /* Primary accent (blue) */
+    --accent-hover: #0056b3; /* Hover state for accent */
+    --border: #dee2e6;       /* Border lines */
+    --error: #dc3545;        /* Red for errors */
+    --success: #28a745;      /* Green for success */
+    --green-badge: #a7f3d0;
+    --phone-number: #065f46;
+    --green-text: #28a745;
+    --red-text: #dc3545;
+    --purple-text: #667eea;
+    --device-fill-dekstop: #764ba2;
+    --device-fill-mobile: #667eea;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+    --bg: #1D2125;           /* Main background - avoid pure black */
+    --bg-secondary: #252A2E; /* Cards, modals, boxes */
+    --surface: #2C3237;      /* Buttons, input fields */
+    --text: #ffffff;         /* Main text - pure white for contrast */
+    --text-muted: #B6C2CF;   /* Hints, secondary info */
+    --accent: #00bcd4;       /* Primary accent (cyan) */
+    --accent-hover: #00acc1; /* Hover state for accent */
+    --border: #3C4347;       /* Border lines */
+    --error: #ef5350;        /* Red for errors */
+    --success: #66bb6a;      /* Green for success */
+    --green-badge: #66bb6a;
+    --phone-number: #ffffff;
+    --green-text: #6bfb8c;
+    --red-text: #ff5f6e;
+    --purple-text: #9caeff;
+    --device-fill-dekstop: #8052af;
+    --device-fill-mobile: #7f96ff;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,7 +70,31 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
-    color: #333;
+    background: var(--bg);
+    color: var(--text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    cursor: pointer;
+    font-size: 24px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.theme-toggle:hover {
+    background: var(--text-muted);
+    transform: scale(1.1);
 }
 
 /* Ensure text selection works globally */
@@ -28,7 +115,7 @@ body {
 }
 
 .login-card {
-    background: white;
+    background: var(--bg-secondary);
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -47,7 +134,7 @@ body {
 }
 
 .login-header h2 {
-    color: #333;
+    color: var(--text);
     font-weight: 600;
 }
 
@@ -66,7 +153,7 @@ body {
 }
 
 .dashboard-header {
-    background: white;
+    background: var(--bg-secondary);
     padding: 15px 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -92,9 +179,51 @@ body {
 }
 
 .header-left h1 {
-    color: #333;
+    color: var(--text);
     font-weight: 600;
     font-size: 20px;
+}
+
+.india-time-display {
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    position: relative;
+}
+
+.india-time-display::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: -1;
+    background: linear-gradient(90deg, rgb(79, 70, 229), rgb(124, 58, 237), rgb(67, 56, 202), rgb(37, 99, 235), rgb(14, 165, 233), rgb(79, 70, 229)) 0% 0% / 200% 100%;
+    border-radius: 8px;
+    animation: 4s linear 0s infinite normal none running shimmer;
+    mask: linear-gradient(rgb(255, 255, 255) 0px, rgb(255, 255, 255) 0px) content-box, linear-gradient(rgb(255, 255, 255) 0px, rgb(255, 255, 255) 0px);
+    mask-composite: xor;
+    -webkit-mask: linear-gradient(rgb(255, 255, 255) 0px, rgb(255, 255, 255) 0px) content-box, linear-gradient(rgb(255, 255, 255) 0px, rgb(255, 255, 255) 0px);
+    -webkit-mask-composite: xor;
+    padding: 3px;
+}
+
+.time-text {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Hide on mobile devices */
+@media (max-width: 768px) {
+    .india-time-display {
+        display: none;
+    }
 }
 
 .header-right {
@@ -104,8 +233,7 @@ body {
 }
 
 .admin-email {
-    color: #666;
-    font-size: 14px;
+    display: none;
 }
 
 /* Main Content Wrapper for Desktop Layout */
@@ -117,8 +245,8 @@ body {
 
 /* Navigation Tabs - Desktop: Left Sidebar */
 .tab-navigation {
-    background: white;
-    border-right: 1px solid #e1e8ed;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     width: 250px;
@@ -154,13 +282,13 @@ body {
 
 .tab-btn:hover {
     color: #667eea;
-    background: #f8f9ff;
+    background: var(--bg);
 }
 
 .tab-btn.active {
     color: #667eea;
     border-right-color: #667eea;
-    background: #f8f9ff;
+    background: var(--bg);
 }
 
 .tab-btn i {
@@ -192,7 +320,7 @@ body {
 }
 
 .section-header h2 {
-    color: #333;
+    color: var(--text);
     font-weight: 600;
 }
 
@@ -438,7 +566,7 @@ button:active {
 }
 
 .game-item {
-    background: white;
+    background: var(--bg-secondary);
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 20px;
@@ -596,7 +724,7 @@ button:active {
 }
 
 .banner-card {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -620,7 +748,7 @@ button:active {
 .banner-title {
     font-weight: 600;
     margin-bottom: 10px;
-    color: #333;
+    color: var(--text);
 }
 
 .banner-meta {
@@ -643,7 +771,7 @@ button:active {
 
 /* Comments Table */
 .comments-table {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -689,7 +817,7 @@ button:active {
 
 .comment-username {
     font-weight: 600;
-    color: #333;
+    color: var(--text);
 }
 
 .comment-timestamp {
@@ -719,7 +847,7 @@ button:active {
 
 /* Video Content */
 .video-content {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -800,7 +928,7 @@ button:active {
 
 .video-title {
     font-weight: 600;
-    color: #333;
+    color: var(--text);
     margin-bottom: 10px;
 }
 
@@ -815,7 +943,7 @@ button:active {
 }
 
 .video-history {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -823,7 +951,7 @@ button:active {
 
 .video-history h3 {
     margin-bottom: 20px;
-    color: #333;
+    color: var(--text);
 }
 
 .video-history-item {
@@ -917,7 +1045,7 @@ button:active {
 
 .dropdown-trigger:hover {
     background-color: #f0f0f0;
-    color: #333;
+    color: var(--text);
 }
 
 .dropdown-trigger:focus,
@@ -931,7 +1059,7 @@ button:active {
     position: absolute;
     top: 100%;
     right: 0;
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     min-width: 140px;
@@ -958,7 +1086,7 @@ button:active {
     text-align: left;
     cursor: pointer;
     font-size: 14px;
-    color: #333;
+    color: var(--text);
     transition: background-color 0.2s ease;
     display: flex;
     align-items: center;
@@ -1003,7 +1131,7 @@ button:active {
 }
 
 .modal-content {
-    background: white;
+    background: var(--bg-secondary);
     margin: 5% auto;
     padding: 0;
     border-radius: 8px;
@@ -1022,7 +1150,7 @@ button:active {
 }
 
 .modal-header h3 {
-    color: #333;
+    color: var(--text);
     font-weight: 600;
 }
 
@@ -1216,7 +1344,7 @@ button:active {
 
 .games-status,
 .games-config {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1232,7 +1360,7 @@ button:active {
 
 /* Winners Table */
 .winners-table {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1270,7 +1398,7 @@ button:active {
 
 .winner-details h4 {
     margin: 0 0 5px 0;
-    color: #333;
+    color: var(--text);
     font-weight: 600;
 }
 
@@ -1295,7 +1423,7 @@ button:active {
 
 .jackpot-config,
 .jackpot-messages {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1321,7 +1449,7 @@ button:active {
 }
 
 .messages-table {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1399,6 +1527,22 @@ button:active {
         border: 1px solid rgba(118, 75, 162, 0.1);
     }
 
+    .theme-toggle {
+        cursor: pointer;
+        font-size: 17px;
+        padding: 6px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+    }
+
 
     .comment-actions {
         display: grid;
@@ -1457,7 +1601,7 @@ button:active {
     }
 
     .video-history {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 8px;
         padding: 15px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1472,7 +1616,7 @@ button:active {
     }
 
     .modal-header h3 {
-        color: #333;
+        color: var(--text);
         font-weight: 600;
         font-size: 12px;
     }
@@ -1517,7 +1661,7 @@ button:active {
     }
 
     .game-item {
-        background: white;
+        background: var(--bg-secondary);
         border: 1px solid #e2e8f0;
         border-radius: 8px;
         padding: 10px;
@@ -1529,13 +1673,13 @@ button:active {
 
     .video-history h3 {
         margin-bottom: 10px;
-        color: #333;
+        color: var(--text);
         font-size: 17px;
     }
 
     /* Tournament TV Mobile Styles */
     .video-content {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 8px;
         padding: 15px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1545,7 +1689,7 @@ button:active {
     .video-content h3 {
         font-size: 17px;
         margin-bottom: 15px;
-        color: #333;
+        color: var(--text);
     }
 
     .current-video {
@@ -1767,7 +1911,7 @@ button:active {
     }
     
     .section-header h2 {
-        color: #333;
+        color: var(--text);
         font-weight: 600;
         font-size: 15px;
     }
@@ -1781,7 +1925,7 @@ button:active {
     }
 
     .header-left h1 {
-        color: #333;
+        color: var(--text);
         font-weight: 600;
         font-size: 12px;
     }
@@ -1826,7 +1970,7 @@ button:active {
         max-height: 100%;
         padding: 0 20px;
         border-right: none;
-        border-bottom: 1px solid #e1e8ed;
+        border-bottom: 1px solid var(--border);
         overflow-x: auto;
         white-space: nowrap;
         scrollbar-width: none;      /* Firefox */
@@ -1974,7 +2118,7 @@ button:active {
 }
 
 .metric-card {
-    background: white;
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -2191,14 +2335,14 @@ button:active {
 
 .metric-content h3 {
     font-size: 14px;
-    color: #666;
+    color: var(--text-muted);
     margin-bottom: 5px;
 }
 
 .metric-value {
     font-size: 24px;
     font-weight: 600;
-    color: #333;
+    color: var(--text);
     margin-bottom: 5px;
 }
 
@@ -2208,7 +2352,7 @@ button:active {
 }
 
 .metrics-section {
-    background: white;
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -2217,7 +2361,7 @@ button:active {
 
 .metrics-section h3 {
     margin-bottom: 15px;
-    color: #333;
+    color: var(--text);
     font-size: 18px;
 }
 
@@ -2240,14 +2384,14 @@ button:active {
 .device-label {
     min-width: 100px;
     font-size: 14px;
-    color: #666;
+    color: var(--text-muted);
     text-align: center;
 }
 
 .device-bar {
     flex: 1;
     height: 20px;
-    background: #f0f0f0;
+    background: var(--bg);
     border-radius: 10px;
     overflow: hidden;
 }
@@ -2258,13 +2402,13 @@ button:active {
 }
 
 .device-fill.mobile {
-    background: #667eea;
+    background: var(--device-fill-mobile);
     border-radius: 10px;
     display: block;
 }
 
 .device-fill.desktop {
-    background: #764ba2;
+    background: var(--device-fill-dekstop);
     border-radius: 10px;
 }
 
@@ -2272,11 +2416,11 @@ button:active {
     min-width: 40px;
     text-align: right;
     font-weight: 600;
-    color: #333;
+    color: var(--text);
 }
 
 .tips-table {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -2291,7 +2435,6 @@ button:active {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     font-weight: 600;
     color: #495057;
-    border-bottom: 2px solid #dee2e6;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -2302,7 +2445,6 @@ button:active {
     grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 1.2fr;
     gap: 12px;
     padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
     transition: all 0.3s ease;
     align-items: center;
 }
@@ -2319,7 +2461,7 @@ button:active {
 
 .col-tip {
     font-family: monospace;
-    color: #667eea;
+    color: var(--purple-text);
     font-weight: 500;
     cursor: pointer;
     user-select: text;
@@ -2327,9 +2469,9 @@ button:active {
 }
 
 .col-tip.verified-phone {
-    color: #065f46;
+    color: var(--phone-number);
     font-weight: 700;
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    background: var(--green-badge);
     padding: 6px 12px;
     border-radius: 8px;
     display: inline-grid;
@@ -2385,12 +2527,12 @@ button:active {
 
 .col-views, .col-unique {
     font-weight: 600;
-    color: #374151;
+    color: var(--text);
     font-size: 14px;
 }
 
 .col-ctr {
-    color: #059669;
+    color: var(--green-badge);
     font-weight: 700;
     font-size: 14px;
 }
@@ -2655,9 +2797,10 @@ button:active {
         .metric-card,
         .stat-card {
         flex-direction: row;
-        text-align: center;
+        text-align: center; 
         padding: 12px;
         gap: 6px;
+        border-color: var(--border);
         min-width: 0;
         overflow: hidden;
         box-sizing: border-box;
@@ -2744,13 +2887,13 @@ button:active {
 
     .pagination-controls select {
         padding: 2px 6px !important;
-        border: 2px solid #c9e3ff !important;
+        border: 2px solid var(--border) !important;
         border-radius: 3px !important;
-        background: white !important;
+        background: var(--surface) !important;
         font-size: 10px !important;
         font-weight: 600 !important;
         cursor: pointer !important;
-        color: #6798cc !important;
+        color: var(--text) !important;
         min-width: 1px !important;
         transition: all 0.2s ease !important;
     }
@@ -2776,7 +2919,6 @@ button:active {
         justify-content: space-between;
         align-items: center;
         padding: 6px 0;
-        border-bottom: 1px solid #f3f4f6;
     }
     
     .tips-row > div:last-child {
@@ -2821,6 +2963,7 @@ button:active {
     .section-header-inline h3 {
         text-align: center;
         margin-bottom: 0;
+        color: var(--text);
     }
     
     .search-container {
@@ -2873,7 +3016,7 @@ button:active {
 }
 
 .stat-card {
-    background: white;
+    background: var(--bg-secondary);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -2899,13 +3042,13 @@ button:active {
 .stat-content h3 {
     font-size: 22px;
     font-weight: 700;
-    color: #333;
+    color: var(--text);
     margin: 0 0 5px 0;
 }
 
 .stat-content p {
     font-size: 14px;
-    color: #666;
+    color: var(--text-muted);
     margin: 0;
 }
 
@@ -2916,7 +3059,7 @@ button:active {
 }
 
 .otp-logs-container {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -2959,11 +3102,11 @@ button:active {
 }
 
 .otp-table th {
-    background: #f8f9fa;
+    background: var(--bg-secondary);
     padding: 15px 12px;
     text-align: center;
     font-weight: 600;
-    color: #333;
+    color: var(--text);
     border-bottom: 2px solid #e9ecef;
 }
 
@@ -2975,7 +3118,7 @@ button:active {
 }
 
 .otp-table tbody tr:hover {
-    background: #f8f9fa;
+    background: var(--bg-secondary);
 }
 
 .otp-table .loading-message {
@@ -2995,7 +3138,7 @@ button:active {
     font-family: inherit;
     font-weight: normal;
     color: #495057;
-    background: #f8f9fa;
+    background: var(--bg-secondary);
     padding: 4px 8px;
     border-radius: 4px;
     display: inline-block;
@@ -3082,7 +3225,7 @@ button:active {
 
 .pagination-controls label {
     font-weight: 600;
-    color: #495057;
+    color: var(--text);
     font-size: 14px;
 }
 
@@ -3090,7 +3233,7 @@ button:active {
     padding: 2px 12px;
     border: 2px solid #c9e3ff;
     border-radius: 3px;
-    background: white;
+    background: var(--bg-secondary);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -3120,16 +3263,16 @@ button:active {
     gap: 8px;
     margin-top: 20px;
     padding: 20px;
-    background: white;
+    background: var(--bg-secondary);
     position: sticky;
     bottom: 0;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid var(--border);
 }
 
 .pagination-btn {
     padding: 8px 12px;
     border: 1px solid #dee2e6;
-    background: white;
+    background: var(--bg-secondary);
     color: #495057;
     border-radius: 4px;
     cursor: pointer;
@@ -3145,7 +3288,7 @@ button:active {
 }
 
 .pagination-btn:disabled {
-    background: #f8f9fa;
+    background: var(--bg-secondary);
     color: #adb5bd;
     cursor: not-allowed;
     border-color: #dee2e6;
@@ -3235,7 +3378,7 @@ button:active {
 
 .pagination {
     padding: 20px;
-    background: #f8f9fa;
+    background: var(--bg-secondary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -3245,8 +3388,8 @@ button:active {
 .pagination button {
     padding: 8px 12px;
     border: 1px solid #ddd;
-    background: white;
-    color: #333;
+    background: var(--bg-secondary);
+    color: var(--text);
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -3569,10 +3712,10 @@ button:active {
 .search-input {
     width: 100%;
     padding: 10px 40px 10px 35px;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 14px;
-    background: #ffffff;
+    background: var(--surface);
     transition: all 0.3s ease;
     color: #374151;
 }
@@ -3581,7 +3724,7 @@ button:active {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    background: #fefefe;
+    background: var(--bg-secondary);
 }
 
 .search-input::placeholder {
@@ -3616,7 +3759,7 @@ button:active {
 
 .section-header-inline h3 {
     margin: 0;
-    color: #2d3748;
+    color: var(--text);
     font-size: 18px;
     font-weight: 600;
 }
@@ -3650,7 +3793,7 @@ button:active {
 }
 
 .player-activity {
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -3680,7 +3823,7 @@ button:active {
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     transition: background-color 0.2s ease;
 }
 
@@ -3689,7 +3832,7 @@ button:active {
 }
 
 .activity-item:hover {
-    background-color: #f7fafc;
+    background-color: var(--bg);
 }
 
 .activity-item.new-entry {
@@ -3733,14 +3876,14 @@ button:active {
 
 .activity-player {
     font-weight: 600;
-    color: #2d3748;
+    color: var(--text);
     font-size: 14px;
     margin-bottom: 2px;
 }
 
 .activity-game {
     font-size: 12px;
-    color: #718096;
+    color: var(--text-muted);
 }
 
 .activity-meta {
@@ -3758,8 +3901,8 @@ button:active {
 
 .activity-tip {
     font-size: 10px;
-    color: #9ca3af;
-    background: #f3f4f6;
+    color: var(--text);
+    background: var(--bg);
     padding: 2px 6px;
     border-radius: 10px;
     font-family: monospace;
@@ -3775,9 +3918,9 @@ button:active {
 
 .activity-phone {
     font-size: 11px;
-    color: #059669;
+    color: var(--phone-number);
     font-weight: 600;
-    background: #d1fae5;
+    background: var(--green-badge);
     padding: 2px 6px;
     border-radius: 10px;
     font-family: monospace;
@@ -4022,11 +4165,11 @@ button:active {
 
 /* Color classes for change indicators */
 .change-positive {
-    color: #28a745 !important;
+    color: var(--green-text) !important;
 }
 
 .change-negative {
-    color: #dc3545 !important;
+    color: var(--red-text) !important;
 }
 
 .change-neutral {
@@ -4093,7 +4236,7 @@ button:active {
 
 .video-title-main {
     font-weight: 600;
-    color: #333;
+    color: var(--text);
     margin-bottom: 10px;
     font-size: 18px;
 }
@@ -4211,7 +4354,7 @@ button:active {
 }
 
 .video-history-title {
-    color: #333;
+    color: var(--text);
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 8px;
@@ -4379,4 +4522,185 @@ button:active {
 /* Clear button styles */
 .clear-search.show {
     display: block;
+}
+/* Dark Mode Component Overrides */
+.dashboard {
+    background: var(--bg);
+    color: var(--text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dashboard-header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.login-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.metrics-section,
+.otp-controls,
+.otp-table,
+.current-video,
+.video-info-box,
+.secondary,
+.video-history,
+.game-item,
+.jackpot-config,
+.jackpot-messages {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.activity-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Form elements dark mode */
+input, textarea, select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+/* Button dark mode */
+.btn {
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-secondary);
+}
+
+/* Table dark mode */
+.otp-table {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.otp-table th {
+    background: var(--surface);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.otp-table td {
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.otp-table tbody tr:hover {
+    background: var(--surface);
+}
+
+/* Tips table dark mode */
+.tips-table {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.table-header {
+    background: var(--surface);
+    color: var(--text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tips-row:hover {
+    background: var(--surface);
+}
+
+/* H4 elements in dark mode */
+[data-theme="dark"] h4 {
+    color: var(--text);
+}
+
+/* Pagination controls dark mode */
+.pagination-controls select {
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--border);
+}
+
+/* Dropdown dark mode */
+.dropdown-trigger:hover {
+    background-color: var(--surface);
+    color: var(--text);
+}
+
+
+/* Mobile Green Padding Fix - Only phone number (2nd column) and status (5th column) */
+@media (max-width: 768px) {
+    .otp-table td:first-child {
+        background: transparent \!important;
+        padding: 8px 6px \!important;
+    }
+    
+    .otp-table td:nth-child(2),
+    .otp-table td:nth-child(5) {
+        background: #d1fae5 \!important;
+        padding: 8px 6px \!important;
+        border-radius: 4px \!important;
+    }
+    
+    .otp-table th:first-child,
+    .otp-table td:first-child {
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+    }
+}
+
+/* Desktop - Set Player ID column width for tips table */
+.table-header,
+.tips-row {
+    grid-template-columns: 200px 1fr 1fr 1fr 1fr 1.2fr;
 }

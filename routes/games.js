@@ -130,17 +130,8 @@ router.get('/daily', async (req, res) => {
         console.log('Daily games API - Active games found:', activeGames.length);
         
         if (activeGames.length === 0) {
-            // Fallback to games-data.json if no games in database
-            try {
-                const gamesPath = path.join(__dirname, '../games-data.json');
-                const gamesData = await fs.readFile(gamesPath, 'utf8');
-                const fallbackGames = JSON.parse(gamesData);
-                // Select 3 random games from fallback
-                const shuffled = (fallbackGames.gamesPool || []).sort(() => 0.5 - Math.random());
-                return res.json(shuffled.slice(0, 3));
-            } catch (error) {
-                return res.json([]);
-            }
+            console.log('No active games found in database. Please add games through admin panel.');
+            return res.json([]);
         }
         
         // Randomly select 3 games from active games

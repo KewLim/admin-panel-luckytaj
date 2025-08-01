@@ -12,6 +12,9 @@ class AdminPanel {
     }
 
     async init() {
+        // Initialize theme early
+        this.initThemeEarly();
+        
         // Check if user is already logged in
         if (this.token) {
             const isValid = await this.verifyToken();
@@ -269,6 +272,12 @@ class AdminPanel {
         // Setup dashboard event listeners after elements are visible
         this.setupDashboardEventListeners();
         
+        // Initialize theme toggle
+        this.initThemeToggle();
+        
+        // Start India time display
+        this.startIndiaTimeDisplay();
+        
         // Load admin info
         const adminInfo = await this.getAdminInfo();
         if (adminInfo) {
@@ -362,6 +371,30 @@ class AdminPanel {
 
     hideLoading() {
         document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    startIndiaTimeDisplay() {
+        const updateIndiaTime = () => {
+            const now = new Date();
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const indiaTime = new Date(utcTime + (5.5 * 60 * 60 * 1000));
+            
+            const hours = indiaTime.getHours().toString().padStart(2, '0');
+            const minutes = indiaTime.getMinutes().toString().padStart(2, '0');
+            const seconds = indiaTime.getSeconds().toString().padStart(2, '0');
+            const milliseconds = Math.floor(indiaTime.getMilliseconds() / 10).toString().padStart(2, '0');
+            
+            const timeString = `GMT+5:30 ${hours}:${minutes}:${seconds}:${milliseconds}`;
+            
+            const timeElement = document.getElementById('indiaTime');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
+        };
+        
+        // Update immediately and then every 10 milliseconds for smooth ms display
+        updateIndiaTime();
+        setInterval(updateIndiaTime, 10);
     }
 
     // Real-time updates management
@@ -2590,6 +2623,44 @@ class AdminPanel {
 
     async editJackpotMessage(messageId) {
         await this.openJackpotModal(messageId);
+    }
+
+    // Theme Management Methods
+    initThemeEarly() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    initThemeToggle() {
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        
+        // Set initial theme
+        this.setTheme(savedTheme);
+        
+        // Add click listener
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        }
+    }
+
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            // Update icon: Moon for light mode, Sun for dark mode
+            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+        }
+    }
+
+    toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
     }
 
 }
