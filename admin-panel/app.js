@@ -130,12 +130,13 @@ class AdminPanel {
         
         if (attempt >= maxTotalAttempts) {
             errorDiv.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="error-message-flex">
                     <i class="fas fa-exclamation-triangle"></i>
                     Maximum retry attempts exceeded. Please wait and try again later.
                 </div>
             `;
-            errorDiv.style.display = 'block';
+            errorDiv.classList.remove('d-none');
+            errorDiv.classList.add('d-block');
             this.hideLoading();
             return;
         }
@@ -188,7 +189,8 @@ class AdminPanel {
                             Rate limited. Waiting ${waitTime/1000} seconds before retry...
                         </div>
                     `;
-                    errorDiv.style.display = 'block';
+                    errorDiv.classList.remove('d-none');
+                    errorDiv.classList.add('d-block');
                     
                     setTimeout(() => {
                         this.handleLogin(attempt + 1);
@@ -202,14 +204,16 @@ class AdminPanel {
                             Too many attempts. Please wait 5 minutes and try again.
                         </div>
                     `;
-                    errorDiv.style.display = 'block';
+                    errorDiv.classList.remove('d-none');
+                    errorDiv.classList.add('d-block');
                     this.hideLoading();
                     return;
                 }
             } else {
                 // Other error (invalid credentials, etc.)
                 errorDiv.textContent = data.error || 'Login failed';
-                errorDiv.style.display = 'block';
+                errorDiv.classList.remove('d-none');
+                errorDiv.classList.add('d-block');
                 this.hideLoading();
                 return;
             }
@@ -225,7 +229,8 @@ class AdminPanel {
                         Connection failed. Retrying in 2 seconds...
                     </div>
                 `;
-                errorDiv.style.display = 'block';
+                errorDiv.classList.remove('d-none');
+                errorDiv.classList.add('d-block');
                 
                 setTimeout(() => {
                     this.handleLogin(attempt + 1);
@@ -234,7 +239,8 @@ class AdminPanel {
             }
             
             errorDiv.textContent = 'Network error. Please check your connection and try again.';
-            errorDiv.style.display = 'block';
+            errorDiv.classList.remove('d-none');
+            errorDiv.classList.add('d-block');
             this.hideLoading();
         }
     }
@@ -247,15 +253,18 @@ class AdminPanel {
     }
 
     showLogin() {
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('loginScreen').classList.remove('d-none');
+        document.getElementById('loginScreen').classList.add('d-flex');
+        document.getElementById('dashboard').classList.remove('d-block');
+        document.getElementById('dashboard').classList.add('d-none');
+        document.getElementById('loginError').classList.add('d-none');
         document.getElementById('loginForm').reset();
     }
 
     async showDashboard() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('loginScreen').classList.add('d-none');
+        document.getElementById('dashboard').classList.remove('d-none');
+        document.getElementById('dashboard').classList.add('d-block');
         
         // Setup dashboard event listeners after elements are visible
         this.setupDashboardEventListeners();
@@ -348,11 +357,11 @@ class AdminPanel {
     }
 
     showLoading() {
-        document.getElementById('loadingOverlay').style.display = 'flex';
+        document.getElementById('loadingOverlay').classList.add('show');
     }
 
     hideLoading() {
-        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('loadingOverlay').classList.remove('show');
     }
 
     // Real-time updates management
@@ -389,7 +398,7 @@ class AdminPanel {
     clearLoginErrors() {
         const errorDiv = document.getElementById('loginError');
         if (errorDiv) {
-            errorDiv.style.display = 'none';
+            errorDiv.classList.add('d-none');
             errorDiv.textContent = '';
         }
     }
@@ -401,16 +410,18 @@ class AdminPanel {
         
         if (isRealTime) {
             indicator.innerHTML = `
-                <div style="width: 8px; height: 8px; background: #28a745; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                <div class="live-indicator-dot live"></div>
                 Live Data (Port 3003)
             `;
-            indicator.style.color = '#28a745';
+            indicator.classList.add('status-indicator', 'live');
+            indicator.classList.remove('mock');
         } else {
             indicator.innerHTML = `
-                <div style="width: 8px; height: 8px; background: #ffc107; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                <div class="live-indicator-dot mock"></div>
                 Mock Data (Simulated)
             `;
-            indicator.style.color = '#ffc107';
+            indicator.classList.add('status-indicator', 'mock');
+            indicator.classList.remove('live');
         }
     }
 
@@ -636,9 +647,11 @@ class AdminPanel {
             
             // Show/hide clear button
             if (searchValue) {
-                clearBtn.style.display = 'block';
+                clearBtn.classList.remove('d-none');
+                clearBtn.classList.add('show');
             } else {
-                clearBtn.style.display = 'none';
+                clearBtn.classList.add('d-none');
+                clearBtn.classList.remove('show');
             }
 
             // Debounce search requests
@@ -651,7 +664,8 @@ class AdminPanel {
         // Handle clear button
         clearBtn.addEventListener('click', () => {
             searchInput.value = '';
-            clearBtn.style.display = 'none';
+            clearBtn.classList.add('d-none');
+            clearBtn.classList.remove('show');
             this.loadMetrics(true, '');
         });
 
@@ -699,8 +713,8 @@ class AdminPanel {
             
             document.getElementById('mobilePercentage').textContent = mobilePerc + '%';
             document.getElementById('desktopPercentage').textContent = desktopPerc + '%';
-            document.querySelector('.device-fill.mobile').style.width = mobilePerc + '%';
-            document.querySelector('.device-fill.desktop').style.width = desktopPerc + '%';
+            document.querySelector('.device-fill.mobile').style.setProperty('width', mobilePerc + '%');
+            document.querySelector('.device-fill.desktop').style.setProperty('width', desktopPerc + '%');
         }
         
         if (tips && tips.length > 0) {
@@ -761,12 +775,13 @@ class AdminPanel {
     updateChangeColors(elementId, change) {
         const element = document.getElementById(elementId);
         const changeValue = parseFloat(change);
+        element.classList.remove('change-positive', 'change-negative', 'change-neutral');
         if (changeValue > 0) {
-            element.style.color = '#28a745'; // Green for positive
+            element.classList.add('change-positive');
         } else if (changeValue < 0) {
-            element.style.color = '#dc3545'; // Red for negative
+            element.classList.add('change-negative');
         } else {
-            element.style.color = '#6c757d'; // Gray for neutral
+            element.classList.add('change-neutral');
         }
     }
 
@@ -919,8 +934,8 @@ class AdminPanel {
         const desktopPerc = 100 - mobilePerc;
         document.getElementById('mobilePercentage').textContent = mobilePerc + '%';
         document.getElementById('desktopPercentage').textContent = desktopPerc + '%';
-        document.querySelector('.device-fill.mobile').style.width = mobilePerc + '%';
-        document.querySelector('.device-fill.desktop').style.width = desktopPerc + '%';
+        document.querySelector('.device-fill.mobile').style.setProperty('width', mobilePerc + '%');
+        document.querySelector('.device-fill.desktop').style.setProperty('width', desktopPerc + '%');
         
         // Update tips performance table
         const tipsTableBody = document.getElementById('tipsTableBody');
@@ -1760,32 +1775,32 @@ class AdminPanel {
 
     // Modal Management
     openBannerModal() {
-        document.getElementById('bannerModal').style.display = 'block';
+        document.getElementById('bannerModal').classList.add('show');
         document.getElementById('bannerForm').reset();
     }
 
     closeBannerModal() {
-        document.getElementById('bannerModal').style.display = 'none';
+        document.getElementById('bannerModal').classList.remove('show');
     }
 
     openCommentModal() {
-        document.getElementById('commentModal').style.display = 'block';
+        document.getElementById('commentModal').classList.add('show');
         document.getElementById('commentForm').reset();
     }
 
     closeCommentModal() {
-        document.getElementById('commentModal').style.display = 'none';
+        document.getElementById('commentModal').classList.remove('show');
     }
 
     openVideoModal() {
-        document.getElementById('videoModal').style.display = 'block';
+        document.getElementById('videoModal').classList.add('show');
         document.getElementById('videoUrlForm').reset();
         document.getElementById('videoUploadForm').reset();
         this.switchVideoTab('youtube');
     }
 
     closeVideoModal() {
-        document.getElementById('videoModal').style.display = 'none';
+        document.getElementById('videoModal').classList.remove('show');
     }
 
     // Utility Methods
@@ -2016,7 +2031,10 @@ class AdminPanel {
         document.getElementById('selectedImage').value = filename;
         document.getElementById('selectedImageName').textContent = name;
         document.getElementById('selectedImageImg').src = path;
-        document.getElementById('selectedImagePreview').style.display = 'block';
+        document.getElementById('selectedImagePreview').classList.add('show');
+        
+        // Auto-fill game title with image name
+        document.getElementById('gameTitle').value = name;
     }
 
     async openGameModal(gameId = null) {
@@ -2029,7 +2047,12 @@ class AdminPanel {
         form.reset();
         document.getElementById('gameId').value = '';
         document.getElementById('selectedImage').value = '';
-        document.getElementById('selectedImagePreview').style.display = 'none';
+        document.getElementById('selectedImagePreview').classList.remove('show');
+        
+        // Reset auto-generate checkboxes
+        document.getElementById('autoAmount').checked = false;
+        document.getElementById('autoPlayer').checked = false;
+        document.getElementById('autoComment').checked = false;
         
         // Clear gallery selections
         document.querySelectorAll('.image-gallery-item').forEach(item => {
@@ -2054,11 +2077,11 @@ class AdminPanel {
                     
                     // Pre-select the current image and disable gallery for edit mode
                     const gallery = document.getElementById('imageGallery');
-                    gallery.style.display = 'none';
+                    gallery.classList.add('d-none');
                     document.getElementById('selectedImage').value = game.image;
                     document.getElementById('selectedImageName').textContent = game.image.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').replace(/-/g, ' ');
                     document.getElementById('selectedImageImg').src = `/images/${game.image}`;
-                    document.getElementById('selectedImagePreview').style.display = 'block';
+                    document.getElementById('selectedImagePreview').classList.add('show');
                     
                     // Add note for edit mode
                     const galleryLabel = document.querySelector('label[for="imageGallery"]');
@@ -2071,7 +2094,7 @@ class AdminPanel {
             }
         } else {
             // Add mode - show gallery
-            document.getElementById('imageGallery').style.display = 'grid';
+            document.getElementById('imageGallery').classList.remove('d-none');
             this.renderImageGallery();
             
             // Reset label
@@ -2081,11 +2104,11 @@ class AdminPanel {
             }
         }
         
-        modal.style.display = 'block';
+        modal.classList.add('show');
     }
 
     closeGameModal() {
-        document.getElementById('gameModal').style.display = 'none';
+        document.getElementById('gameModal').classList.remove('show');
     }
 
     async handleGameSubmit() {
@@ -2278,7 +2301,7 @@ class AdminPanel {
             document.getElementById('winnerId').value = '';
         }
         
-        modal.style.display = 'block';
+        modal.classList.add('show');
         
         // Set up form submission
         form.onsubmit = async (e) => {
@@ -2288,7 +2311,7 @@ class AdminPanel {
     }
 
     closeWinnerModal() {
-        document.getElementById('winnerModal').style.display = 'none';
+        document.getElementById('winnerModal').classList.remove('show');
     }
 
     async handleWinnerSubmit() {
@@ -2450,7 +2473,7 @@ class AdminPanel {
             document.getElementById('jackpotId').value = '';
         }
         
-        modal.style.display = 'block';
+        modal.classList.add('show');
         
         // Set up form submission
         form.onsubmit = async (e) => {
@@ -2460,7 +2483,7 @@ class AdminPanel {
     }
 
     closeJackpotModal() {
-        document.getElementById('jackpotModal').style.display = 'none';
+        document.getElementById('jackpotModal').classList.remove('show');
     }
 
     async handleJackpotSubmit() {
@@ -2619,6 +2642,111 @@ function openGameModal() {
 
 function closeGameModal() {
     adminPanel.closeGameModal();
+}
+
+// Auto-generation functions for game modal
+function toggleAutoGenerate(type) {
+    const checkbox = document.getElementById(`auto${type.charAt(0).toUpperCase() + type.slice(1)}`);
+    
+    if (checkbox.checked) {
+        generateAndFill(type);
+    } else {
+        // Clear the field when unchecked
+        clearField(type);
+    }
+}
+
+function generateAndFill(type) {
+    switch (type) {
+        case 'amount':
+            const amount = Math.floor(Math.random() * (40000 - 3000) + 3000);
+            document.getElementById('winAmount').value = `₹${amount.toLocaleString('en-IN')}`;
+            break;
+            
+        case 'player':
+            const playerName = generatePlayerName();
+            document.getElementById('winPlayer').value = playerName;
+            break;
+            
+        case 'comment':
+            const comment = generateGameComment();
+            document.getElementById('winComment').value = comment;
+            break;
+    }
+}
+
+function generatePlayerName() {
+    const indianNames = [
+        'Rajesh', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Suresh', 'Kavita',
+        'Rahul', 'Meera', 'Arjun', 'Pooja', 'Kiran', 'Deepika', 'Rohan', 'Shreya',
+        'Anil', 'Ritu', 'Manoj', 'Nisha', 'Sanjay', 'Geeta', 'Vinay', 'Sunita',
+        'Ravi', 'Lata', 'Ajay', 'Manju', 'Prakash', 'Seema', 'Gopal', 'Usha',
+        'Neha', 'Harsh', 'Divya', 'Abhishek', 'Isha', 'Karthik', 'Swati', 'Tushar',
+        'Bhavna', 'Yash', 'Chitra', 'Mohit', 'Tanvi', 'Nikhil', 'Payal', 'Dev',
+        'Juhi', 'Alok', 'Madhuri', 'Sameer', 'Lucky', 'Game', 'Winner', 'Spin'
+    ];
+    
+    const cities = [
+        'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad',
+        'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Bhopal', 'Visakhapatnam', 'Patna',
+        'Vadodara', 'Ghaziabad', 'Ludhiana', 'Agra', 'Nashik', 'Faridabad', 'Meerut', 'Rajkot'
+    ];
+    
+    const name = indianNames[Math.floor(Math.random() * indianNames.length)];
+    const city = cities[Math.floor(Math.random() * cities.length)];
+    const vipLevel = Math.floor(Math.random() * 20) + 1;
+    
+    return `${name}${city.charAt(0)}*** VIP ${vipLevel}`;
+}
+
+function generateGameComment() {
+    const gameComments = [
+        "Amazing game! Just won big!",
+        "I can't believe I hit the jackpot! This game is incredible!",
+        "The bonus rounds kept coming and the multipliers were insane!",
+        "Bhai full paisa vasool ho gaya aaj!",
+        "Aaj toh lag raha hai mera din hai!",
+        "Arre yaar itna paisa dekh kar khushi se jump kar raha hu!",
+        "Main toh pagal ho gayi hu khushi se!",
+        "Hit blackjack 5 times in a row! Amazing luck!",
+        "Royal flush on my third hand! The graphics are amazing!",
+        "Found the treasure chest bonus! The free spins kept triggering!",
+        "Lightning struck three times! The multipliers are crazy!",
+        "The cyberpunk vibes are unreal! Hit the progressive bonus!",
+        "Four of a kind with aces. The animations are breathtaking!",
+        "Yeehaw! Hit the saloon bonus round and couldn't stop winning!",
+        "Dove deep and found the pearl jackpot! Gorgeous theme!",
+        "Put it all on red and won! Then did it again!",
+        "The space theme makes every spin feel epic!",
+        "BNG slots mein aj ka spin OP gaya!",
+        "PG Slots mein aaj full paisa vasool!",
+        "Golden Empire slot ka bonus round dekhna banta hai!",
+        "3 wild symbols back-to-back mila bhai 🔥",
+        "Treasure Hunter ne toh dil khush kar diya!",
+        "Jili ke Lucky Ball ne mega win diya!",
+        "Wild Wild Riches se 100x aaya re baba!",
+        "Lightning Roulette ne aaj 100x diya!",
+        "Tiger win streak dekh ke shock lag gaya!",
+        "Evolution ke live games full paisa vasool lagte hain!",
+        "Aaj toh full entertainment mil raha hai!",
+        "Sab game mein loot machi hai bhai log!"
+    ];
+    
+    return gameComments[Math.floor(Math.random() * gameComments.length)];
+}
+
+function clearField(type) {
+    switch (type) {
+        case 'amount':
+            document.getElementById('winAmount').value = '';
+            break;
+        case 'player':
+            document.getElementById('winPlayer').value = '';
+            break;
+        case 'comment':
+            document.getElementById('winComment').value = '';
+            break;
+    }
 }
 
 function updateGamesConfig() {
@@ -2947,12 +3075,12 @@ function renderTournamentPlaylist() {
 }
 
 function openTournamentVideoModal() {
-    document.getElementById('tournamentVideoModal').style.display = 'flex';
+    document.getElementById('tournamentVideoModal').classList.add('flex');
     resetTournamentVideoForms();
 }
 
 function closeTournamentVideoModal() {
-    document.getElementById('tournamentVideoModal').style.display = 'none';
+    document.getElementById('tournamentVideoModal').classList.remove('flex');
     resetTournamentVideoForms();
 }
 
@@ -3022,18 +3150,6 @@ function showTournamentSuccess(message) {
     const successDiv = document.createElement('div');
     successDiv.className = 'success-message';
     successDiv.textContent = message;
-    successDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #48bb78;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-    `;
     
     document.body.appendChild(successDiv);
     

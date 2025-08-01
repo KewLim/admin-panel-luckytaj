@@ -556,7 +556,8 @@ button:active {
 }
 
 .form-group label {
-    display: block;
+    display: grid;
+    grid-template-columns: 30px 1fr;
     margin-bottom: 5px;
     font-weight: 500;
     color: #4a5568;
@@ -1463,7 +1464,7 @@ button:active {
     }
 
     .form-group label {
-        display: block;
+        display: flex;
         margin-bottom: 5px;
         font-weight: 500;
         color: #4a5568;
@@ -2004,18 +2005,7 @@ button:active {
     display: none;
 }
 
-/* Screen size specific classes */
-.large-screen {
-    /* For screens > 1200px */
-}
-
-.medium-screen {
-    /* For screens 768px - 1200px */
-}
-
-.small-screen {
-    /* For screens < 768px */
-}
+/* Screen size specific classes - removed empty rulesets */
 
 /* Chart container customization */
 .chart-container {
@@ -2287,32 +2277,40 @@ button:active {
 
 .tips-table {
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
 }
 
 .table-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-    gap: 15px;
-    padding: 15px 20px;
-    background: #f8f9fa;
+    grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 1.2fr;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     font-weight: 600;
-    color: #333;
-    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .tips-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-    gap: 15px;
-    padding: 15px 20px;
+    grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 1.2fr;
+    gap: 12px;
+    padding: 16px 20px;
     border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    align-items: center;
 }
 
 .tips-row:hover {
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .tips-row:last-child {
@@ -2323,20 +2321,91 @@ button:active {
     font-family: monospace;
     color: #667eea;
     font-weight: 500;
+    cursor: pointer;
+    user-select: text;
+    position: relative;
+}
+
+.col-tip.verified-phone {
+    color: #065f46;
+    font-weight: 700;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-grid;
+    grid-template-columns: 120px 100px 1fr;
+    align-items: center;
+    text-align: left;
+    gap: 6px;
+    border: 1px solid #10b981;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.verified-icon {
+    color: #065f46;
+    font-size: 12px;
+    animation: pulse-check 2s infinite;
+}
+
+@keyframes pulse-check {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Make tip performance table copyable */
+.tips-table {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+}
+
+.tips-row {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+}
+
+.tips-row > div {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+}
+
+.table-header > div {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
 }
 
 .col-views, .col-unique {
     font-weight: 600;
-    color: #333;
+    color: #374151;
+    font-size: 14px;
 }
 
 .col-ctr {
-    color: #28a745;
-    font-weight: 600;
+    color: #059669;
+    font-weight: 700;
+    font-size: 14px;
 }
 
 .col-time {
-    color: #666;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.col-activity {
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 500;
+    font-style: italic;
 }
 
 .no-data {
@@ -2688,31 +2757,88 @@ button:active {
     
     .tips-row {
         grid-template-columns: 1fr;
-        gap: 8px;
-        border: 1px solid #e9ecef;
-        border-radius: 6px;
-        margin-bottom: 8px;
-        background: #fafafa;
+        gap: 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 16px 20px;
+    }
+    
+    .tips-row:hover {
+        transform: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     
     .tips-row > div {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 2px 0;
+        padding: 6px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .tips-row > div:last-child {
+        border-bottom: none;
     }
     
     .tips-row > div::before {
-        font-weight: 600;
-        color: #666;
+        font-weight: 700;
+        color: #6b7280;
         font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-width: 20px;
     }
     
-    .col-tip::before { content: 'Tip ID:'; }
+    .col-tip::before { content: 'Player:'; }
     .col-views::before { content: 'Views:'; }
     .col-unique::before { content: 'Unique:'; }
-    .col-ctr::before { content: 'Avg CTR:'; }
+    .col-ctr::before { content: 'CTR:'; }
     .col-time::before { content: 'Time:'; }
+    .col-activity::before { content: 'Activity:'; }
+    
+    .col-tip.verified-phone {
+        font-size: 13px;
+        padding: 4px 2px;
+        border-radius: 6px;
+        grid-template-columns: 55px 1fr 15px;
+        padding: 6px 12px;
+
+    }
+    
+    .verified-icon {
+        font-size: 10px;
+    }
+    
+    /* Mobile search styles */
+    .section-header-inline {
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .section-header-inline h3 {
+        text-align: center;
+        margin-bottom: 0;
+    }
+    
+    .search-container {
+        justify-content: center;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    
+    .search-box {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .search-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px 40px 12px 35px;
+    }
 }
 
 /* Real-time indicator animation */
@@ -3414,4 +3540,843 @@ button:active {
     .dropdown-item.delete:hover {
         background: #f8d7da !important;
     }
+}
+
+/* Latest Player Activity Styles */
+.section-header-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Search Container Styles */
+.search-container {
+    display: grid;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 40px 10px 35px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    color: #374151;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: #fefefe;
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: #6b7280;
+    font-size: 14px;
+    z-index: 1;
+}
+
+.clear-search {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.clear-search:hover {
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+.section-header-inline h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.activity-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #718096;
+}
+
+.live-indicator {
+    width: 8px;
+    height: 8px;
+    background: #48bb78;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(72, 187, 120, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+    }
+}
+
+.player-activity {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activity-container {
+    padding: 20px;
+}
+
+.activity-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 6px;
+}
+
+.activity-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px;
+    color: #718096;
+    font-size: 14px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item:hover {
+    background-color: #f7fafc;
+}
+
+.activity-item.new-entry {
+    animation: slideIn 0.5s ease-out;
+    background-color: #edf2f7;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.activity-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-player {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.activity-game {
+    font-size: 12px;
+    color: #718096;
+}
+
+.activity-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.activity-time {
+    font-size: 11px;
+    color: #a0aec0;
+    font-weight: 500;
+}
+
+.activity-tip {
+    font-size: 10px;
+    color: #9ca3af;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-family: monospace;
+}
+
+.activity-device {
+    font-size: 10px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.activity-phone {
+    font-size: 11px;
+    color: #059669;
+    font-weight: 600;
+    background: #d1fae5;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-family: monospace;
+}
+
+.no-activity {
+    text-align: center;
+    padding: 40px;
+    color: #718096;
+    font-size: 14px;
+}
+
+/* Scrollbar styling for activity list */
+.activity-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.activity-list::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+.auto-generate-section {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 50%, #f0f9ff 100%);
+    border: 2px solid transparent;
+    padding: 20px;
+    border-radius: 21px;
+    margin-top: 15px;
+    margin-bottom: 26px;
+    position: relative;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.15);
+    backdrop-filter: blur(8px);
+}
+
+.auto-generate-section::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed, #4338ca, #2563eb, #0ea5e9, #4f46e5);
+    background-size: 200% 100%;
+    border-radius: 18px;
+    z-index: -1;
+    animation: shimmer 4s linear infinite;
+    mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    padding: 1px;
+    margin: .7px;
+}
+
+
+
+@keyframes shimmer {
+    0% { background-position: 300% 0; }
+    50% { background-position: -100% 0; }
+    100% { background-position: 300% 0; }
+}
+
+@keyframes rainbowGlow {
+    0% { 
+        background-position: 0% 0%;
+    }
+    100% { 
+        background-position: 300% 0%;
+    }
+}
+
+.auto-generate-title {
+    margin: 0 0 15px 0;
+    color: #4f46e5;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 0 1px 2px rgba(79, 70, 229, 0.1);
+}
+
+.auto-generate-title i {
+    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 1px 2px rgba(79, 70, 229, 0.2));
+}
+
+.auto-generate-checkboxes {
+    display: grid;
+    grid-template-columns: repeat (1, 1fr);
+    padding: 10px 0px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 0;
+    font-size: 13px;
+    color: #4338ca;
+    font-weight: 500;
+    user-select: none;
+}
+
+.checkbox-text {
+    font-size: 13px;
+    color: #4338ca;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    accent-color: #4f46e5;
+    cursor: pointer;
+    margin: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    animation: checkboxPulse 0.3s ease-out;
+}
+
+
+@keyframes checkboxPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Form field label styles (for Win Amount, Player Name, etc.) */
+.form-group > label:not(.checkbox-label) {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+    cursor: default;
+}
+
+/* Checkbox text styling */
+
+/* Utility classes to replace inline styles */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.flex {
+    display: flex !important;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-none {
+    display: none;
+}
+
+.d-flex {
+    display: flex;
+}
+
+/* Loading and error message styles */
+.error-message-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-overlay.show {
+    display: flex;
+}
+
+/* Live data indicator styles */
+.live-indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.live-indicator-dot.live {
+    background: #28a745;
+}
+
+.live-indicator-dot.mock {
+    background: #ffc107;
+}
+
+.status-indicator.live {
+    color: #28a745;
+}
+
+.status-indicator.mock {
+    color: #ffc107;
+}
+
+/* Device usage bars */
+.device-fill {
+    transition: width 0.3s ease;
+}
+
+/* Color classes for change indicators */
+.change-positive {
+    color: #28a745 !important;
+}
+
+.change-negative {
+    color: #dc3545 !important;
+}
+
+.change-neutral {
+    color: #6c757d !important;
+}
+
+/* Video info boxes */
+.video-info-box {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.video-info-box.secondary {
+    background: #f8fafc;
+}
+
+/* Video content styles */
+.video-content-section {
+    margin-bottom: 20px;
+}
+
+.current-tournament-thumbnail {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.video-duration-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.video-info-center {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.video-title-main {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.video-description-text {
+    color: #4a5568;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.video-meta-info {
+    font-size: 12px;
+    color: #718096;
+}
+
+/* Selected image preview */
+.selected-image-preview {
+    display: none;
+    margin-top: 10px;
+}
+
+.selected-image-preview.show {
+    display: block;
+}
+
+.selected-image-preview img {
+    max-height: 20px;
+    margin-left: 10px;
+    border-radius: 2px;
+}
+
+/* Button styles for video actions */
+.btn-video-action {
+    margin-top: 10px;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-preview {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-toggle-active {
+    background: #ffc107;
+    color: white;
+}
+
+.btn-toggle-inactive {
+    background: #28a745;
+    color: white;
+}
+
+.btn-delete-small {
+    background: #f56565;
+    color: white;
+}
+
+/* Video history styles */
+.video-history-item {
+    margin-bottom: 15px;
+}
+
+.video-history-item.current-playing {
+    border-left: 4px solid #28a745;
+    padding-left: 16px;
+}
+
+.video-history-thumbnail {
+    width: 160px;
+    height: 90px;
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.video-history-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-history-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 18px;
+    background: rgba(255, 0, 0, 0.8);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-history-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-left: 16px;
+}
+
+.video-history-title {
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.video-history-description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.video-meta {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.tournament-video-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Game card styles */
+.game-win-comment {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.game-created {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+/* Modal styles */
+.modal.show {
+    display: block;
+}
+
+.modal.flex {
+    display: flex;
+}
+
+/* Hide scrollbars in all modal/popup windows */
+.modal-content {
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Hide scrollbars in modal body sections */
+.modal-content .video-form,
+.modal-content .form-group,
+.modal-content .image-gallery {
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.modal-content .video-form::-webkit-scrollbar,
+.modal-content .form-group::-webkit-scrollbar,
+.modal-content .image-gallery::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Hide scrollbars in specific modal sections */
+.game-modal-content,
+.video-history,
+.comments-table,
+.winners-table,
+.messages-table,
+.otp-logs-container {
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.game-modal-content::-webkit-scrollbar,
+.video-history::-webkit-scrollbar,
+.comments-table::-webkit-scrollbar,
+.winners-table::-webkit-scrollbar,
+.messages-table::-webkit-scrollbar,
+.otp-logs-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Hide scrollbars in tournament video modal */
+.tournament-video-actions,
+.video-tabs,
+.video-form textarea,
+.video-form input[type="url"] {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.tournament-video-actions::-webkit-scrollbar,
+.video-tabs::-webkit-scrollbar,
+.video-form textarea::-webkit-scrollbar,
+.video-form input[type="url"]::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Hide scrollbars in dropdowns and selects within modals */
+.modal-content select,
+.modal-content .dropdown-content,
+.modal-content .table-wrapper {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.modal-content select::-webkit-scrollbar,
+.modal-content .dropdown-content::-webkit-scrollbar,
+.modal-content .table-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Hide scrollbars in any overflow content within modals */
+.modal *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+.modal * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Success message styles */
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Loading table message */
+.loading-message.error {
+    color: red;
+}
+
+/* Edit mode styles */
+.edit-mode-note {
+    color: #666;
+}
+
+/* Clear button styles */
+.clear-search.show {
+    display: block;
 }
