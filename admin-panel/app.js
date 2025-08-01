@@ -732,6 +732,9 @@ class AdminPanel {
             this.updateChangeColors('avgTimeOnPageChange', overview.avgTimeOnPage.change);
         }
         
+        // Store trend data for theme refreshes
+        this.lastTrendData = trend;
+        
         // Create charts with real or trend data
         this.createRealCharts(trend);
         
@@ -788,20 +791,19 @@ class AdminPanel {
                 });
                 
                 return `
-                <div class="tips-row">
-                    <div class="col-tip ${isPhoneNumber ? 'verified-phone' : ''}" title="${isPhoneNumber ? 'Verified Phone Number' : 'Tip ID'}">
-                        ${displayText.replace(/^\+/, '')}
-                        ${isPhoneNumber ? '<i class="fas fa-check-circle verified-icon"></i>' : ''}
-                    </div>
-                    <div class="col-views">${tip.views.toLocaleString()}</div>
-                    <div class="col-unique">${tip.uniqueVisitors || 'N/A'}</div>
-                    <div class="col-ctr">${Math.round(tip.ctr)}%</div>
-                    <div class="col-time">${tip.avgTimeSeconds || 0}s</div>
-                    <div class="col-activity">${lastActivityTime}</div>
-                </div>
+                <tr>
+                    <td class="${isPhoneNumber ? 'verified-phone' : ''}" title="${isPhoneNumber ? 'Verified Phone Number' : 'Tip ID'}">
+                        ${isPhoneNumber ? `<span>${displayText.replace(/^\+/, '')}<i class="fas fa-check-circle verified-icon"></i></span>` : displayText.replace(/^\+/, '')}
+                    </td>
+                    <td>${tip.views.toLocaleString()}</td>
+                    <td>${tip.uniqueVisitors || 'N/A'}</td>
+                    <td>${Math.round(tip.ctr)}%</td>
+                    <td>${tip.avgTimeSeconds || 0}s</td>
+                    <td>${lastActivityTime}</td>
+                </tr>
             `}).join('');
         } else {
-            document.getElementById('tipsTableBody').innerHTML = '<div class="no-data">No tip data available yet</div>';
+            document.getElementById('tipsTableBody').innerHTML = '<tr><td colspan="6" class="no-data">No tip data available yet</td></tr>';
         }
     }
 
@@ -850,19 +852,23 @@ class AdminPanel {
             // Calculate CTR
             const ctrData = viewsData.map((v, i) => v > 0 ? ((clicksData[i] / v) * 100) : 0);
             
-            this.createChart('viewsChart', viewsData, '#667eea');
-            this.createChart('visitorsChart', visitorsData, '#764ba2');
-            this.createChart('ctrChart', ctrData, '#28a745');
-            this.createChart('timeChart', avgTimeData, '#ffc107');
+            this.createChart('viewsChart', viewsData, 'views');
+            this.createChart('visitorsChart', visitorsData, 'visitors');
+            this.createChart('ctrChart', ctrData, 'ctr');
+            this.createChart('timeChart', avgTimeData, 'time');
         } else {
             // Fallback to sample data
             this.createMiniCharts();
         }
     }
 
-    createChart(canvasId, data, color) {
+    createChart(canvasId, data, chartType) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
+        
+        // Get colors from CSS variables
+        const borderColor = getComputedStyle(document.documentElement).getPropertyValue(`--chart-${chartType}-border`);
+        const backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(`--chart-${chartType}-bg`);
         
         // Destroy existing chart if it exists
         if (this.charts[canvasId]) {
@@ -875,8 +881,8 @@ class AdminPanel {
                 labels: Array(data.length).fill(''),
                 datasets: [{
                     data: data,
-                    borderColor: color,
-                    backgroundColor: color + '20',
+                    borderColor: borderColor.trim(),
+                    backgroundColor: backgroundColor.trim(),
                     fill: true,
                     borderWidth: 2
                 }]
@@ -973,41 +979,46 @@ class AdminPanel {
         // Update tips performance table
         const tipsTableBody = document.getElementById('tipsTableBody');
         tipsTableBody.innerHTML = `
-            <div class="tips-row">
-                <div class="col-tip">tip_20250724_001</div>
-                <div class="col-views">2,340</div>
-                <div class="col-unique">1,890</div>
-                <div class="col-ctr">4.1%</div>
-                <div class="col-time">45s</div>
-            </div>
-            <div class="tips-row">
-                <div class="col-tip">tip_20250724_002</div>
-                <div class="col-views">1,980</div>
-                <div class="col-unique">1,560</div>
-                <div class="col-ctr">2.8%</div>
-                <div class="col-time">38s</div>
-            </div>
-            <div class="tips-row">
-                <div class="col-tip">tip_20250724_003</div>
-                <div class="col-views">3,120</div>
-                <div class="col-unique">2,450</div>
-                <div class="col-ctr">3.5%</div>
-                <div class="col-time">52s</div>
-            </div>
-            <div class="tips-row">
-                <div class="col-tip">tip_20250724_004</div>
-                <div class="col-views">1,670</div>
-                <div class="col-unique">1,320</div>
-                <div class="col-ctr">2.1%</div>
-                <div class="col-time">35s</div>
-            </div>
-            <div class="tips-row">
-                <div class="col-tip">tip_20250724_005</div>
-                <div class="col-views">3,340</div>
-                <div class="col-unique">2,100</div>
-                <div class="col-ctr">4.7%</div>
-                <div class="col-time">48s</div>
-            </div>
+            <tr>
+                <td>tip_20250724_001</td>
+                <td>2,340</td>
+                <td>1,890</td>
+                <td>4.1%</td>
+                <td>45s</td>
+                <td>2 mins ago</td>
+            </tr>
+            <tr>
+                <td>tip_20250724_002</td>
+                <td>1,980</td>
+                <td>1,560</td>
+                <td>2.8%</td>
+                <td>38s</td>
+                <td>5 mins ago</td>
+            </tr>
+            <tr>
+                <td>tip_20250724_003</td>
+                <td>3,120</td>
+                <td>2,450</td>
+                <td>3.5%</td>
+                <td>52s</td>
+                <td>8 mins ago</td>
+            </tr>
+            <tr>
+                <td>tip_20250724_004</td>
+                <td>1,670</td>
+                <td>1,320</td>
+                <td>2.1%</td>
+                <td>35s</td>
+                <td>12 mins ago</td>
+            </tr>
+            <tr>
+                <td>tip_20250724_005</td>
+                <td>3,340</td>
+                <td>2,100</td>
+                <td>4.7%</td>
+                <td>48s</td>
+                <td>15 mins ago</td>
+            </tr>
         `;
     }
 
@@ -1045,8 +1056,8 @@ class AdminPanel {
                 labels,
                 datasets: [{
                     data: generateTrendData(8000, 2000),
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-views-border'),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-views-bg'),
                     fill: true,
                     borderWidth: 2
                 }]
@@ -1076,8 +1087,8 @@ class AdminPanel {
                 labels,
                 datasets: [{
                     data: generateTrendData(6500, 1500),
-                    borderColor: '#764ba2',
-                    backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-visitors-border'),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-visitors-bg'),
                     fill: true,
                     borderWidth: 2
                 }]
@@ -1107,8 +1118,8 @@ class AdminPanel {
                 labels,
                 datasets: [{
                     data: labels.map(() => parseFloat((2.5 + Math.random() * 1.5).toFixed(1))),
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-ctr-border'),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-ctr-bg'),
                     fill: true,
                     borderWidth: 2
                 }]
@@ -1138,8 +1149,8 @@ class AdminPanel {
                 labels,
                 datasets: [{
                     data: labels.map(() => Math.floor(35 + Math.random() * 15)),
-                    borderColor: '#ffc107',
-                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-time-border'),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-time-bg'),
                     fill: true,
                     borderWidth: 2
                 }]
@@ -2654,6 +2665,16 @@ class AdminPanel {
         if (themeToggle) {
             // Update icon: Moon for light mode, Sun for dark mode
             themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+        }
+        
+        // Refresh charts to use new theme colors
+        if (this.charts && Object.keys(this.charts).length > 0) {
+            // Try to refresh with real data if available, otherwise use mock data
+            if (this.lastTrendData) {
+                this.createRealCharts(this.lastTrendData);
+            } else {
+                this.createMiniCharts();
+            }
         }
     }
 

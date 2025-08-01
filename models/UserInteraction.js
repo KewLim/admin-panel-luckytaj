@@ -313,19 +313,40 @@ userInteractionSchema.statics.getTipPerformance = async function(startDate, endD
                     {
                         $match: {
                             $expr: { $eq: ['$tipId', '$$currentTipId'] },
-                            phoneNumber: { $exists: true, $ne: null }
+                            phoneNumber: { $exists: true, $ne: null, $ne: '' }
                         }
                     },
                     {
                         $group: {
                             _id: '$phoneNumber',
-                            count: { $sum: 1 }
+                            count: { $sum: 1 },
+                            lastSeen: { $max: '$timestamp' }
                         }
                     },
-                    { $sort: { count: -1 } },
+                    { $sort: { lastSeen: -1, count: -1 } },
                     { $limit: 1 }
                 ],
                 as: 'phoneInfo'
+            }
+        },
+        {
+            $lookup: {
+                from: 'userinteractions',
+                let: { currentTipId: '$_id' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: ['$tipId', '$$currentTipId'] },
+                            timestamp: {
+                                $gte: startDate,
+                                $lte: endDate
+                            }
+                        }
+                    },
+                    { $sort: { timestamp: -1 } },
+                    { $limit: 1 }
+                ],
+                as: 'lastActivity'
             }
         },
         {
@@ -354,10 +375,17 @@ userInteractionSchema.statics.getTipPerformance = async function(startDate, endD
                 },
                 avgTimeSeconds: {
                     $round: [{ $divide: ['$avgTimeMs', 1000] }, 0]
+                },
+                lastActivityTime: {
+                    $cond: [
+                        { $gt: [{ $size: '$lastActivity' }, 0] },
+                        { $arrayElemAt: ['$lastActivity.timestamp', 0] },
+                        new Date(0) // Default to epoch if no activity
+                    ]
                 }
             }
         },
-        { $sort: { views: -1 } }
+        { $sort: { lastActivityTime: -1 } }
     ];
     
     return await this.aggregate(pipeline);

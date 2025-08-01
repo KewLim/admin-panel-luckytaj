@@ -319,7 +319,7 @@
     justify-content: flex-start;
 }
 
-.video-history-actions {
+.tournament-video-actions {
     display: flex;
     align-items: center;
     flex-shrink: 0;
@@ -497,7 +497,7 @@
         gap: 12px;
     }
     
-    .video-history-actions {
+    .tournament-video-actions {
         justify-content: flex-start;
     }
     

@@ -187,17 +187,25 @@
                                 </div>
                             </div>
                             <div class="tips-performance">
-                                <div id="tipsTable" class="tips-table">
-                                    <div class="table-header">
-                                        <div class="col-tip">Player ID</div>
-                                        <div class="col-views">Views</div>
-                                        <div class="col-unique">Sessions</div>
-                                        <div class="col-ctr">Avg CTR</div>
-                                        <div class="col-time">Avg. Time</div>
-                                        <div class="col-activity">Last Activity</div>
-                                    </div>
-                                    <div id="tipsTableBody">
-                                        <div class="no-data">No tip data available</div>
+                                <div class="table-container">
+                                    <div class="table-wrapper">
+                                        <table class="tips-table" id="tipsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Player ID</th>
+                                                    <th>Views</th>
+                                                    <th>Sessions</th>
+                                                    <th>Avg CTR</th>
+                                                    <th>Avg. Time</th>
+                                                    <th>Last Activity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tipsTableBody">
+                                                <tr>
+                                                    <td colspan="6" class="no-data">No tip data available</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
