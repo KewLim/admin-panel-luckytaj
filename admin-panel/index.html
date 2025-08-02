@@ -186,6 +186,31 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Date Selector Calendar -->
+                            <div class="date-selector-container">
+                                <div class="date-filters">
+                                    <div class="date-range-picker">
+                                        <label for="startDate">From:</label>
+                                        <input type="date" id="startDate" class="date-input">
+                                        <label for="endDate">To:</label>
+                                        <input type="date" id="endDate" class="date-input">
+                                        <button class="btn btn-primary" onclick="filterByDateRange()">
+                                            <i class="fas fa-filter"></i> Filter
+                                        </button>
+                                        <button class="btn btn-secondary" onclick="clearDateFilter()">
+                                            <i class="fas fa-times"></i> Clear
+                                        </button>
+                                    </div>
+                                    <div class="quick-filters">
+                                        <span class="filter-label">Quick filters:</span>
+                                        <button class="btn btn-outline" onclick="setQuickFilter('today')">Today</button>
+                                        <button class="btn btn-outline" onclick="setQuickFilter('week')">This Week</button>
+                                        <button class="btn btn-outline" onclick="setQuickFilter('month')">This Month</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="tips-performance">
                                 <div class="table-container">
                                     <div class="table-wrapper">
@@ -207,6 +232,41 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pagination Controls -->
+                            <div class="pagination-container">
+                                <div class="pagination-info">
+                                    <span id="tableInfo">Showing 1-10 of 25 entries</span>
+                                </div>
+                                <div class="pagination-controls">
+                                    <label for="pageSize">Items per page:</label>
+                                    <select id="pageSize" class="page-size-selector" onchange="changePageSize(this.value)">
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                                <div class="pagination-buttons">
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('first')" id="firstPageBtn">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </button>
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('prev')" id="prevPageBtn">
+                                        <i class="fas fa-angle-left"></i>
+                                    </button>
+                                    <div class="page-numbers" id="pageNumbers">
+                                        <button class="btn btn-outline pagination-btn page-number active" onclick="goToPage(1)">1</button>
+                                        <button class="btn btn-outline pagination-btn page-number" onclick="goToPage(2)">2</button>
+                                        <button class="btn btn-outline pagination-btn page-number" onclick="goToPage(3)">3</button>
+                                    </div>
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('next')" id="nextPageBtn">
+                                        <i class="fas fa-angle-right"></i>
+                                    </button>
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('last')" id="lastPageBtn">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>

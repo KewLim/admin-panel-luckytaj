@@ -112,10 +112,7 @@ body {
     border: 1px solid var(--border);
 }
 
-.theme-toggle:hover {
-    background: var(--text-muted);
-    transform: scale(1.1);
-}
+
 
 /* Ensure text selection works globally */
 .otp-requests * {
@@ -273,7 +270,7 @@ body {
     padding: 20px 0;
     gap: 5px;
     flex-shrink: 0;
-    min-height: 100vh; /* at least full viewport height, grows with content */
+    min-height: 1.3vh; /* at least full viewport height, grows with content */
     overflow-y: auto; /* allows scrolling if items overflow */
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -3089,27 +3086,58 @@ button:active {
     background: #9ca3af;
 }
 
-.otp-table {
-    width: 100%;
-    min-width: 800px;
-    border-collapse: collapse;
-    font-size: 14px;
+/* Desktop OTP Table Styles */
+@media (min-width: 769px) {
+    .otp-table {
+        width: 100%;
+        min-width: 800px;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    .otp-table th {
+        background: var(--bg-secondary);
+        padding: 15px 12px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .otp-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        text-align: center;
+    }
 }
 
-.otp-table th {
-    background: var(--bg-secondary);
-    padding: 15px 12px;
-    text-align: center;
-    font-weight: 600;
-    color: var(--text);
-    border-bottom: 2px solid #e9ecef;
-}
+/* Mobile OTP Table Styles */
+@media (max-width: 768px) {
+    .otp-table {
+        width: 100%;
+        min-width: 600px;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
 
-.otp-table td {
-    padding: 12px;
-    border-bottom: 1px solid #e9ecef;
-    vertical-align: middle;
-    text-align: center;
+    .otp-table th {
+        background: var(--bg-secondary);
+        padding: 8px 6px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 2px solid #e9ecef;
+        white-space: nowrap;
+    }
+
+    .otp-table td {
+        padding: 8px 6px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        text-align: center;
+        white-space: nowrap;
+    }
 }
 
 .otp-table tbody tr:hover {
@@ -3290,9 +3318,9 @@ button:active {
 }
 
 .pagination-btn.active {
-    background: #007bff;
+    background: var(--device-fill-mobile);
     color: white;
-    border-color: #007bff;
+    border-color: var(--device-fill-mobile);
     font-weight: 600;
 }
 
@@ -3475,17 +3503,6 @@ button:active {
         background: #d1d5db;
         border-radius: 6px;
         border: 2px solid #f5f5f5;
-    }
-    
-    .otp-table {
-        font-size: 12px;
-        min-width: 600px;
-    }
-    
-    .otp-table th,
-    .otp-table td {
-        padding: 8px 6px;
-        white-space: nowrap;
     }
     
     .otp-table .user-agent {
@@ -4985,25 +5002,39 @@ input:focus, textarea:focus, select:focus {
 }
 
 
-/* Mobile Green Padding Fix - Only phone number (2nd column) and status (5th column) */
+/* Mobile OTP Table Column Widths */
 @media (max-width: 768px) {
-    .otp-table td:first-child {
-        background: transparent \!important;
-        padding: 8px 6px \!important;
-    }
-    
-    .otp-table td:nth-child(2),
-    .otp-table td:nth-child(5) {
-        background: #d1fae5 \!important;
-        padding: 8px 6px \!important;
-        border-radius: 4px \!important;
-    }
-    
+    /* First column (ID) - minimum width to prevent overlay */
     .otp-table th:first-child,
     .otp-table td:first-child {
-        width: 80px;
-        min-width: 80px;
-        max-width: 80px;
+        width: 60px;
+        min-width: 100px;
+        max-width: 600px;
+        font-size: 10px;
+        padding: 8px 4px;
+    }
+    
+    /* Second column (Phone) - adequate width to prevent overlay */
+    .otp-table th:nth-child(2),
+    .otp-table td:nth-child(2) {
+        width: 130px;
+        min-width: 130px;
+        max-width: 130px;
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+    
+    /* Ensure other columns have proper spacing */
+    .otp-table th:nth-child(3),
+    .otp-table td:nth-child(3),
+    .otp-table th:nth-child(4),
+    .otp-table td:nth-child(4),
+    .otp-table th:nth-child(5),
+    .otp-table td:nth-child(5),
+    .otp-table th:nth-child(6),
+    .otp-table td:nth-child(6) {
+        padding: 8px 4px;
+        font-size: 10px;
     }
 }
 
@@ -5013,4 +5044,286 @@ input:focus, textarea:focus, select:focus {
     width: 200px;
     min-width: 200px;
     max-width: 200px;
+}
+
+/* Date Selector Calendar Styles */
+.date-selector-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.date-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.date-range-picker {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.date-range-picker label {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+    justify-self: end;
+}
+
+.date-input {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.3s ease;
+    min-width: 150px;
+    width: 100%;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.date-input:hover {
+    border-color: var(--accent);
+}
+
+.quick-filters {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 14px;
+    justify-self: start;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    justify-self: center;
+}
+
+.btn-outline:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-outline:active {
+    transform: translateY(0);
+}
+
+/* Pagination Container Styles */
+.pagination-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns:  auto 1fr;
+    grid-template-areas: "info controls navigation";
+    gap: 20px;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-info {
+    grid-area: info;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    justify-self: start;
+}
+
+.pagination-controls {
+    grid-area: controls;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 12px;
+    align-items: center;
+    justify-self: center;
+}
+
+.pagination-controls label {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 14px;
+    justify-self: end;
+}
+
+.page-size-selector {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-size: 14px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 80px;
+    justify-self: start;
+}
+
+.page-size-selector:focus {
+    outline: none;
+    border-color: var(--device-fill-mobile);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.page-size-selector:hover {
+    border-color: var(--device-fill-mobile);
+}
+
+.pagination-buttons {
+    grid-area: navigation;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    gap: 8px;
+    align-items: center;
+    justify-self: end;
+}
+
+.pagination-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 40px;
+    display: grid;
+    place-items: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--device-fill-mobile);
+    border-color: var(--device-fill-mobile);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--surface);
+}
+
+.pagination-btn.active {
+    background: var(--device-fill-mobile);
+    border-color: var(--device-fill-mobile);
+    color: white;
+    font-weight: 600;
+}
+
+.page-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, 36px);
+    gap: 4px;
+    align-items: center;
+}
+
+.page-number {
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+}
+
+/* Mobile Responsive for Date Selector and Pagination */
+@media (max-width: 768px) {
+    .date-range-picker {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .date-range-picker label {
+        justify-self: start;
+        margin-bottom: 4px;
+    }
+    
+    .date-input {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .quick-filters {
+        display: flex;
+        gap: 12px;
+        text-align: baseline;
+    }
+    
+    .filter-label {
+        justify-self: center;
+        margin-bottom: 8px;
+    }
+    
+    .btn-outline {
+        justify-self: stretch;
+    }
+    
+    .pagination-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "info"
+            "controls" 
+            "navigation";
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .pagination-info {
+        justify-self: center;
+    }
+    
+    .pagination-controls {
+        justify-self: center;
+        grid-template-columns: auto auto;
+    }
+    
+    .pagination-buttons {
+        justify-self: center;
+        grid-template-columns: repeat(5, auto);
+        gap: 6px;
+    }
+    
+    .page-numbers {
+        grid-template-columns: repeat(3, 32px);
+        gap: 2px;
+    }
+    
+    .page-number {
+        min-width: 32px;
+        height: 32px;
+    }
 }
