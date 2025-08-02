@@ -3317,3 +3317,209 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 });
+
+// Custom Calendar Variables
+let currentCalendarDate = new Date();
+let selectedCalendarDate = null;
+let targetInputId = null;
+
+// Date picker functions
+function openDatePicker(inputId) {
+    targetInputId = inputId;
+    showCalendar();
+}
+
+function updateDateInput(inputId, dateValue) {
+    const textInput = document.getElementById(inputId);
+    if (dateValue) {
+        // Format date to readable format (DD/MM/YYYY)
+        const date = new Date(dateValue);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        textInput.value = `${day}/${month}/${year}`;
+    }
+}
+
+// Custom Calendar Functions
+function showCalendar() {
+    const modal = document.getElementById('calendarModal');
+    modal.classList.add('show');
+    renderCalendar();
+    
+    // Add event listeners
+    document.getElementById('prevMonth').onclick = () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+        renderCalendar();
+    };
+    
+    document.getElementById('nextMonth').onclick = () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+        renderCalendar();
+    };
+    
+    // Close calendar when clicking outside
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            closeCalendar();
+        }
+    };
+}
+
+function closeCalendar() {
+    const modal = document.getElementById('calendarModal');
+    modal.classList.remove('show');
+    selectedCalendarDate = null;
+}
+
+function renderCalendar() {
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const currentMonth = currentCalendarDate.getMonth();
+    const currentYear = currentCalendarDate.getFullYear();
+    
+    // Update header
+    document.getElementById('currentMonth').textContent = monthNames[currentMonth];
+    document.getElementById('currentYear').textContent = currentYear;
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    // Get previous month's last few days
+    const prevMonth = new Date(currentYear, currentMonth, 0);
+    const daysInPrevMonth = prevMonth.getDate();
+    
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+    
+    const today = new Date();
+    const isCurrentMonth = currentMonth === today.getMonth() && currentYear === today.getFullYear();
+    
+    // Add previous month's trailing days
+    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+        const day = daysInPrevMonth - i;
+        const dayElement = createDayElement(day, 'other-month');
+        calendarDays.appendChild(dayElement);
+    }
+    
+    // Add current month's days
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = createDayElement(day, 'current-month');
+        
+        // Mark today
+        if (isCurrentMonth && day === today.getDate()) {
+            dayElement.classList.add('today');
+        }
+        
+        // Mark selected date
+        if (selectedCalendarDate && 
+            selectedCalendarDate.getDate() === day &&
+            selectedCalendarDate.getMonth() === currentMonth &&
+            selectedCalendarDate.getFullYear() === currentYear) {
+            dayElement.classList.add('selected');
+        }
+        
+        calendarDays.appendChild(dayElement);
+    }
+    
+    // Add next month's leading days
+    const totalCells = calendarDays.children.length;
+    const remainingCells = 42 - totalCells; // 6 rows × 7 days
+    for (let day = 1; day <= remainingCells; day++) {
+        const dayElement = createDayElement(day, 'other-month');
+        calendarDays.appendChild(dayElement);
+    }
+}
+
+function createDayElement(day, monthType) {
+    const dayElement = document.createElement('div');
+    dayElement.className = `calendar-day ${monthType}`;
+    dayElement.textContent = day;
+    
+    if (monthType === 'current-month') {
+        dayElement.onclick = () => selectDate(day);
+    }
+    
+    return dayElement;
+}
+
+function selectDate(day) {
+    const currentMonth = currentCalendarDate.getMonth();
+    const currentYear = currentCalendarDate.getFullYear();
+    
+    selectedCalendarDate = new Date(currentYear, currentMonth, day);
+    
+    // Update the target input
+    if (targetInputId) {
+        const dayFormatted = day.toString().padStart(2, '0');
+        const monthFormatted = (currentMonth + 1).toString().padStart(2, '0');
+        const dateString = `${dayFormatted}/${monthFormatted}/${currentYear}`;
+        
+        document.getElementById(targetInputId).value = dateString;
+        
+        // Also update hidden input for form submission
+        const hiddenInput = document.getElementById(targetInputId + 'Hidden');
+        if (hiddenInput) {
+            hiddenInput.value = selectedCalendarDate.toISOString().split('T')[0];
+        }
+    }
+    
+    closeCalendar();
+}
+
+function selectCurrentDate() {
+    const today = new Date();
+    currentCalendarDate = new Date(today);
+    selectDate(today.getDate());
+}
+
+// Placeholder functions for date filtering (to be implemented)
+function filterByDateRange() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    console.log('Filter by date range:', startDate, 'to', endDate);
+    // TODO: Implement actual filtering logic
+}
+
+function clearDateFilter() {
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    document.getElementById('startDateHidden').value = '';
+    document.getElementById('endDateHidden').value = '';
+    console.log('Date filter cleared');
+    // TODO: Implement actual clear logic
+}
+
+function setQuickFilter(period) {
+    const today = new Date();
+    let startDate = new Date();
+    
+    switch(period) {
+        case 'today':
+            startDate = new Date();
+            break;
+        case 'week':
+            startDate.setDate(today.getDate() - 7);
+            break;
+        case 'month':
+            startDate.setMonth(today.getMonth() - 1);
+            break;
+    }
+    
+    // Update hidden inputs
+    document.getElementById('startDateHidden').value = startDate.toISOString().split('T')[0];
+    document.getElementById('endDateHidden').value = today.toISOString().split('T')[0];
+    
+    // Update text inputs
+    updateDateInput('startDate', startDate.toISOString().split('T')[0]);
+    updateDateInput('endDate', today.toISOString().split('T')[0]);
+    
+    console.log('Quick filter set:', period);
+    // TODO: Implement actual filtering logic
+}
