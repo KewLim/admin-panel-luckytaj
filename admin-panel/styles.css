@@ -273,7 +273,7 @@ body {
     padding: 20px 0;
     gap: 5px;
     flex-shrink: 0;
-    height: 100vh; /* full vertical height */
+    min-height: 100vh; /* at least full viewport height, grows with content */
     overflow-y: auto; /* allows scrolling if items overflow */
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -2562,7 +2562,7 @@ button:active {
 }
 
 .tips-table td:nth-child(4) {
-    color: var(--green-badge);
+    color: var(--text-muted);
     font-weight: 700;
     font-size: 14px;
 }
@@ -3126,13 +3126,13 @@ button:active {
 .otp-table .phone-number {
     font-family: inherit;
     font-weight: normal;
-    color: #495057;
+    color: var(--text-muted);
 }
 
 .otp-table .otp-code {
     font-family: inherit;
     font-weight: normal;
-    color: #495057;
+    color: var(--text-muted);
     background: var(--bg-secondary);
     padding: 4px 8px;
     border-radius: 4px;
@@ -3352,13 +3352,13 @@ button:active {
 
 .otp-table .timestamp {
     font-size: 12px;
-    color: #666;
+    color: var(--text-muted);
 }
 
 .otp-table .ip-address {
     font-family: inherit;
     font-size: 14px;
-    color: #495057;
+    color: var(--text-muted);
     font-weight: normal;
 }
 
@@ -3787,6 +3787,14 @@ button:active {
     }
 }
 
+.activity-search-bar {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
 .player-activity {
     background: var(--bg-secondary);
     border-radius: 8px;
@@ -3795,12 +3803,27 @@ button:active {
 
 .activity-container {
     padding: 20px;
+    overflow-x: hidden;
 }
 
 .activity-list {
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
     border-radius: 6px;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+/* Make all activity list content selectable */
+.activity-list * {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+    cursor: text !important;
 }
 
 .activity-loading {
@@ -3814,12 +3837,16 @@ button:active {
 }
 
 .activity-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 12px 8px;
     border-bottom: 1px solid var(--border);
     transition: background-color 0.2s ease;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .activity-item:last-child {
@@ -3867,6 +3894,8 @@ button:active {
 
 .activity-details {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .activity-player {
@@ -3874,11 +3903,48 @@ button:active {
     color: var(--text);
     font-size: 14px;
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.activity-player:hover {
+    background-color: rgba(59, 130, 246, 0.05);
 }
 
 .activity-game {
     font-size: 12px;
     color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: text;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 2px 4px;
+    transition: all 0.2s ease;
+}
+
+.activity-game:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.activity-game:focus {
+    outline: none;
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
 }
 
 .activity-meta {
@@ -3892,6 +3958,22 @@ button:active {
     font-size: 11px;
     color: #a0aec0;
     font-weight: 500;
+    cursor: text;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 2px 4px;
+    transition: all 0.2s ease;
+}
+
+.activity-time:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.activity-time:focus {
+    outline: none;
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
 }
 
 .activity-tip {
@@ -3901,6 +3983,20 @@ button:active {
     padding: 2px 6px;
     border-radius: 10px;
     font-family: monospace;
+    cursor: text;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.activity-tip:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.activity-tip:focus {
+    outline: none;
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
 }
 
 .activity-device {
@@ -3912,13 +4008,27 @@ button:active {
 }
 
 .activity-phone {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--phone-number);
     font-weight: 600;
     background: var(--green-badge);
     padding: 2px 6px;
     border-radius: 10px;
     font-family: monospace;
+    cursor: text;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.activity-phone:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.activity-phone:focus {
+    outline: none;
+    background-color: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
 }
 
 .no-activity {
@@ -3945,6 +4055,207 @@ button:active {
 
 .activity-list::-webkit-scrollbar-thumb:hover {
     background: #a0aec0;
+}
+
+/* Mobile responsive styles for activity items */
+@media (max-width: 768px) {
+    .activity-container {
+        padding: 12px;
+        background: var(--bg-primary);
+        border-radius: 12px;
+        margin: 0 -5px;
+    }
+    
+    .activity-list {
+        max-height: 350px;
+        padding: 0;
+        background: transparent;
+        border-radius: 8px;
+    }
+    
+    .activity-item {
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 8px 8px;
+        margin-bottom: 1px;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        align-items: center;
+    }
+    
+    .activity-item:last-child {
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .activity-main {
+        order: 1;
+        min-width: 0;
+        flex: 1;
+    }
+    
+    .activity-meta {
+        order: 2;
+        align-items: flex-end;
+        flex-direction: column;
+        justify-content: center;
+        flex-shrink: 0;
+        padding-top: 0;
+        border-top: none;
+        margin-top: 0;
+    }
+    
+    .activity-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 18px !important;
+    }
+    
+    .activity-icon i {
+        font-size: 18px !important;
+    }
+    
+    /* Enhanced mobile editable styling */
+    .activity-player {
+        padding: 6px 8px;
+        border-radius: 4px;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+    }
+    
+    .activity-game {
+        padding: 6px 8px;
+        border-radius: 4px;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+    }
+    
+    .activity-time {
+        padding: 6px 8px;
+        border-radius: 4px;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+    }
+    
+    .activity-tip {
+        padding: 6px 8px;
+        border-radius: 4px;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+        font-size: 7px;
+    }
+    
+    .activity-phone {
+        padding: 6px 8px;
+        border-radius: 4px;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+    }
+    
+    .activity-player:focus, .activity-game:focus, .activity-time:focus, .activity-tip:focus, .activity-phone:focus {
+        transform: scale(1.02);
+        z-index: 10;
+        position: relative;
+    }
+}
+
+@media (max-width: 480px) {
+    .activity-container {
+        padding: 8px;
+        margin: 0 -8px;
+        border-radius: 16px;
+    }
+    
+    .activity-list {
+        max-height: 320px;
+        gap: 6px;
+    }
+    
+    .activity-item {
+        grid-template-columns: 1fr auto;
+        padding: 9px 5px;
+        gap: 10px;
+        margin-bottom: 6px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        align-items: center;
+    }
+    
+    .activity-main {
+        gap: 1px;
+        min-width: 0;
+        flex: 1;
+    }
+    
+    .activity-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 10px !important;
+        flex-shrink: 0;
+    }
+    
+    .activity-icon i {
+        font-size: 20px !important;
+    }
+    
+    .activity-details {
+        min-width: 0;
+        flex: 1;
+    }
+    
+    .activity-meta {
+        gap: 4px;
+        flex-direction: column;
+        align-items: flex-end;
+        flex-shrink: 0;
+        padding-top: 0;
+        margin-top: 0;
+    }
+    
+    /* Extra mobile editable styling - override for smaller screens */
+    .activity-player {
+        font-size: 15px;
+    }
+    
+    .activity-game {
+        font-size: 12px;
+    }
+    
+    .activity-time {
+        font-size: 10px;
+    }
+    
+    .activity-tip { 
+        font-size: 7px;
+    }
+    
+    .activity-phone {
+        font-size: 7px;
+    }
+    
+    .activity-player:focus, .activity-game:focus, .activity-time:focus, .activity-tip:focus, .activity-phone:focus {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Remove text overflow on mobile when editing */
+    .activity-player:focus, .activity-game:focus {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        word-wrap: break-word;
+    }
 }
 
 .auto-generate-section {
@@ -4565,11 +4876,13 @@ button:active {
 .activity-container {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
+    border-radius: 10px;
     color: var(--text);
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     overflow: hidden;
     max-width: 100%;
     box-sizing: border-box;
+    margin-top: 10px;
 }
 
 /* Form elements dark mode */
