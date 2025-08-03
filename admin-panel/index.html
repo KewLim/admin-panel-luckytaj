@@ -751,26 +751,40 @@
             <form id="winnerForm">
                 <input type="hidden" id="winnerId" name="id">
                 <div class="form-group">
-                    <label for="winnerName">Winner Name</label>
-                    <input type="text" id="winnerName" name="name" maxlength="50" required>
-                </div>
-                <div class="form-group">
-                    <label for="winnerAmount">Win Amount</label>
-                    <input type="text" id="winnerAmount" name="amount" placeholder="₹15,420" required>
+                    <label for="winnerUsername">Username</label>
+                    <input type="text" id="winnerUsername" name="username" maxlength="50" placeholder="Lucky****2" required>
                 </div>
                 <div class="form-group">
                     <label for="winnerGame">Game Name</label>
-                    <input type="text" id="winnerGame" name="game" maxlength="100" required>
+                    <input type="text" id="winnerGame" name="game" maxlength="100" placeholder="Jili Boxing King" required>
                 </div>
                 <div class="form-group">
-                    <label for="winnerTime">Time Ago</label>
-                    <select id="winnerTime" name="timeAgo">
-                        <option value="2 mins ago">2 mins ago</option>
-                        <option value="5 mins ago">5 mins ago</option>
-                        <option value="10 mins ago">10 mins ago</option>
-                        <option value="15 mins ago">15 mins ago</option>
-                        <option value="30 mins ago">30 mins ago</option>
-                        <option value="1 hour ago">1 hour ago</option>
+                    <label for="winnerBetAmount">Bet Amount (₹)</label>
+                    <input type="number" id="winnerBetAmount" name="betAmount" min="1" placeholder="500" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerWinAmount">Win Amount (₹)</label>
+                    <input type="number" id="winnerWinAmount" name="winAmount" min="1" placeholder="24000" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerMultiplier">Multiplier</label>
+                    <input type="text" id="winnerMultiplier" name="multiplier" placeholder="48x" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerQuote">Quote</label>
+                    <textarea id="winnerQuote" name="quote" maxlength="200" placeholder="Bhai full paisa vasool ho gaya aaj!" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="winnerAvatar">Avatar</label>
+                    <select id="winnerAvatar" name="avatar" required>
+                        <option value="👑">👑 Crown</option>
+                        <option value="💎">💎 Diamond</option>
+                        <option value="🔥">🔥 Fire</option>
+                        <option value="⭐">⭐ Star</option>
+                        <option value="🎰">🎰 Slot Machine</option>
+                        <option value="💰">💰 Money Bag</option>
+                        <option value="🏆">🏆 Trophy</option>
+                        <option value="⚡">⚡ Lightning</option>
                     </select>
                 </div>
                 <div class="form-actions">

@@ -2314,13 +2314,15 @@ class AdminPanel {
         container.innerHTML = winners.map(winner => `
             <div class="winner-item">
                 <div class="winner-info">
-                    <div class="winner-avatar">${winner.name.charAt(0).toUpperCase()}</div>
+                    <div class="winner-avatar">${winner.avatar || '🎰'}</div>
                     <div class="winner-details">
-                        <h4>${winner.name}</h4>
-                        <p>${winner.game} • ${winner.timeAgo}</p>
+                        <h4>${winner.username}</h4>
+                        <p>${winner.game} • ${winner.multiplier}</p>
+                        <small>Bet: ₹${winner.betAmount} → Win: ₹${winner.winAmount.toLocaleString()}</small>
+                        <div class="winner-quote">"${winner.quote}"</div>
                     </div>
                 </div>
-                <div class="winner-amount">${winner.amount}</div>
+                <div class="winner-amount">₹${winner.winAmount.toLocaleString()}</div>
                 <div class="winner-actions">
                     <span class="status-badge ${winner.active ? 'status-active' : 'status-inactive'}">
                         ${winner.active ? 'Active' : 'Inactive'}
@@ -2363,11 +2365,16 @@ class AdminPanel {
         const formData = new FormData(form);
         
         const data = {
-            name: formData.get('name'),
-            amount: formData.get('amount'),
+            username: formData.get('username'),
             game: formData.get('game'),
-            timeAgo: formData.get('timeAgo')
+            betAmount: formData.get('betAmount'),
+            winAmount: formData.get('winAmount'),
+            multiplier: formData.get('multiplier'),
+            quote: formData.get('quote'),
+            avatar: formData.get('avatar')
         };
+
+        console.log('Submitting winner data:', data);
 
         try {
             this.showLoading();
@@ -2389,8 +2396,10 @@ class AdminPanel {
                 await this.loadWinners();
                 this.showSuccess('Winner saved successfully!');
             } else {
-                const error = await response.json();
-                this.showError(error.error || 'Save failed');
+                const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+                console.error('API Error:', error);
+                console.error('Response status:', response.status);
+                this.showError(error.error || `Save failed (${response.status})`);
             }
         } catch (error) {
             this.showError('Network error. Please try again.');

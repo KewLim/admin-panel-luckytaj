@@ -73,7 +73,7 @@ class DailyTrendingGames {
         this.initializeTournamentTV();
         
         // Initialize retention modules
-        this.initializeRetentionModules();
+        await this.initializeRetentionModules();
     }
 
     async loadGamesData() {
@@ -1307,56 +1307,68 @@ Play Now: https://www.luckytaj.com/en-in/slot
 
     
     // Retention Modules Implementation
-    initializeRetentionModules() {
+    async initializeRetentionModules() {
         console.log('Initializing retention modules...');
         
-        // Initialize all modules
-        this.initializeWinnerBoard();
+        // Initialize all modules (await the async ones)
+        await this.initializeWinnerBoard();
         this.initializeCommentSection();
         this.initializeLiveInteraction();
         this.initializeJackpotCountdown();
     }
     
     // Module 1: WinnerBoard
-    initializeWinnerBoard() {
-        this.winnerData = [
-            {
-                username: "Lucky****2",
-                game: "Jili Boxing King",
-                betAmount: 500,
-                winAmount: 24000,
-                multiplier: "48x",
-                quote: "Bhai full paisa vasool ho gaya aaj!",
-                avatar: "👑"
-            },
-            {
-                username: "Meena****n",
-                game: "BNG Three China Pots",
-                betAmount: 1000,
-                winAmount: 32000,
-                multiplier: "32x",
-                quote: "Aaj toh lag raha hai mera din hai!",
-                avatar: "💎"
-            },
-            {
-                username: "Vikram****i",
-                game: "Evolution Crazy Time",
-                betAmount: 750,
-                winAmount: 18000,
-                multiplier: "24x",
-                quote: "Arre yaar itna paisa dekh kar khushi se jump kar raha hu!",
-                avatar: "🔥"
-            },
-            {
-                username: "Pooja****y",
-                game: "Crazy Time",
-                betAmount: 2000,
-                winAmount: 50000,
-                multiplier: "25x",
-                quote: "Main toh pagal ho gayi hu khushi se!",
-                avatar: "⭐"
+    async initializeWinnerBoard() {
+        try {
+            // Fetch winner data from API
+            const response = await fetch('/api/winners/active');
+            if (response.ok) {
+                this.winnerData = await response.json();
+            } else {
+                throw new Error('Failed to fetch winners');
             }
-        ];
+        } catch (error) {
+            console.error('Error fetching winner data:', error);
+            // Fallback to default data if API fails
+            this.winnerData = [
+                {
+                    username: "Lucky****2",
+                    game: "Jili Boxing King",
+                    betAmount: 500,
+                    winAmount: 24000,
+                    multiplier: "48x",
+                    quote: "Bhai full paisa vasool ho gaya aaj!",
+                    avatar: "👑"
+                },
+                {
+                    username: "Meena****n",
+                    game: "BNG Three China Pots",
+                    betAmount: 1000,
+                    winAmount: 32000,
+                    multiplier: "32x",
+                    quote: "Aaj toh lag raha hai mera din hai!",
+                    avatar: "💎"
+                },
+                {
+                    username: "Vikram****i",
+                    game: "Evolution Crazy Time",
+                    betAmount: 750,
+                    winAmount: 18000,
+                    multiplier: "24x",
+                    quote: "Arre yaar itna paisa dekh kar khushi se jump kar raha hu!",
+                    avatar: "🔥"
+                },
+                {
+                    username: "Pooja****y",
+                    game: "Crazy Time",
+                    betAmount: 2000,
+                    winAmount: 50000,
+                    multiplier: "25x",
+                    quote: "Main toh pagal ho gayi hu khushi se!",
+                    avatar: "⭐"
+                }
+            ];
+        }
         
         this.renderWinnerBoard();
     }

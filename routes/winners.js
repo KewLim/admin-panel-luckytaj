@@ -30,17 +30,22 @@ router.get('/active', async (req, res) => {
 // Add new winner
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const { name, amount, game, timeAgo } = req.body;
+        console.log('Received winner data:', req.body);
+        const { username, game, betAmount, winAmount, multiplier, quote, avatar } = req.body;
 
-        if (!name || !amount || !game || !timeAgo) {
-            return res.status(400).json({ error: 'All fields are required' });
+        if (!username || !game || !betAmount || !winAmount || !multiplier || !quote) {
+            console.log('Missing fields:', { username, game, betAmount, winAmount, multiplier, quote });
+            return res.status(400).json({ error: 'All required fields must be provided' });
         }
 
         const winner = new Winner({
-            name,
-            amount,
+            username,
             game,
-            timeAgo,
+            betAmount: Number(betAmount),
+            winAmount: Number(winAmount),
+            multiplier,
+            quote,
+            avatar: avatar || "🎰",
             createdBy: req.admin.id
         });
 
@@ -59,17 +64,20 @@ router.post('/', authMiddleware, async (req, res) => {
 // Update winner
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
-        const { name, amount, game, timeAgo, active } = req.body;
+        const { username, game, betAmount, winAmount, multiplier, quote, avatar, active } = req.body;
         
         const winner = await Winner.findById(req.params.id);
         if (!winner) {
             return res.status(404).json({ error: 'Winner not found' });
         }
 
-        winner.name = name || winner.name;
-        winner.amount = amount || winner.amount;
+        winner.username = username || winner.username;
         winner.game = game || winner.game;
-        winner.timeAgo = timeAgo || winner.timeAgo;
+        winner.betAmount = betAmount ? Number(betAmount) : winner.betAmount;
+        winner.winAmount = winAmount ? Number(winAmount) : winner.winAmount;
+        winner.multiplier = multiplier || winner.multiplier;
+        winner.quote = quote || winner.quote;
+        winner.avatar = avatar || winner.avatar;
         if (typeof active !== 'undefined') {
             winner.active = active;
         }

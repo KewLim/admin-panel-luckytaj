@@ -1,24 +1,39 @@
 const mongoose = require('mongoose');
 
 const winnerSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true,
         maxlength: 50
-    },
-    amount: {
-        type: String,
-        required: true
     },
     game: {
         type: String,
         required: true,
         maxlength: 100
     },
-    timeAgo: {
+    betAmount: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    winAmount: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    multiplier: {
+        type: String,
+        required: true
+    },
+    quote: {
         type: String,
         required: true,
-        enum: ['2 mins ago', '5 mins ago', '10 mins ago', '15 mins ago', '30 mins ago', '1 hour ago']
+        maxlength: 200
+    },
+    avatar: {
+        type: String,
+        required: true,
+        default: "🎰"
     },
     active: {
         type: Boolean,
