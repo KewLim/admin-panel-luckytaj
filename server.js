@@ -73,16 +73,22 @@ app.use(express.static(__dirname, {
 }));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/luckytaj-admin', {
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/luckytaj-admin';
+
+mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     connectTimeoutMS: 10000,
     serverSelectionTimeoutMS: 5000,
 })
-.then(() => console.log('Connected to MongoDB'))
+.then(() => {
+    console.log('✅ Connected to MongoDB');
+    console.log('Database:', MONGO_URI.includes('mongodb.net') ? 'MongoDB Atlas (Cloud)' : 'Local MongoDB');
+})
 .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    console.log('Server will continue without MongoDB connection');
+    console.error('❌ MongoDB connection error:', err.message);
+    console.log('⚠️  Server will continue without MongoDB connection');
+    console.log('💡 Make sure MONGO_URI environment variable is set correctly');
 });
 
 // Routes
@@ -120,6 +126,52 @@ app.get('/', (req, res) => {
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Database diagnostic
+app.get('/api/debug/database', async (req, res) => {
+    try {
+        const dbState = mongoose.connection.readyState;
+        const states = {
+            0: 'disconnected',
+            1: 'connected',
+            2: 'connecting',
+            3: 'disconnecting'
+        };
+        
+        let adminCount = 0;
+        let collections = [];
+        
+        if (dbState === 1) {
+            try {
+                adminCount = await mongoose.connection.db.collection('admins').countDocuments();
+                collections = await mongoose.connection.db.listCollections().toArray();
+            } catch (err) {
+                console.error('Database query error:', err);
+            }
+        }
+        
+        res.json({
+            database: {
+                state: states[dbState],
+                name: mongoose.connection.name,
+                host: mongoose.connection.host,
+                adminCount,
+                collections: collections.map(c => c.name),
+                environment: {
+                    MONGO_URI: process.env.MONGO_URI ? 'SET' : 'NOT SET',
+                    MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT SET',
+                    NODE_ENV: process.env.NODE_ENV
+                }
+            },
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
 });
 
 // 404 handler
