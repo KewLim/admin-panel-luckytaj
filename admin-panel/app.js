@@ -1679,7 +1679,7 @@ class AdminPanel {
                 </div>
                 <div class="video-history-details" style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start; margin-left: 16px;">
                     <div class="video-history-info">
-                        <h4 style="color: #333; font-size: 16px; font-weight: 600; margin-bottom: 8px;">${video.title || 'Untitled'} ${video.isActive ? '(Active)' : ''}</h4>
+                        <h4 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 8px;">${video.title || 'Untitled'} ${video.isActive ? '(Active)' : ''}</h4>
                         <p style="color: #666; font-size: 14px; margin-bottom: 8px;">${video.videoType.toUpperCase()} video for TV session</p>
                         <div class="video-meta" style="font-size: 12px; color: #94a3b8;">
                             <span>${video.videoType.toUpperCase()}</span> • <span>Added: ${new Date(video.createdAt).toLocaleDateString()}</span>
@@ -2008,7 +2008,7 @@ class AdminPanel {
                 </div>
                 <div class="game-info">
                     <h4 class="game-title">${game.title}</h4>
-                    <div class="game-win-info">
+                    <div class="game-win-info" style="color: var(--text-muted);">
                         <strong>${game.recentWin.amount}</strong> by ${game.recentWin.player}
                     </div>
                     <div class="game-win-comment" style="font-size: 12px; color: #6b7280; margin-top: 4px;">
@@ -3155,7 +3155,7 @@ function renderTournamentPlaylist() {
                 </div>
                 <div class="video-history-details" style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start; margin-left: 16px;">
                     <div class="video-history-info">
-                        <h4 style="color: #333; font-size: 16px; font-weight: 600; margin-bottom: 8px;">Tournament Video ${index + 1} ${isCurrentVideo ? '(Currently Playing)' : ''}</h4>
+                        <h4 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 8px;">Tournament Video ${index + 1} ${isCurrentVideo ? '(Currently Playing)' : ''}</h4>
                         <p style="color: #666; font-size: 14px; margin-bottom: 8px;">Tournament highlights and live action</p>
                         <div class="video-meta" style="font-size: 12px; color: #94a3b8;">
                             <span>YouTube</span> • <span>Video ID: ${videoId}</span>
@@ -3531,4 +3531,28 @@ function setQuickFilter(period) {
     
     console.log('Quick filter set:', period);
     // TODO: Implement actual filtering logic
+}
+
+// ===============================
+// Auto Generate Jackpot Messages
+// ===============================
+
+// Predefined messages from frontend script.js
+const predefinedJackpotMessages = [
+    "Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!",
+    "System prediction: Next 30 minutes mein BNG Slot jackpot hit hone wala hai!",
+    "Alert! Fishing Games mein agle 30 min lucky streak chalega!",
+    "Mega prediction: Crazy Time bonus wheel aaj lucky hai!",
+    "Lucky prediction: PG Slots mein agle 30 min mega wins aa rahe hain!",
+    "Special alert: Jili games mein bonus rounds active hone wale hain!",
+    "Hot prediction: Live casino mein multipliers high chal rahe hain!"
+];
+
+function autoGenerateMessage() {
+    // Pick a random message from the predefined list
+    const randomIndex = Math.floor(Math.random() * predefinedJackpotMessages.length);
+    const selectedMessage = predefinedJackpotMessages[randomIndex];
+    
+    // Fill the message textarea
+    document.getElementById('jackpotMessage').value = selectedMessage;
 }

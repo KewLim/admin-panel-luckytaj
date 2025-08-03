@@ -11,6 +11,9 @@
     --error: #dc3545;        /* Red for errors */
     --success: #28a745;      /* Green for success */
     --green-badge: #a7f3d0;
+    --green-badge-text: #2f855a;
+    --red-badge: #fed7d7;
+    --red-badge-text: #c53030;
     --phone-number: #065f46;
     --green-text: #28a745; 
     --red-text: #dc3545;
@@ -42,6 +45,9 @@
     --error: #dc3545;        /* Red for errors */
     --success: #28a745;      /* Green for success */
     --green-badge: #a7f3d0;
+    --green-badge-text: #2f855a;
+    --red-badge: #fed7d7;
+    --red-badge-text: #c53030;
     --phone-number: #065f46;
     --green-text: #28a745;
     --red-text: #dc3545;
@@ -63,6 +69,9 @@
     --error: #ef5350;        /* Red for errors */
     --success: #66bb6a;      /* Green for success */
     --green-badge: #66bb6a;
+    --green-badge-text: #ffffff;
+    --red-badge: #e53e3e;
+    --red-badge-text: #ffffff;
     --phone-number: #ffffff;
     --green-text: #6bfb8c;
     --red-text: #ff5f6e;
@@ -260,6 +269,33 @@ body {
     min-height: 0;
 }
 
+/* Desktop Fixed Navigation and Header */
+@media (min-width: 769px) {
+    .dashboard-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        height: 80px;
+    }
+    
+    .tab-navigation {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        height: calc(100vh - 80px);
+        z-index: 999;
+    }
+    
+    .dashboard-content {
+        margin-left: 250px;
+        margin-top: 80px;
+        height: calc(100vh - 80px);
+        overflow-y: auto;
+    }
+}
+
 /* Navigation Tabs - Desktop: Left Sidebar */
 .tab-navigation {
     background: var(--bg-secondary);
@@ -286,7 +322,7 @@ body {
     border: none;
     padding: 15px 20px;
     cursor: pointer;
-    color: #666;
+    color: var(--text-muted);
     font-size: 14px;
     font-weight: 500;
     border-right: 3px solid transparent;
@@ -533,8 +569,8 @@ button:active {
 
 /* Info box styles */
 .info-box {
-    background: #f0f9ff;
-    border: 1px solid #0ea5e9;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
     border-radius: 6px;
     padding: 12px;
     margin-bottom: 20px;
@@ -542,12 +578,12 @@ button:active {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #0c4a6e;
+    color: var(--text);
     font-size: 14px;
 }
 
 .info-box i {
-    color: #0ea5e9;
+    color: var(--text);
 }
 
 /* Game Modal Specific Styles */
@@ -702,10 +738,10 @@ button:active {
 
 .form-group label {
     display: grid;
-    grid-template-columns: 30px 1fr;
+    grid-template-columns: 193px 1fr;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #4a5568;
+    color: var(--text);
 }
 
 .form-group input,
@@ -713,7 +749,7 @@ button:active {
 .form-group select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.3s ease;
@@ -796,7 +832,7 @@ button:active {
 
 .comment-item {
     padding: 20px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     display: grid;
     grid-template-columns: 1fr 250px;
     justify-content: space-between;
@@ -843,7 +879,7 @@ button:active {
 }
 
 .comment-text {
-    color: #4a5568;
+    color: var(--text-muted);
     margin-bottom: 10px;
 }
 
@@ -973,7 +1009,7 @@ button:active {
 
 .video-history-item {
     padding: 15px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     display: flex;
     gap: 15px;
     align-items: flex-start;
@@ -1385,7 +1421,7 @@ button:active {
 
 .winner-item {
     padding: 20px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1460,7 +1496,7 @@ button:active {
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
-    background: #f8f9ff;
+    background: var(--bg);
     border-radius: 6px;
     border-left: 4px solid #667eea;
 }
@@ -1474,7 +1510,7 @@ button:active {
 
 .message-item {
     padding: 15px 20px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -1499,7 +1535,7 @@ button:active {
 }
 
 .message-text {
-    color: #4a5568;
+    color: var(--text-muted);
     margin-bottom: 5px;
 }
 
@@ -1523,13 +1559,13 @@ button:active {
 }
 
 .status-active {
-    background: #c6f6d5;
-    color: #2f855a;
+    background: var(--green-badge);
+    color: var(--green-badge-text);
 }
 
 .status-inactive {
-    background: #fed7d7;
-    color: #c53030;
+    background: var(--red-badge);
+    color: var(--red-badge-text);
 }
 
 /* Responsive */
@@ -1628,7 +1664,7 @@ button:active {
         display: flex;
         margin-bottom: 5px;
         font-weight: 500;
-        color: #4a5568;
+        color: var(--text);
         font-size: 13px;
     }
 
@@ -2033,15 +2069,15 @@ button:active {
     }
 
     .status-active {
-        background: #c6f6d5;
-        color: #2f855a;
+        background: var(--green-badge);
+        color: var(--green-badge-text);
         font-size: 8px;
         padding: 3px 10px 3px 10px;
     }
 
     .status-inactive {
-        background: #fed7d7;
-        color: #c53030;
+        background: var(--red-badge);
+        color: var(--red-badge-text);
         font-size: 8px;
         padding: 3px 10px 3px 10px;
     }
@@ -2054,7 +2090,7 @@ button:active {
 
     .comment-item {
         padding: 20px;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--border);
         display: grid;
         grid-template-columns: 1fr 90px;
         justify-content: space-between;
@@ -4401,7 +4437,7 @@ button:active {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #374151;
+    color: var(--text);
     font-size: 14px;
     cursor: default;
 }
@@ -4509,7 +4545,7 @@ button:active {
 }
 
 .video-info-box.secondary {
-    background: #f8fafc;
+    background: var(--bg-secondary);
 }
 
 /* Video content styles */
@@ -5703,3 +5739,26 @@ input:focus, textarea:focus, select:focus {
         font-size: 13px;
     }
 }
+
+/* AI Generate Button with Animated Glowing Border */
+.ai-generate-btn {
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid #00d4ff;
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+    animation: glowPulse 2s ease-in-out infinite alternate;
+    font-weight: 400;
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 3px rgba(0, 212, 255, 0.4);
+        border-color: #00d4ff;
+    }
+    100% {
+        box-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+        border-color: #5b86e5;
+    }
+}
+

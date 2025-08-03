@@ -805,7 +805,12 @@
             <form id="jackpotForm">
                 <input type="hidden" id="jackpotId" name="id">
                 <div class="form-group">
-                    <label for="jackpotMessage">Prediction Message</label>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                        <label for="jackpotMessage">Prediction Message</label>
+                        <button type="button" class="btn btn-secondary btn-sm ai-generate-btn" onclick="autoGenerateMessage()">
+                            Auto Generate Message
+                        </button>
+                    </div>
                     <textarea id="jackpotMessage" name="message" maxlength="200" rows="3" required 
                               placeholder="Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!"></textarea>
                 </div>

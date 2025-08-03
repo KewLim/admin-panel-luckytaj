@@ -1,0 +1,9 @@
+{
+  "username": "SimpleTest",
+  "game": "Simple Game",
+  "betAmount": 100,
+  "winAmount": 5000,
+  "multiplier": "50x",
+  "quote": "Simple test quote",
+  "avatar": "⭐"
+}

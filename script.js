@@ -1314,7 +1314,7 @@ Play Now: https://www.luckytaj.com/en-in/slot
         await this.initializeWinnerBoard();
         this.initializeCommentSection();
         this.initializeLiveInteraction();
-        this.initializeJackpotCountdown();
+        await this.initializeJackpotCountdown();
     }
     
     // Module 1: WinnerBoard
@@ -1698,15 +1698,19 @@ Play Now: https://www.luckytaj.com/en-in/slot
     }
     
     // Module 4: JackpotCountdown
-    initializeJackpotCountdown() {
-        // Daily prediction times in GMT+5:30 (IST): 2:00 AM, 10:00 AM, 5:00 PM
+    async initializeJackpotCountdown() {
+        // Load jackpot data from admin panel API
+        await this.loadJackpotData();
+        
+        // Fallback prediction times in GMT+5:30 (IST): 2:00 AM, 10:00 AM, 5:00 PM
         this.predictionTimes = [
             { hour: 2, minute: 0 },  // 2:00 AM
             { hour: 10, minute: 0 }, // 10:00 AM
             { hour: 17, minute: 0 }  // 5:00 PM
         ];
         
-        this.jackpotMessages = [
+        // Fallback messages if API fails
+        this.fallbackMessages = [
             "Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!",
             "System prediction: Next 30 minutes mein BNG SLot jackpot hit hone wala hai!",
             "Alert! Fishing Gamed mein agle 30 min lucky streak chalega!",
@@ -1716,9 +1720,73 @@ Play Now: https://www.luckytaj.com/en-in/slot
             "Hot prediction: Live casino mein multipliers high chal rahe hain!"
         ];
         
-        this.currentMessageIndex = Math.floor(Math.random() * this.jackpotMessages.length);
         this.checkPredictionStatus();
         this.startCountdown();
+        
+        // Refresh jackpot data every 5 minutes to get latest admin updates
+        this.jackpotRefreshInterval = setInterval(async () => {
+            await this.loadJackpotData();
+            this.checkPredictionStatus();
+        }, 5 * 60 * 1000);
+    }
+
+    async loadJackpotData() {
+        try {
+            // Try different API endpoints (local development and production)
+            const apiEndpoints = [
+                'http://localhost:3003/api/jackpot/active',
+                'https://www.luckytaj.com/api/jackpot/active'
+            ];
+            
+            let response = null;
+            for (const endpoint of apiEndpoints) {
+                try {
+                    response = await fetch(endpoint);
+                    if (response.ok) break;
+                } catch (err) {
+                    console.warn(`Failed to fetch from ${endpoint}:`, err);
+                    continue;
+                }
+            }
+            
+            if (response && response.ok) {
+                const activeMessages = await response.json();
+                
+                // Group messages by prediction time
+                this.jackpotMessages = {};
+                this.predictionTimesFromAPI = [];
+                
+                activeMessages.forEach(message => {
+                    const time = message.predictionTime;
+                    if (!this.jackpotMessages[time]) {
+                        this.jackpotMessages[time] = [];
+                    }
+                    this.jackpotMessages[time].push(message.message);
+                    
+                    // Convert predictionTime to hour format
+                    const [hour] = time.split(':').map(Number);
+                    if (!this.predictionTimesFromAPI.find(p => p.hour === hour)) {
+                        this.predictionTimesFromAPI.push({ hour, minute: 0 });
+                    }
+                });
+                
+                // If we have prediction times from API, use them instead of fallback
+                if (this.predictionTimesFromAPI.length > 0) {
+                    this.predictionTimes = this.predictionTimesFromAPI.sort((a, b) => a.hour - b.hour);
+                }
+                
+                console.log('Loaded jackpot data from admin panel:', {
+                    messages: this.jackpotMessages,
+                    times: this.predictionTimes
+                });
+            } else {
+                console.warn('Failed to load jackpot data from API, using fallback messages');
+                this.jackpotMessages = this.fallbackMessages;
+            }
+        } catch (error) {
+            console.error('Error loading jackpot data:', error);
+            this.jackpotMessages = this.fallbackMessages;
+        }
     }
     
     checkPredictionStatus() {
@@ -1790,8 +1858,42 @@ Play Now: https://www.luckytaj.com/en-in/slot
     updateJackpotMessage() {
         const messageElement = document.getElementById('jackpotMessage');
         if (messageElement && this.isActivePrediction) {
-            messageElement.textContent = this.jackpotMessages[this.currentMessageIndex];
+            // Get current active prediction time
+            const now = new Date();
+            const istTime = this.getISTTime(now);
+            const currentPrediction = this.getCurrentActivePrediction(istTime);
+            
+            if (currentPrediction) {
+                // Find the matching prediction time and get admin-controlled message
+                const currentTime = this.getCurrentPredictionTimeString(istTime);
+                
+                if (this.jackpotMessages[currentTime] && this.jackpotMessages[currentTime].length > 0) {
+                    // Use admin-controlled message for current time
+                    const messageIndex = Math.floor(Math.random() * this.jackpotMessages[currentTime].length);
+                    messageElement.textContent = this.jackpotMessages[currentTime][messageIndex];
+                } else if (Array.isArray(this.jackpotMessages)) {
+                    // Fallback to array format
+                    messageElement.textContent = this.jackpotMessages[this.currentMessageIndex];
+                } else {
+                    // Use fallback messages
+                    messageElement.textContent = this.fallbackMessages[this.currentMessageIndex];
+                }
+            }
         }
+    }
+
+    getCurrentPredictionTimeString(istTime) {
+        for (let prediction of this.predictionTimes) {
+            const predictionStart = new Date(istTime);
+            predictionStart.setHours(prediction.hour, prediction.minute, 0, 0);
+            
+            const predictionEnd = new Date(predictionStart.getTime() + (30 * 60 * 1000));
+            
+            if (istTime >= predictionStart && istTime <= predictionEnd) {
+                return `${prediction.hour}:00`;
+            }
+        }
+        return null;
     }
     
     showNextPredictionCTA() {
