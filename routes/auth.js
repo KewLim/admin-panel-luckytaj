@@ -53,7 +53,19 @@ router.post('/login', [
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed' });
+        
+        // More detailed error for debugging
+        let errorMessage = 'Login failed';
+        if (error.message.includes('JWT_SECRET')) {
+            errorMessage = 'JWT_SECRET not configured';
+        } else if (error.message.includes('compare')) {
+            errorMessage = 'Password comparison failed';
+        }
+        
+        res.status(500).json({ 
+            error: errorMessage,
+            debug: process.env.NODE_ENV !== 'production' ? error.message : undefined
+        });
     }
 });
 
