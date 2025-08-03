@@ -70,6 +70,7 @@ Key features:
 ## Development Workflow
 
 - Make sure you save all the file before you continue to amend everything I told you
+- "css push" means: "css updated, git push"
 
 ## Server Management
 

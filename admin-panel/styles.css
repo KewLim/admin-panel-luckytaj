@@ -82,11 +82,11 @@
     /* Chart Colors - Dark Theme - EDIT THESE COLORS */
     --chart-views-border: #00bcd4;
     --chart-views-bg: #1a2528;
-    --chart-visitors-border: #db41f6;
+    --chart-visitors-border: #f64177;
     --chart-visitors-bg: #291a2d;
-    --chart-ctr-border: #4caf50;
+    --chart-ctr-border: #63e967;
     --chart-ctr-bg: #1e2822;
-    --chart-time-border: #ff9800;
+    --chart-time-border: #fde55c;
     --chart-time-bg: #2d241a;
 }
 
@@ -1529,7 +1529,7 @@ button:active {
     margin-top: 8px;
 }
 .message-time {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 12px;
     font-weight: 500;
 }
@@ -1541,8 +1541,8 @@ button:active {
 
 .message-category {
     font-size: 12px;
-    color: #718096;
-    background: #e2e8f0;
+    color: var(--text);
+    background: var(--chart-time-border);
     padding: 2px 8px;
     border-radius: 12px;
     display: inline-block;
@@ -1578,6 +1578,11 @@ button:active {
         /* Add your custom mobile styles here */
         background: rgba(118, 75, 162, 0.05);
         border: 1px solid rgba(118, 75, 162, 0.1);
+    }
+
+    .comment-timestamp {
+        font-size: 8px;
+        color: #718096;
     }
 
     .theme-toggle {
@@ -5104,6 +5109,30 @@ input:focus, textarea:focus, select:focus {
     grid-template-columns: auto 1fr auto 1fr auto auto;
     gap: 12px;
     align-items: center;
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* Tablet and medium screens */
+@media (max-width: 1024px) {
+    .date-range-picker {
+        grid-template-columns: auto 1fr auto 1fr;
+        gap: 10px;
+    }
+}
+
+/* Small tablet screens */  
+@media (max-width: 900px) {
+    .date-range-picker {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .date-range-picker label {
+        justify-self: start;
+        margin-bottom: 4px;
+        font-size: 13px;
+    }
 }
 
 .date-input-wrapper {
@@ -5111,6 +5140,8 @@ input:focus, textarea:focus, select:focus {
     grid-template-columns: 1fr auto;
     gap: 0;
     position: relative;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .date-range-picker label {
@@ -5128,8 +5159,26 @@ input:focus, textarea:focus, select:focus {
     font-size: 14px;
     color: var(--text);
     transition: all 0.3s ease;
-    min-width: 150px;
+    min-width: 120px;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Responsive input sizing */
+@media (max-width: 1024px) {
+    .date-input {
+        min-width: 100px;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 900px) {
+    .date-input {
+        min-width: 0;
+        padding: 8px 10px;
+    }
 }
 
 .date-input:focus {
@@ -5353,7 +5402,7 @@ input:focus, textarea:focus, select:focus {
     
     .date-range-picker {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, auto);
         gap: 12px;
         width: 100%;
         max-width: 100%;
@@ -5387,7 +5436,7 @@ input:focus, textarea:focus, select:focus {
     
     .quick-filters {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: auto auto auto auto;
         gap: 10px;
         text-align: center;
         width: 100%;

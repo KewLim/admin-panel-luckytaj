@@ -207,11 +207,11 @@
                                             </button>
                                             <input type="date" id="endDateHidden" class="hidden-date-input" onchange="updateDateInput('endDate', this.value)">
                                         </div>
-                                        <button class="btn btn-primary" onclick="filterByDateRange()">
-                                            <i class="fas fa-filter"></i> Filter
-                                        </button>
                                         <button class="btn btn-secondary" onclick="clearDateFilter()">
                                             <i class="fas fa-times"></i> Clear
+                                        </button>
+                                        <button class="btn btn-primary" onclick="filterByDateRange()">
+                                            <i class="fas fa-search"></i> Search
                                         </button>
                                     </div>
                                     <div class="quick-filters">
@@ -320,7 +320,7 @@
                 <!-- Comments Section -->
                 <section id="comments" class="content-section">
                     <div class="section-header">
-                        <h2><i class="fas fa-comments"></i> Fake Comments Management</h2>
+                        <h2><i class="fas fa-comments"></i>Comments Management</h2>
                         <button class="btn btn-primary" onclick="openCommentModal()">
                             Add Comment
                         </button>
